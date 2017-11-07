@@ -31,20 +31,30 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, done
     parameter IDLE = 1;
     parameter OBSERVE = 2;
 
+    reg [1:0] state = 0;
+
     // index in s to which we are going to write (write to s[index:index+2])
     reg [7:0] index = 0; // this increments by 3 for each sticker we observe
 
     always @(posedge clock) begin
         case (state)
             PREP: begin
+                // we need to tell the spin_all module to send the appropriate moves
+                // to the motors. Then we go to IDLE
+                send_setup_moves <= 1;
+                state <= IDLE;
             end
             IDLE: begin
+                // make sure we aren't telling spin_all module to keep sending moves
+                send_setup_moves <= 0;
+                // sit here waiting until done turning happens
+                if (done_turning) state <= OBSERVE;
             end
             OBSERVE: begin
-                if (done_turning) begin
-                    cubestate[index:index+2] <= (index < 72) ? corner_color_sensor : edge_color_sensor;
-                    index <= index + 3;
-                end
+                // when we get here, we can observe the color under the appropriate sensor
+                cubestate[index:index+2] <= (index < 72) ? corner_color_sensor : edge_color_sensor;
+                index <= index + 3;
+                state <= PREP;
             end
         endcase
     end
