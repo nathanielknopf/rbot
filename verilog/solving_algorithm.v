@@ -5,8 +5,8 @@ module solving_algorithm(input start, clock, cubestate,
     parameter W = 0;
     parameter O = 1;
     parameter G = 2;
-    parameter R = 3;
-    parameter B = 4;
+    parameter Red = 3;
+    parameter Blue = 4;
     parameter Y = 5;
 
     // moves
@@ -175,16 +175,16 @@ module solving_algorithm(input start, clock, cubestate,
                                 // we've solved LDF so it won't be there!
 
                                 // corner is in RDF and solved
-                                if (cubestate[30:32] == G && cubestate[42:44] == R && cubestate[69:71] == Y) piece_counter <= 2;
+                                if (cubestate[30:32] == G && cubestate[42:44] == Red && cubestate[69:71] == Y) piece_counter <= 2;
                                 // corner is in RDF
-                                else if (cubestate[30:32] == Y && cubestate[42:44] == G && cubestate[69:71] == R) begin
+                                else if (cubestate[30:32] == Y && cubestate[42:44] == G && cubestate[69:71] == Red) begin
                                     next_moves <= next_moves | {R,Ui,Ri,U,R,Ui,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
                                 // corner is in RDF
-                                else if (cubestate[30:32] == R && cubestate[42:44] == Y && cubestate[69:71] == G) begin
+                                else if (cubestate[30:32] == Red && cubestate[42:44] == Y && cubestate[69:71] == G) begin
                                     next_moves <= next_moves | {R,U,Ri,Ui,R,U,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -192,21 +192,21 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // corner is in LDB
-                                else if (cubestate[12:14] == G && cubestate[48:50] == Y && cubestate[63:65] == R) begin
+                                else if (cubestate[12:14] == G && cubestate[48:50] == Y && cubestate[63:65] == Red) begin
                                     next_moves <= next_moves | {Bi,R,U,U,Ri,B};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
                                 // corner is in LDB
-                                else if (cubestate[12:14] == R && cubestate[48:50] == G && cubestate[63:65] == Y) begin
+                                else if (cubestate[12:14] == Red && cubestate[48:50] == G && cubestate[63:65] == Y) begin
                                     next_moves <= next_moves | {L,U,U,Li,U,R,Ui,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
                                 // corner is in LDB
-                                else if (cubestate[12:14] == Y && cubestate[48:50] == R && cubestate[63:65] == G) begin
+                                else if (cubestate[12:14] == Y && cubestate[48:50] == Red && cubestate[63:65] == G) begin
                                     next_moves <= next_moves | {L,U,U,R,U,Ri,Li};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -214,21 +214,21 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // corner is in RDB
-                                else if (cubestate[45:47] == G && cubestate[57:59] == R && cubestate[66:68] == Y) begin
+                                else if (cubestate[45:47] == G && cubestate[57:59] == Red && cubestate[66:68] == Y) begin
                                     next_moves <= next_moves | {Ri,U,U,R,Ui,R,U,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
                                 // corner is in RDB
-                                else if (cubestate[45:47] == Y && cubestate[57:59] == G && cubestate[66:68] == R) begin
+                                else if (cubestate[45:47] == Y && cubestate[57:59] == G && cubestate[66:68] == Red) begin
                                     next_moves <= next_moves | {Ri,U,U,R,R,Ui,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
                                 // corner is in RDB
-                                else if (cubestate[45:47] == R && cubestate[57:59] == Y && cubestate[66:68] == G) begin
+                                else if (cubestate[45:47] == Red && cubestate[57:59] == Y && cubestate[66:68] == G) begin
                                     next_moves <= next_moves | {Fi,B,U,Bi,F};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -236,21 +236,21 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // corner is in ULF
-                                else if (cubestate[3:5] == G && cubestate[24:26] == R && cubestate[18:20] == Y) begin
+                                else if (cubestate[3:5] == G && cubestate[24:26] == Red && cubestate[18:20] == Y) begin
                                     next_moves <= next_moves | {R,Ui,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
                                 // corner is in ULF
-                                else if (cubestate[3:5] == Y && cubestate[24:26] == G && cubestate[18:20] == R) begin
+                                else if (cubestate[3:5] == Y && cubestate[24:26] == G && cubestate[18:20] == Red) begin
                                     next_moves <= next_moves | {R,U,U,Ri,U,R,Ui,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
                                 // corner is in ULF
-                                else if (cubestate[3:5] == R && cubestate[24:26] == Y && cubestate[18:20] == G) begin
+                                else if (cubestate[3:5] == Red && cubestate[24:26] == Y && cubestate[18:20] == G) begin
                                     next_moves <= next_moves | {Ui,R,U,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -271,16 +271,16 @@ module solving_algorithm(input start, clock, cubestate,
                                 // we've solved RDF so it won't be there!
 
                                 // corner is in LDB and solved
-                                if (cubestate[12:14] == O && cubestate[48:50] == B && cubestate[63:65] == Y) piece_counter <= 3;
+                                if (cubestate[12:14] == O && cubestate[48:50] == Blue && cubestate[63:65] == Y) piece_counter <= 3;
                                 // corner is in LDB
-                                else if (cubestate[12:14] == Y && cubestate[48:50] == O && cubestate[63:65] == B) begin
+                                else if (cubestate[12:14] == Y && cubestate[48:50] == O && cubestate[63:65] == Blue) begin
                                     next_moves <= next_moves | {L,U,Li,Ui,L,U,Li};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 2;
                                 end
                                 // corner is in LDB
-                                else if (cubestate[12:14] == B && cubestate[48:50] == Y && cubestate[63:65] == O) begin
+                                else if (cubestate[12:14] == Blue && cubestate[48:50] == Y && cubestate[63:65] == O) begin
                                     next_moves <= next_moves | {Bi,Ui,B,U,Bi,Ui,B};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -288,21 +288,21 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // corner is in RDB
-                                else if (cubestate[45:47] == B && cubestate[57:59] == O && cubestate[66:68] == Y) begin
+                                else if (cubestate[45:47] == Blue && cubestate[57:59] == O && cubestate[66:68] == Y) begin
                                     next_moves <= next_moves | {Ri,U,U,R,Bi,U,B};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 2;
                                 end
                                 // corner is in RDB
-                                else if (cubestate[45:47] == Y && cubestate[57:59] == B && cubestate[66:68] == O) begin
+                                else if (cubestate[45:47] == Y && cubestate[57:59] == Blue && cubestate[66:68] == O) begin
                                     next_moves <= next_moves | {Ri,L,Ui,R,Li};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 2;
                                 end
                                 // corner is in RDB
-                                else if (cubestate[45:47] == O && cubestate[57:59] == Y && cubestate[66:68] == B) begin
+                                else if (cubestate[45:47] == O && cubestate[57:59] == Y && cubestate[66:68] == Blue) begin
                                     next_moves <= next_moves | {Bi,U,B,U,Bi,U,B};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -310,21 +310,21 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // corner is in ULF
-                                else if (cubestate[3:5] == B && cubestate[24:26] == O && cubestate[18:20] == Y) begin
+                                else if (cubestate[3:5] == Blue && cubestate[24:26] == O && cubestate[18:20] == Y) begin
                                     next_moves <= next_moves | {U,U,L,Ui,Li};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 2;
                                 end
                                 // corner is in ULF
-                                else if (cubestate[3:5] == Y && cubestate[24:26] == B && cubestate[18:20] == O) begin
+                                else if (cubestate[3:5] == Y && cubestate[24:26] == Blue && cubestate[18:20] == O) begin
                                     next_moves <= next_moves | {U,L,U,U,Li,Ui,Li,U,L};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 2;
                                 end
                                 // corner is in ULF
-                                else if (cubestate[3:5] == O && cubestate[24:26] == Y && cubestate[18:20] == B) begin
+                                else if (cubestate[3:5] == O && cubestate[24:26] == Y && cubestate[18:20] == Blue) begin
                                     next_moves <= next_moves | {Bi,U,B};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -346,18 +346,18 @@ module solving_algorithm(input start, clock, cubestate,
                                 // we've solved RDB so it won't be there!
 
                                 // corner is in RDB and solved
-                                if (cubestate[45:47] == R && cubestate[57:59] == B && cubestate[66:68] == Y) begin
+                                if (cubestate[45:47] == Red && cubestate[57:59] == Blue && cubestate[66:68] == Y) begin
                                     piece_counter <= 0;
                                     step <= MIDDLE_LAYER;
                                 end
-                                else if (cubestate[45:47] == B && cubestate[57:59] == Y && cubestate[66:68] == R) begin
+                                else if (cubestate[45:47] == Blue && cubestate[57:59] == Y && cubestate[66:68] == Red) begin
                                     next_moves <= next_moves | {Ri,U,R,Ui,Ri,U,R};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 3;
                                 end
                                 // corner is in RDB
-                                else if (cubestate[45:47] == Y && cubestate[57:59] == R && cubestate[66:68] == B) begin
+                                else if (cubestate[45:47] == Y && cubestate[57:59] == Red && cubestate[66:68] == Blue) begin
                                     next_moves <= next_moves | {Ri,Ui,R,U,Ri,Ui,R};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -365,21 +365,21 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // corner is in ULF
-                                else if (cubestate[3:5] == B && cubestate[24:26] == Y && cubestate[18:20] == R) begin
+                                else if (cubestate[3:5] == Blue && cubestate[24:26] == Y && cubestate[18:20] == Red) begin
                                     next_moves <= next_moves | {Ri,U,U,R};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 3;
                                 end
                                 // corner is in ULF
-                                else if (cubestate[3:5] == R && cubestate[24:26] == B && cubestate[18:20] == Y) begin
+                                else if (cubestate[3:5] == Red && cubestate[24:26] == Blue && cubestate[18:20] == Y) begin
                                     next_moves <= next_moves | {B,U,U,Bi};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 3;
                                 end
                                 // corner is in ULF
-                                else if (cubestate[3:5] == Y && cubestate[24:26] == R && cubestate[18:20] == B) begin
+                                else if (cubestate[3:5] == Y && cubestate[24:26] == Red && cubestate[18:20] == Blue) begin
                                     next_moves <= next_moves | {Ri,Ui,R,Ui,Ri,U,R};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -480,9 +480,9 @@ module solving_algorithm(input start, clock, cubestate,
                                 // RG edge needs to go in RF
                                 // edge can't be in LF because that piece is already solved
                                 // edge is in RF and solved
-                                if (cubestate[96:98] == G && cubestate[111:113] == R) piece_counter <= 2;
+                                if (cubestate[96:98] == G && cubestate[111:113] == Red) piece_counter <= 2;
                                 // edge is in RF and flipped
-                                else if (cubestate[96:98] == R && cubestate[111:113] == G) begin
+                                else if (cubestate[96:98] == Red && cubestate[111:113] == G) begin
                                     next_moves <= next_moves | {R,Ui,Ri,U,Fi,U,U,F,U,U,Fi,U,F};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -490,13 +490,13 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // edge is in RB
-                                else if (cubestate[126:128] == G && cubestate[117:119] == R) begin
+                                else if (cubestate[126:128] == G && cubestate[117:119] == Red) begin
                                     next_moves <= next_moves | {L,L,D,D,R,R,D,D,L,L};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
-                                else if (cubestate[126:128] == R && cubestate[117:119] == G) begin
+                                else if (cubestate[126:128] == Red && cubestate[117:119] == G) begin
                                     next_moves <= next_moves | {D,Ri,Ui,R,Di,Fi,U,U,F};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -504,13 +504,13 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // edge is in LB
-                                else if (cubestate[120:122] == G && cubestate[93:95] == R) begin
+                                else if (cubestate[120:122] == G && cubestate[93:95] == Red) begin
                                     next_moves <= next_moves | {D,D,L,U,Li,D,D,U,U,R,Ui,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
-                                else if (cubestate[120:122] == R && cubestate[93:95] == G) begin
+                                else if (cubestate[120:122] == Red && cubestate[93:95] == G) begin
                                     next_moves <= next_moves | {L,U,Li,Ui,Bi,Ui,B,U,R,Ui,Ri,Ui,Fi,U,F};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -518,13 +518,13 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // edge is in UF
-                                else if (cubestate[78:80] == G && cubestate[105:107] == R) begin
+                                else if (cubestate[78:80] == G && cubestate[105:107] == Red) begin
                                     next_moves <= next_moves | {U,U,Fi,U,F,U,R,Ui,Ri};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 1;
                                 end
-                                else if (cubestate[78:80] == R && cubestate[105:107] == G) begin
+                                else if (cubestate[78:80] == Red && cubestate[105:107] == G) begin
                                     next_moves <= next_moves | {U,R,Ui,Ri,Ui,Fi,U,F};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -545,9 +545,9 @@ module solving_algorithm(input start, clock, cubestate,
                                 // edge can't be in LF because that piece is already solved
                                 // edge can't be in RF because that piece is already solved
                                 // edge is in RB and solved
-                                if (cubestate[117:119] == R && cubestate[126:128] == B) piece_counter <= 3;
+                                if (cubestate[117:119] == Red && cubestate[126:128] == Blue) piece_counter <= 3;
                                 // edge is in RB and flipped
-                                else if (cubestate[117:119] == B && cubestate[126:128] == R) begin
+                                else if (cubestate[117:119] == Blue && cubestate[126:128] == Red) begin
                                     next_moves <= next_moves | {Ri,U,R,Ui,B,U,U,Bi,U,U,B,Ui,Bi};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -555,13 +555,13 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // edge is in LB
-                                else if (cubestate[93:95] == B && cubestate[120:122] == R) begin
+                                else if (cubestate[93:95] == Blue && cubestate[120:122] == Red) begin
                                     next_moves <= next_moves | {D,L,U,Li,Di,U,B,Ui,Bi};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 2;
                                 end
-                                else if (cubestate[93:95] == R && cubestate[120:122] == B) begin
+                                else if (cubestate[93:95] == Red && cubestate[120:122] == Blue) begin
                                     next_moves <= next_moves | {F,F,D,D,B,B,D,D,F,F};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -569,13 +569,13 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // edge is in UF
-                                else if (cubestate[78:80] == B && cubestate[105:107] == R) begin
+                                else if (cubestate[78:80] == Blue && cubestate[105:107] == Red) begin
                                     next_moves <= next_moves | {B,Ui,Bi,Ui,Ri,U,R};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 2;
                                 end
-                                else if (cubestate[78:80] == R && cubestate[105:107] == B) begin
+                                else if (cubestate[78:80] == Red && cubestate[105:107] == Blue) begin
                                     next_moves <= next_moves | {U,Ri,U,R,U,B,Ui,Bi};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -597,11 +597,11 @@ module solving_algorithm(input start, clock, cubestate,
                                 // edge can't be in RF because that piece is already solved
                                 // edge can't be in RB because that piece is already solved
                                 // edge is in LB and solved
-                                if (cubestate[93:95] == O && cubestate[120:122] == B) begin
+                                if (cubestate[93:95] == O && cubestate[120:122] == Blue) begin
                                     piece_counter <= 0;
                                     step <= OLL_EDGES;
                                 end
-                                else if (cubestate[93:95] == B && cubestate[120:122] == O) begin
+                                else if (cubestate[93:95] == Blue && cubestate[120:122] == O) begin
                                     next_moves <= next_moves | {L,Ui,Li,U,Bi,U,U,B,U,U,Bi,U,B};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -609,13 +609,13 @@ module solving_algorithm(input start, clock, cubestate,
                                 end
 
                                 // edge is in UF
-                                else if (cubestate[78:80] == B && cubestate[105:107] == O) begin
+                                else if (cubestate[78:80] == Blue && cubestate[105:107] == O) begin
                                     next_moves <= next_moves | {Bi,U,B,U,L,Ui,Li};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 3;
                                 end
-                                else if (cubestate[78:80] == O && cubestate[105:107] == B) begin
+                                else if (cubestate[78:80] == O && cubestate[105:107] == Blue) begin
                                     next_moves <= next_moves | {Ui,L,Ui,Li,Ui,Bi,U,B};
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
@@ -728,77 +728,77 @@ module solving_algorithm(input start, clock, cubestate,
                     PLL_EDGES: begin
                         // 8 different U perms, 2 Z perms...
                         // solved
-                        if (cubestate[90:92] == O && cubestate[105:107] == G && cubestate[108:110] == R && cubestate[129:131] == B) step <= PLL_CORNERS;
+                        if (cubestate[90:92] == O && cubestate[105:107] == G && cubestate[108:110] == Red && cubestate[129:131] == Blue) step <= PLL_CORNERS;
                         // U: solved edge in back
-                        else if (cubestate[90:92] == R && cubestate[105:107] == O && cubestate[108:110] == G) begin
+                        else if (cubestate[90:92] == Red && cubestate[105:107] == O && cubestate[108:110] == G) begin
                             next_moves <= next_moves | {R,R,U,R,U,Ri,Ui,Ri,Ui,Ri,U,Ri};
                             new_moves_ready <= 1;
                             step <= PLL_CORNERS;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[90:92] == G && cubestate[105:107] == R && cubestate[108:110] == O) begin
+                        else if (cubestate[90:92] == G && cubestate[105:107] == Red && cubestate[108:110] == O) begin
                             next_moves <= next_moves | {R,Ui,R,U,R,U,R,Ui,Ri,Ui,R,R};
                             new_moves_ready <= 1;
                             step <= PLL_CORNERS;
                             state <= UPDATE_STATE;
                         end
                         // U: solved edge on left
-                        else if (cubestate[129:131] == G && cubestate[105:107] == R && cubestate[108:110] == B) begin
+                        else if (cubestate[129:131] == G && cubestate[105:107] == Red && cubestate[108:110] == Blue) begin
                             next_moves <= next_moves | {U,R,Ui,R,U,R,U,R,Ui,Ri,Ui,R,R,Ui};
                             new_moves_ready <= 1;
                             step <= PLL_CORNERS;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[129:131] == R && cubestate[105:107] == B && cubestate[108:110] == G) begin
+                        else if (cubestate[129:131] == Red && cubestate[105:107] == Blue && cubestate[108:110] == G) begin
                             next_moves <= next_moves | {U,R,R,U,R,U,Ri,Ui,Ri,Ui,Ri,U,Ri,Ui};
                             new_moves_ready <= 1;
                             step <= PLL_CORNERS;
                             state <= UPDATE_STATE;
                         end
                         // U: solved edge in front
-                        else if (cubestate[129:131] == R && cubestate[90:92] == B && cubestate[108:110] == O) begin
+                        else if (cubestate[129:131] == Red && cubestate[90:92] == Blue && cubestate[108:110] == O) begin
                             next_moves <= next_moves | {U,U,R,R,U,R,U,Ri,Ui,Ri,Ui,Ri,U,Ri,U,U};
                             new_moves_ready <= 1;
                             step <= PLL_CORNERS;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[129:131] == O && cubestate[90:92] == R && cubestate[108:110] == B) begin
+                        else if (cubestate[129:131] == O && cubestate[90:92] == Red && cubestate[108:110] == Blue) begin
                             next_moves <= next_moves | {U,U,R,Ui,R,U,R,U,R,Ui,Ri,Ui,R,R,U,U};
                             new_moves_ready <= 1;
                             step <= PLL_CORNERS;
                             state <= UPDATE_STATE;
                         end
                         // U: solved edge on right
-                        else if (cubestate[129:131] == G && cubestate[105:107] == O && cubestate[90:92] == B) begin
+                        else if (cubestate[129:131] == G && cubestate[105:107] == O && cubestate[90:92] == Blue) begin
                             next_moves <= next_moves | {Ui,R,R,U,R,U,Ri,Ui,Ri,Ui,Ri,U,Ri,U};
                             new_moves_ready <= 1;
                             step <= PLL_CORNERS;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[129:131] == O && cubestate[105:107] == B && cubestate[90:92] == G) begin
+                        else if (cubestate[129:131] == O && cubestate[105:107] == Blue && cubestate[90:92] == G) begin
                             next_moves <= next_moves | {Ui,R,Ui,R,U,R,U,R,Ui,Ri,Ui,R,R,U};
                             new_moves_ready <= 1;
                             step <= PLL_CORNERS;
                             state <= UPDATE_STATE;
                         end
                         // Z perms - reduce to U perm
-                        else if (cubestate[105:107] == R && cubestate[108:110] == G && cubestate[90:92] == B && cubestate[129:131] == O) begin
+                        else if (cubestate[105:107] == Red && cubestate[108:110] == G && cubestate[90:92] == Blue && cubestate[129:131] == O) begin
                             next_moves <= next_moves | {R,R,U,R,U,Ri,Ui,Ri,Ui,Ri,U,Ri};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[105:107] == O && cubestate[108:110] == B && cubestate[90:92] == G && cubestate[129:131] == R) begin
+                        else if (cubestate[105:107] == O && cubestate[108:110] == Blue && cubestate[90:92] == G && cubestate[129:131] == Red) begin
                             next_moves <= next_moves | {R,R,U,R,U,Ri,Ui,Ri,Ui,Ri,U,Ri};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
                         // only 2 are solved
-                        else if (cubestate[90:92] == O && cubestate[108:110] == R && cubestate[105:107] == B && cubestate[129:131] == G) begin
+                        else if (cubestate[90:92] == O && cubestate[108:110] == Red && cubestate[105:107] == Blue && cubestate[129:131] == G) begin
                             next_moves <= next_moves | {Ui,R,U,Ri,Ui,Ri,F,R,R,Ui,Ri,Ui,R,U,Ri,Fi,U};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[90:92] == R && cubestate[108:110] == O && cubestate[105:107] == G && cubestate[129:131] == B) begin
+                        else if (cubestate[90:92] == Red && cubestate[108:110] == O && cubestate[105:107] == G && cubestate[129:131] == Blue) begin
                             next_moves <= next_moves | {Ui,R,U,Ri,Ui,Ri,F,R,R,Ui,Ri,Ui,R,U,Ri,Fi,U};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
@@ -813,66 +813,66 @@ module solving_algorithm(input start, clock, cubestate,
 
                     PLL_CORNERS: begin
                         // solved
-                        if (cubestate[24:26] == G && cubestate[33:35] == G && cubestate[54:56] == B && cubestate[51:53] == B) step <= SOLVED;
+                        if (cubestate[24:26] == G && cubestate[33:35] == G && cubestate[54:56] == Blue && cubestate[51:53] == Blue) step <= SOLVED;
                         // a perm - two per each corner ==> 8 a perms
                         // a perm - URF
-                        else if (cubestate[33:35] == B && cubestate[36:38] == G && cubestate[51:53] == R) begin
+                        else if (cubestate[33:35] == Blue && cubestate[36:38] == G && cubestate[51:53] == Red) begin
                             next_moves <= next_moves | {Ri,F,Ri,B,B,R,Fi,Ri,B,B,R,R};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[33:35] == R && cubestate[36:38] == B && cubestate[51:53] == G) begin
+                        else if (cubestate[33:35] == Red && cubestate[36:38] == Blue && cubestate[51:53] == G) begin
                             next_moves <= next_moves | {R,R,B,B,R,F,Ri,B,B,R,Fi,R};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
                         // a perm - URB
-                        else if (cubestate[36:38] == O && cubestate[51:53] == R && cubestate[18:20] == B) begin
+                        else if (cubestate[36:38] == O && cubestate[51:53] == Red && cubestate[18:20] == Blue) begin
                             next_moves <= next_moves | {U,Ri,F,Ri,B,B,R,Fi,Ri,B,B,R,R,Ui};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[36:38] == B && cubestate[51:53] == O && cubestate[18:20] == R) begin
+                        else if (cubestate[36:38] == Blue && cubestate[51:53] == O && cubestate[18:20] == Red) begin
                             next_moves <= next_moves | {U,R,R,B,B,R,F,Ri,B,B,R,Fi,R,Ui};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
                         // a perm - ULB
-                        else if (cubestate[33:35] == B && cubestate[51:53] == O && cubestate[18:20] == G) begin
+                        else if (cubestate[33:35] == Blue && cubestate[51:53] == O && cubestate[18:20] == G) begin
                             next_moves <= next_moves | {U,U,R,R,B,B,R,F,Ri,B,B,R,Fi,R,Ui,Ui};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[33:35] == O && cubestate[51:53] == G && cubestate[18:20] == B) begin
+                        else if (cubestate[33:35] == O && cubestate[51:53] == G && cubestate[18:20] == Blue) begin
                             next_moves <= next_moves | {U,U,Ri,F,Ri,B,B,R,Fi,Ri,B,B,R,R,Ui,Ui};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
                         // a perm - ULF
-                        else if (cubestate[33:35] == R && cubestate[36:38] == O && cubestate[18:20] == G) begin
+                        else if (cubestate[33:35] == Red && cubestate[36:38] == O && cubestate[18:20] == G) begin
                             next_moves <= next_moves | {Ui,R,R,B,B,R,F,Ri,B,B,R,Fi,R,U};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[33:35] == O && cubestate[36:38] == G && cubestate[18:20] == R) begin
+                        else if (cubestate[33:35] == O && cubestate[36:38] == G && cubestate[18:20] == Red) begin
                             next_moves <= next_moves | {Ui,Ri,F,Ri,B,B,R,Fi,Ri,B,B,R,R,U};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
                         // e perm - two orientations
-                        else if (cubestate[24:26] == O && cubestate[33:35] == R && cubestate[21:23] == G && cubestate[36:38] == G) begin
+                        else if (cubestate[24:26] == O && cubestate[33:35] == Red && cubestate[21:23] == G && cubestate[36:38] == G) begin
                             next_moves <= next_moves | {R,Bi,Ri,F,R,B,Ri,Fi,R,B,Ri,F,R,Bi,Ri,Fi};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
-                        else if (cubestate[24:26] == R && cubestate[33:35] == O && cubestate[21:23] == B && cubestate[36:38] == B) begin
+                        else if (cubestate[24:26] == Red && cubestate[33:35] == O && cubestate[21:23] == Blue && cubestate[36:38] == Blue) begin
                             next_moves <= next_moves | {U,R,Bi,Ri,F,R,B,Ri,Fi,R,B,Ri,F,R,Bi,Ri,Fi,Ui};
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
                         // h perm - only one orientation
-                        else if (cubestate[24:26] == B && cubestate[33:35] == B && cubestate[54:56] == G && cubestate[51:53] == G) begin
-                            next_moves <= next_moves | {R,R,U,U,R,R,U,U,R,R,U,R,R,U,U,R,R,U,U,R,R,U}
+                        else if (cubestate[24:26] == Blue && cubestate[33:35] == Blue && cubestate[54:56] == G && cubestate[51:53] == G) begin
+                            next_moves <= next_moves | {R,R,U,U,R,R,U,U,R,R,U,R,R,U,U,R,R,U,U,R,R,U};
                         end
                     end
 
