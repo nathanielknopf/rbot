@@ -15,14 +15,8 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, done
     // cubestate[72:143] is reserved for edges
     // cubestate[144:161] are the centers - hardcoded below
     // see sticker-state-indices.png in ../supportingdocs for layout
-    reg [161:0] cubestate;
-    cubestate[144:146] = W;
-    cubestate[147:149] = O;
-    cubestate[150:152] = G;
-    cubestate[153:155] = R;
-    cubestate[156:158] = B;
-    cubestate[159:161] = Y;
-
+    reg [161:0] cubestate = {Y, B, R, G, O, W, 144'd0};
+    
     // states for the FSM
     // PREP: send setup moves to motor, go immediately to wait
     // IDLE: wait for the motors to finish - when they send done signal, go to observe
