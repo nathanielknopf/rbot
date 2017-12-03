@@ -3,19 +3,19 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, done
 
     // the values used to represent colors in state register
     // colors are 3 bit numbers, explaining why state is 54*3 bit register
-    parameter W = 0;
-    parameter O = 1;
-    parameter G = 2;
-    parameter R = 3;
-    parameter B = 4;
-    parameter Y = 5;
+    parameter W = 3'd0;
+    parameter O = 3'd1;
+    parameter G = 3'd2;
+    parameter R = 3'd3;
+    parameter B = 3'd4;
+    parameter Y = 3'd5;
 
     // cubestate is a 54*3=162 bit register
     // cubestate[0:71] is reserved for corners
     // cubestate[72:143] is reserved for edges
     // cubestate[144:161] are the centers - hardcoded below
     // see sticker-state-indices.png in ../supportingdocs for layout
-    reg [161:0] cubestate = {Y, B, R, G, O, W, 144'd0};
+    reg [161:0] cubestate = {144'd0, Y, B, R, G, O, W};
     
     // states for the FSM
     // PREP: send setup moves to motor, go immediately to wait
@@ -37,6 +37,7 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, done
                 // to the motors. Then we go to IDLE
                 send_setup_moves <= 1;
                 state <= IDLE;
+                cubestate <= cubestate << 3;
             end
             IDLE: begin
                 // make sure we aren't telling spin_all module to keep sending moves
@@ -46,8 +47,8 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, done
             end
             OBSERVE: begin
                 // when we get here, we can observe the color under the appropriate sensor
-                cubestate[index:index+2] <= (index < 72) ? corner_color_sensor : edge_color_sensor;
-                index <= index + 3;
+                cubestate <=
+                cubestate <= cubestate | (index < 72) ? corner_color_sensor : edge_color_sensor;
                 state <= PREP;
             end
         endcase

@@ -19,7 +19,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module labkit(
+module main(
    input CLK100MHZ,
    input[15:0] SW, 
    input BTNC, BTNU, BTNL, BTNR, BTND,

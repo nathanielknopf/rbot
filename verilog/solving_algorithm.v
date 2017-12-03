@@ -10,18 +10,18 @@ module solving_algorithm(input start, clock, cubestate,
     parameter Y = 5;
 
     // moves
-    parameter R = 0;
-    parameter Ri = 1;
-    parameter U = 2;
-    parameter Ui = 3;
-    parameter F = 4;
-    parameter Fi = 5;
-    parameter L = 6;
-    parameter Li = 7;
-    parameter B = 8;
-    parameter Bi = 9;
-    parameter D = 10;
-    parameter Di = 11;
+    parameter R = 4'd0;
+    parameter Ri = 4'd1;
+    parameter U = 4'd2;
+    parameter Ui = 4'd3;
+    parameter F = 4'd4;
+    parameter Fi = 4'd5;
+    parameter L = 4'd6;
+    parameter Li = 4'd7;
+    parameter B = 4'd8;
+    parameter Bi = 4'd9;
+    parameter D = 4'd10;
+    parameter Di = 4'd11;
 
     // steps of the method
     parameter CROSS = 0;
