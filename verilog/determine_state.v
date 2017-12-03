@@ -11,9 +11,9 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, colo
     parameter Y = 3'd5;
 
     // cubestate is a 54*3=162 bit register
-    // cubestate[0:71] is reserved for corners
-    // cubestate[72:143] is reserved for edges
-    // cubestate[144:161] are the centers - hardcoded below
+    // cubestate[71:0] is reserved for corners
+    // cubestate[143:72] is reserved for edges
+    // cubestate[161:144] are the centers - hardcoded below
     // see sticker-state-indices.png in ../supportingdocs for layout
     reg [161:0] cubestate = {144'd0, Y, B, R, G, O, W};
     
@@ -38,6 +38,7 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, colo
                 send_setup_moves <= 1;
                 state <= IDLE;
                 cubestate <= cubestate << 3;
+                index <= index + 3;
             end
             IDLE: begin
                 // make sure we aren't telling spin_all module to keep sending moves
