@@ -31,18 +31,18 @@ module spin_all(input send_setup_moves, clock, [5:0] counter
                 output reg [59:0] moves, reg new_moves);    
 
     // moves
-    parameter R = 4'd1;
-    parameter Ri = 4'd2;
-    parameter U = 4'd3;
-    parameter Ui = 4'd4;
-    parameter F = 4'd5;
-    parameter Fi = 4'd6;
-    parameter L = 4'd7;
-    parameter Li = 4'd8;
-    parameter B = 4'd9;
-    parameter Bi = 4'd10;
-    parameter D = 4'd11;
-    parameter Di = 4'd12;
+    parameter R = 4'd2;
+    parameter Ri = 4'd3;
+    parameter U = 4'd4;
+    parameter Ui = 4'd5;
+    parameter F = 4'd6;
+    parameter Fi = 4'd7;
+    parameter L = 4'd8;
+    parameter Li = 4'd9;
+    parameter B = 4'd10;
+    parameter Bi = 4'd11;
+    parameter D = 4'd12;
+    parameter Di = 4'd13;
 
     parameter SEND_MOVES = 0;
     parameter IDLE = 1; 

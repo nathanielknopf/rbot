@@ -1,4 +1,4 @@
-module solving_algorithm(input start, clock, cubestate,
+module solving_algorithm(input start, clock, cubestate, state_updated
                         output reg[199:0] next_moves, reg cube_solved);
 
     // the values used to represent colors in cubestate register
@@ -10,19 +10,18 @@ module solving_algorithm(input start, clock, cubestate,
     parameter Y = 5;
 
     // moves
-    parameter R = 4'd1;
-    parameter Ri = 4'd2;
-    parameter U = 4'd3;
-    parameter Ui = 4'd4;
-    parameter F = 4'd5;
-    parameter Fi = 4'd6;
-    parameter L = 4'd7;
-    parameter Li = 4'd8;
-    parameter B = 4'd9;
-    parameter Bi = 4'd10;
-    parameter D = 4'd11;
-    parameter Di = 4'd12;
-    parameter NULL = 4'd15;
+    parameter R = 4'd2;
+    parameter Ri = 4'd3;
+    parameter U = 4'd4;
+    parameter Ui = 4'd5;
+    parameter F = 4'd6;
+    parameter Fi = 4'd7;
+    parameter L = 4'd8;
+    parameter Li = 4'd9;
+    parameter B = 4'd10;
+    parameter Bi = 4'd11;
+    parameter D = 4'd12;
+    parameter Di = 4'd13;
 
     // steps of the method
     parameter CROSS = 0;
