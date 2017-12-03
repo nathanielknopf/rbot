@@ -1,4 +1,4 @@
-module determine_state(input start, edge_color_sensor, corner_color_sensor, done_turning, clock,
+module determine_state(input start, edge_color_sensor, corner_color_sensor, color_sensor_stable, clock,
                         output reg send_setup_moves);
 
     // the values used to represent colors in state register
@@ -43,11 +43,10 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, done
                 // make sure we aren't telling spin_all module to keep sending moves
                 send_setup_moves <= 0;
                 // sit here waiting until done turning happens
-                if (done_turning) state <= OBSERVE;
+                if (color_sensor_stable) state <= OBSERVE;
             end
             OBSERVE: begin
                 // when we get here, we can observe the color under the appropriate sensor
-                cubestate <=
                 cubestate <= cubestate | (index < 72) ? corner_color_sensor : edge_color_sensor;
                 state <= PREP;
             end
