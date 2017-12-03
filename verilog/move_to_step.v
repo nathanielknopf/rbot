@@ -25,7 +25,7 @@ module move_to_step(
     input [3:0] next_move,
     input move_start,
     output move_done,
-    output [5:0] dir_pin,
+    output dir_pin,
     output [5:0] step_pin
     );
     
@@ -40,41 +40,43 @@ module move_to_step(
     localparam BACK = 4;
     localparam DOWN = 5;
     
-    localparam R = 0;
-    localparam RI = 1;
-    localparam U = 2;
-    localparam UI = 3;
-    localparam F = 4;
-    localparam FI = 5;
-    localparam L = 6;
-    localparam LI = 7;
-    localparam B = 8;
-    localparam BI = 9;
-    localparam D = 10;
-    localparam DI = 11;
+    // moves
+    parameter R = 4'd2;
+    parameter Ri = 4'd3;
+    parameter U = 4'd4;
+    parameter Ui = 4'd5;
+    parameter F = 4'd6;
+    parameter Fi = 4'd7;
+    parameter L = 4'd8;
+    parameter Li = 4'd9;
+    parameter B = 4'd10;
+    parameter Bi = 4'd11;
+    parameter D = 4'd12;
+    parameter Di = 4'd13;
+    parameter NULL = 4'd15;
     
     wire step_clock;
     clock_100hz local_clock(.reset(move_start), .clock(clock), .slow_clock(step_clock));
     
     wire dir;
-    assign dir = next_move[0];
+    assign dir_pin = next_move[0];
     
     wire [5:0] start;
-    assign start[UP] = (next_move==U | next_move==UI) & move_start;
-    assign start[DOWN] = (next_move==D | next_move==DI) & move_start;
-    assign start[RIGHT] = (next_move==R | next_move==RI) & move_start;
-    assign start[LEFT] = (next_move==L | next_move==LI) & move_start;
-    assign start[FRONT] = (next_move==F | next_move==FI) & move_start;
-    assign start[BACK] = (next_move==B | next_move==BI) & move_start;
+    assign start[RIGHT] = (next_move[3:1] == R[3:1]) & move_start;
+    assign start[UP] = (next_move[3:1] == U[3:1]) & move_start;
+    assign start[FRONT] = (next_move[3:1] == F[3:1]) & move_start;
+    assign start[LEFT] = (next_move[3:1] == L[3:1]) & move_start;
+    assign start[BACK] = (next_move[3:1] == B[3:1]) & move_start;
+    assign start[DOWN] = (next_move[3:1] == D[3:1]) & move_start;
 
-    wire [5:0] done;  
+    wire [5:0] done;
     assign move_done = &done;  
     
-    stepper_driver up_stepper(.clock(clock), .step_clock(step_clock), .start(start[UP]), .dir_in(dir), .steps(QUARTER_TURN), .dir_out(dir_pin[UP]), .step_out(step_pin[UP]), .done(done[UP]));
-    stepper_driver down_stepper(.clock(clock), .step_clock(step_clock), .start(start[DOWN]), .dir_in(dir), .steps(QUARTER_TURN), .dir_out(dir_pin[DOWN]), .step_out(step_pin[DOWN]), .done(done[DOWN]));
-    stepper_driver right_stepper(.clock(clock), .step_clock(step_clock), .start(start[RIGHT]), .dir_in(dir), .steps(QUARTER_TURN), .dir_out(dir_pin[RIGHT]), .step_out(step_pin[RIGHT]), .done(done[RIGHT]));
-    stepper_driver left_stepper(.clock(clock), .step_clock(step_clock), .start(start[LEFT]), .dir_in(dir), .steps(QUARTER_TURN), .dir_out(dir_pin[LEFT]), .step_out(step_pin[LEFT]), .done(done[LEFT]));
-    stepper_driver front_stepper(.clock(clock), .step_clock(step_clock), .start(start[FRONT]), .dir_in(dir), .steps(QUARTER_TURN), .dir_out(dir_pin[FRONT]), .step_out(step_pin[FRONT]), .done(done[FRONT]));
-    stepper_driver back_stepper(.clock(clock), .step_clock(step_clock), .start(start[BACK]), .dir_in(dir), .steps(QUARTER_TURN), .dir_out(dir_pin[BACK]), .step_out(step_pin[BACK]), .done(done[BACK]));
+    stepper_driver up_stepper(.clock(clock), .step_clock(step_clock), .start(start[UP]), .steps(QUARTER_TURN), .step_out(step_pin[UP]), .done(done[UP]));
+    stepper_driver down_stepper(.clock(clock), .step_clock(step_clock), .start(start[DOWN]), .steps(QUARTER_TURN), .step_out(step_pin[DOWN]), .done(done[DOWN]));
+    stepper_driver right_stepper(.clock(clock), .step_clock(step_clock), .start(start[RIGHT]), .steps(QUARTER_TURN), .step_out(step_pin[RIGHT]), .done(done[RIGHT]));
+    stepper_driver left_stepper(.clock(clock), .step_clock(step_clock), .start(start[LEFT]), .steps(QUARTER_TURN), .step_out(step_pin[LEFT]), .done(done[LEFT]));
+    stepper_driver front_stepper(.clock(clock), .step_clock(step_clock), .start(start[FRONT]), .steps(QUARTER_TURN), .step_out(step_pin[FRONT]), .done(done[FRONT]));
+    stepper_driver back_stepper(.clock(clock), .step_clock(step_clock), .start(start[BACK]), .steps(QUARTER_TURN), .step_out(step_pin[BACK]), .done(done[BACK]));
     
 endmodule

@@ -24,9 +24,7 @@ module stepper_driver(
     input clock,
     input step_clock,
     input start,
-    input dir_in,
     input [7:0] steps,
-    output reg dir_out,
     output step_out,
     output reg done
     );
@@ -44,7 +42,6 @@ module stepper_driver(
         prev_step_clock <= step_clock;
         if (start)begin
             steps_left <= steps;
-            dir_out <= dir_in;
             done <= 0;
         end else if (steps_left == 0)begin
             done <= 1;
