@@ -23,16 +23,16 @@
 //clock comes in at 25MHz...locally generates one at 100kHz to 400kHz (potentially up to 3.8 MHz, I believe, but won't hold breath
 
 module i2c_setup(input clock,
+    input scl_clock,
     input reset,
     inout sda,
     inout scl,
     output [4:0] state_out,
-    output  sys_clock,
     input [7:0] register_address,
     input [6:0] device_address,
     input [7:0] data_in,
     input start,
-    output reg done);
+    output reg done=1);
     
     localparam IDLE = 6'd0; //Idle/initial state (SDA= 1, SCL=1)
     localparam START1 = 6'd1; //FPGA claims bus by pulling SDA LOW while SCL is HI
@@ -72,18 +72,7 @@ module i2c_setup(input clock,
     reg scl_val=1;
     assign scl = scl_val ? 1'bz : 1'b0; //if scl_val = 1, make hiZ, else 0...do this for clock stretching.
     
-    reg read_write =1;
-    
-    //assign sys_clock = state==IDLE?1'b1:1'b0;
-    assign sys_clock = clock_for_sys;
-    
-    reg clock_reset;
-    wire clock_for_sys;
-    //assign sys_clock = clock_for_sys?  1'bz : 0;
-    clock_200khz local_clock(.reset(clock_reset), .clock(clock), .slow_clock(clock_for_sys));
-
-    
-    always @(posedge clock_for_sys)begin //update only on rising/fall edges of i2c clock
+    always @(posedge scl_clock)begin //update only on rising/fall edges of i2c clock
         if (reset &&(state !=IDLE))begin
             state <= IDLE;
             count <=0;
