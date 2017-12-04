@@ -1,5 +1,5 @@
 module update_state (
-    input clock, [199:0] moves, new_moves_ready, [161:0] cubestate,
+    input clock, [199:0] moves_input, new_moves_ready, [161:0] cubestate_input,
     output reg[161:0] cubestate_updated, reg state_updated
 );
     // moves
@@ -19,10 +19,14 @@ module update_state (
 
     parameter IDLE = 0;
     parameter MOVING = 1;
+    parameter DONE = 2;
 
-    reg state = IDLE;
+    reg [1:0] state = IDLE;
 
     reg [5:0] counter = 0;
+
+    reg [161:0] cubestate = cubestate_input;
+    reg [199:0] moves = moves_input;
 
     always @(posedge clock) begin
         case (state)
@@ -280,17 +284,66 @@ module update_state (
                         cubestate[122:120] <= cubestate[131:129];
                     end
                     D: begin
+                        // corners not on D face
+                        cubestate[29:27] <= cubestate[14:12];
+                        cubestate[14:12] <= cubestate[59:57];
+                        cubestate[59:57] <= cubestate[44:42];
+                        cubestate[44:42] <= cubestate[29:27];
+                        cubestate[32:30] <= cubestate[17:15];
+                        cubestate[17:15] <= cubestate[50:48];
+                        cubestate[50:48] <= cubestate[47:45];
+                        cubestate[47:45] <= cubestate[32:30];
+                        // edges not on D face
+                        cubestate[101:99] <= cubestate[86:84];
+                        cubestate[86:84] <= cubestate[125:123];
+                        cubestate[125:123] <= cubestate[116:114];
+                        cubestate[116:114] <= cubestate[101:99];
+                        // D face
+                        cubestate[62:60] <= cubestate[65:63];
+                        cubestate[65:63] <= cubestate[68:66];
+                        cubestate[68:66] <= cubestate[71:69];
+                        cubestate[71:69] <= cubestate[62:60];
+                        cubestate[140:138] <= cubestate[137:135];
+                        cubestate[137:135] <= cubestate[134:132];
+                        cubestate[134:132] <= cubestate[143:141];
+                        cubestate[143:141] <= cubestate[140:138];
                     end
                     Di: begin
+                        // corners not on D face
+                        cubestate[14:12] <= cubestate[29:27];
+                        cubestate[59:57] <= cubestate[14:12];
+                        cubestate[44:42] <= cubestate[59:57];
+                        cubestate[29:27] <= cubestate[44:42];
+                        cubestate[17:15] <= cubestate[32:30];
+                        cubestate[50:48] <= cubestate[17:15];
+                        cubestate[47:45] <= cubestate[50:48];
+                        cubestate[32:30] <= cubestate[47:45];
+                        // edges not on D face
+                        cubestate[101:99] <= cubestate[86:84];
+                        cubestate[86:84] <= cubestate[125:123];
+                        cubestate[125:123] <= cubestate[116:114];
+                        cubestate[116:114] <= cubestate[101:99];
+                        // D face
+                        cubestate[65:63] <= cubestate[62:60];
+                        cubestate[68:66] <= cubestate[65:63];
+                        cubestate[71:69] <= cubestate[68:66];
+                        cubestate[62:60] <= cubestate[71:69];
+                        cubestate[137:135] <= cubestate[140:138];
+                        cubestate[134:132] <= cubestate[137:135];
+                        cubestate[143:141] <= cubestate[134:132];
+                        cubestate[140:138] <= cubestate[143:141];
                     end
                 endcase
                 counter <= counter + 1;
                 moves <= moves << 4
                 next_move <= moves[195:192]
                 // if we've just done our 50th move (counter == 49) then go to IDLE
-                state <= (counter < 49) ? MOVING : IDLE
-                state_updated <= (counter == 49) ? 1 : 0
+                state <= (counter < 49) ? MOVING : DONE
             end
+            DONE: begin
+                state_updated <= 1;
+                cubestate_updated <= cubestate;
+                state <= IDLE;
             IDLE: begin
                 counter <= 0; // always be ready...
                 state_updated <= 0;
