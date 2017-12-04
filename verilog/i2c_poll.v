@@ -22,9 +22,10 @@
 //i2c_master module:
 //clock comes in at 25MHz...locally generates one at 100kHz to 400kHz (potentially up to 3.8 MHz, I believe, but won't hold breath
 
-module i2c_poll(input clock,
+module i2c_poll #(parameter NUM_DATA_BYTES=6)
+    (input clock,
     input reset,
-    output reg [15:0] reading,
+    output reg [47:0] reading,
     inout sda,
     inout scl,
     output [4:0] state_out,
@@ -71,11 +72,12 @@ module i2c_poll(input clock,
     //reg [6:0] device_address = 7'h68;
     //reg [7:0] register_address = 8'h75;
     reg [7:0] count;
+    reg [2:0] data_count;
     
     reg [5:0] state = IDLE;
     assign state_out = state;
     
-    reg [15:0] incoming_data = 16'h0000;
+    reg [47:0] incoming_data = 48'h0;
     
     reg sda_val=1; //from the fsm perspective, where SDA output data is placed.
     assign sda =  sda_val ? 1'bz: 1'b0;  //if sda_data  = 1, make hiZ, else 0...rely on external pullup resistors
@@ -103,7 +105,7 @@ module i2c_poll(input clock,
                 IDLE: begin
                     if (reset)begin
                         state <= IDLE;
-                        reading <= 16'h0000;
+                        reading <= 48'h0;
                     end
                     else if (count == 60)begin
                         state <= START1;
@@ -112,7 +114,7 @@ module i2c_poll(input clock,
                     count <= count +1;
                     sda_val <=1;
                     scl_val <=1;
-                    
+                    data_count <= 0;
                 end
                 START1: begin
                     sda_val <= 0; //pull SDA low
@@ -262,13 +264,17 @@ module i2c_poll(input clock,
                 end
                 READ1B: begin
                     scl_val <=0;
-                    incoming_data[count+8] <= sda;
+                    incoming_data[count+(8*data_count)] <= sda;
                     if (count >=1)begin
                         count <= count -1;
-                        state<=READ1A;
+                        state <= READ1A;
+                    end else if(data_count >= (NUM_DATA_BYTES-1)) begin
+                        state <= NACK;
+                        sda_val <= 1;
                     end else begin
-                        state<=ACKNACK4A;
-                        sda_val <=0;
+                        state <= ACKNACK4A;
+                        sda_val <= 0;
+                        data_count <= data_count + 1;
                     end
                 end
                 ACKNACK4A: begin
@@ -278,29 +284,13 @@ module i2c_poll(input clock,
                 end
                 ACKNACK4B: begin
                     scl_val <=0;
-                    state <=READ2A;
-                    count <=7;
-                    sda_val <=1;
-                end
-                READ2A: begin
-                    scl_val <=1;
-                    state <= READ2B;
-                end
-                READ2B: begin
-                    scl_val <=0;
-                    incoming_data[count] <= sda;
-                    if (count >= 1)begin
-                        count <= count -1;
-                        state<=READ2A;
-                    end else begin
-                        state<=NACK;
-                        sda_val<=1;
-                    end
+                    state <= READ1A;
+                    sda_val <= 1;
                 end
                 NACK: begin
                     scl_val <=1;
                     count <=0;
-                    reading[15:0] <= incoming_data[15:0];
+                    reading[47:0] <= incoming_data[47:0];
                     state <= STOP1A;
                 end
                 STOP1A: begin
