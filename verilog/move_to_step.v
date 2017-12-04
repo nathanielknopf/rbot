@@ -41,19 +41,19 @@ module move_to_step(
     localparam DOWN = 5;
     
     // moves
-    parameter R = 4'd2;
-    parameter Ri = 4'd3;
-    parameter U = 4'd4;
-    parameter Ui = 4'd5;
-    parameter F = 4'd6;
-    parameter Fi = 4'd7;
-    parameter L = 4'd8;
-    parameter Li = 4'd9;
-    parameter B = 4'd10;
-    parameter Bi = 4'd11;
-    parameter D = 4'd12;
-    parameter Di = 4'd13;
-    parameter NULL = 4'd15;
+    localparam R = 4'd2;
+    localparam Ri = 4'd3;
+    localparam U = 4'd4;
+    localparam Ui = 4'd5;
+    localparam F = 4'd6;
+    localparam Fi = 4'd7;
+    localparam L = 4'd8;
+    localparam Li = 4'd9;
+    localparam B = 4'd10;
+    localparam Bi = 4'd11;
+    localparam D = 4'd12;
+    localparam Di = 4'd13;
+    localparam NULL = 4'd15;
     
     wire step_clock;
     clock_100hz local_clock(.reset(move_start), .clock(clock), .slow_clock(step_clock));
