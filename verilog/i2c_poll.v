@@ -22,14 +22,14 @@
 //i2c_master module:
 //clock comes in at 25MHz...locally generates one at 100kHz to 400kHz (potentially up to 3.8 MHz, I believe, but won't hold breath
 
-module i2c_poll #(parameter NUM_DATA_BYTES=6)
+module i2c_poll #(parameter NUM_DATA_BYTES=2)
     (input clock,
+    input scl_clock,
     input reset,
-    output reg [47:0] reading,
+    output reg [(NUM_DATA_BYTES*8)-1:0] reading,
     inout sda,
     inout scl,
     output [4:0] state_out,
-    output  sys_clock,
     input [7:0] register_address,
     input [6:0] device_address);
     
@@ -61,23 +61,21 @@ module i2c_poll #(parameter NUM_DATA_BYTES=6)
     localparam READ1B = 6'd25; //this data is 8MSB of x accelerometer reading
     localparam ACKNACK4A = 6'd26; //Master (FPGA) assets acknowledgement to Slave
     localparam ACKNACK4B = 6'd27; //Effectively asking for more data
-    localparam READ2A = 6'd28; //start reading next 8 bits (8LSB)
-    localparam READ2B = 6'd29; //assign to lower half of 16 bit register
-    localparam NACK = 6'd30; //Fail to acknowledge Slave this time (way to say "I'm done so slave doesn't send more data)
-    localparam STOP1A = 6'd31; //Stop/Release line
-    localparam STOP1B = 6'd32; //FPGA master does this by pulling SCL HI while SDA LOW
-    localparam STOP1C = 6'd33; //Then pulling SDA HI while SCL remains HI
+    localparam NACK = 6'd28; //Fail to acknowledge Slave this time (way to say "I'm done so slave doesn't send more data)
+    localparam STOP1A = 6'd29; //Stop/Release line
+    localparam STOP1B = 6'd30; //FPGA master does this by pulling SCL HI while SDA LOW
+    localparam STOP1C = 6'd31; //Then pulling SDA HI while SCL remains HI
     
     
     //reg [6:0] device_address = 7'h68;
     //reg [7:0] register_address = 8'h75;
     reg [7:0] count;
-    reg [2:0] data_count;
+    reg [3:0] data_count;
     
     reg [5:0] state = IDLE;
     assign state_out = state;
     
-    reg [47:0] incoming_data = 48'h0;
+    reg [(NUM_DATA_BYTES*8)-1:0] incoming_data = 0;
     
     reg sda_val=1; //from the fsm perspective, where SDA output data is placed.
     assign sda =  sda_val ? 1'bz: 1'b0;  //if sda_data  = 1, make hiZ, else 0...rely on external pullup resistors
@@ -85,18 +83,7 @@ module i2c_poll #(parameter NUM_DATA_BYTES=6)
     reg scl_val=1;
     assign scl = scl_val ? 1'bz : 1'b0; //if scl_val = 1, make hiZ, else 0...do this for clock stretching.
     
-    reg read_write =1;
-    
-    //assign sys_clock = state==IDLE?1'b1:1'b0;
-    assign sys_clock = clock_for_sys;
-    
-    reg clock_reset;
-    wire clock_for_sys;
-    //assign sys_clock = clock_for_sys?  1'bz : 0;
-    clock_200khz local_clock(.reset(clock_reset), .clock(clock), .slow_clock(clock_for_sys));
-
-    
-    always @(posedge clock_for_sys)begin //update only on rising/fall edges of i2c clock
+    always @(posedge scl_clock)begin //update only on rising/fall edges of i2c clock
         if (reset &&(state !=IDLE))begin
             state <= IDLE;
             count <=0;
@@ -290,7 +277,7 @@ module i2c_poll #(parameter NUM_DATA_BYTES=6)
                 NACK: begin
                     scl_val <=1;
                     count <=0;
-                    reading[47:0] <= incoming_data[47:0];
+                    reading <= incoming_data;
                     state <= STOP1A;
                 end
                 STOP1A: begin
