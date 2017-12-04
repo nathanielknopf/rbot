@@ -28,8 +28,54 @@ module update_state (
             MOVING: begin
                 case (next_move):
                     R: begin
+                        // corners not on R face
+                        cubestate[32:30] <= cubestate[8:6];
+                        cubestate[35:33] <= cubestate[11:9];
+                        cubestate[8:6] <= cubestate[56:54];
+                        cubestate[11:9] <= cubestate[59:57];
+                        cubestate[56:54] <= cubestate[68:66];
+                        cubestate[59:57] <= cubestate[71:69];
+                        cubestate[68:66] <= cubestate[32:30];
+                        cubestate[71:69] <= cubestate[35:33];
+                        // edges not on R face
+                        cubestate[98:96] <= cubestate[83:81];
+                        cubestate[83:81] <= cubestate[128:126];
+                        cubestate[128:126] <= cubestate[143:141];
+                        cubestate[143:141] <= cubestate[98:96];
+                        // stickers on R face
+                        cubestate[41:39] <= cubestate[38:36];
+                        cubestate[38:36] <= cubestate[47:45];
+                        cubestate[47:45] <= cubestate[44:42];
+                        cubestate[44:42] <= cubestate[41:39];
+                        cubestate[113:111] <= cubestate[110:108];
+                        cubestate[110:108] <= cubestate[119:117];
+                        cubestate[119:117] <= cubestate[116:114];
+                        cubestate[116:114] <= cubestate[113:111];
                     end
                     Ri: begin
+                        // corners not on R face
+                        cubestate[8:6] <= cubestate[32:30];
+                        cubestate[11:9] <= cubestate[35:33]
+                        cubestate[56:54] <= cubestate[8:6];
+                        cubestate[59:57] <= cubestate[11:9];
+                        cubestate[68:66] <= cubestate[56:54];
+                        cubestate[71:69] <= cubestate[59:57];
+                        cubestate[32:30] <= cubestate[68:66];
+                        cubestate[35:33] <= cubestate[71:69];
+                        // edges not on R face
+                        cubestate[83:81] <= cubestate[98:96];
+                        cubestate[128:126] <= cubestate[83:81];
+                        cubestate[143:141] <= cubestate[128:126];
+                        cubestate[98:96] <= cubestate[143:141];
+                        // stickers on R face
+                        cubestate[38:36] <= cubestate[41:39];
+                        cubestate[47:45] <= cubestate[38:36];
+                        cubestate[44:42] <= cubestate[47:45]; 
+                        cubestate[41:39] <= cubestate[44:42]; 
+                        cubestate[110:108] <= cubestate[113:111];
+                        cubestate[119:117] <= cubestate[110:108];
+                        cubestate[116:114] <= cubestate[119:117];
+                        cubestate[113:111] <= cubestate[116:114];
                     end
                     U: begin
                     end
