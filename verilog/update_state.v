@@ -180,12 +180,104 @@ module update_state (
                         cubestate[101:99] <= cubestate[104:102]
                     end
                     L: begin
+                        // corners not on L face
+                        cubestate[2:0] <= cubestate[50:48];
+                        cubestate[50:48] <= cubestate[62:60];
+                        cubestate[62:60] <= cubestate[26:24];
+                        cubestate[26:24] <= cubestate[2:0];
+                        cubestate[5:3] <= cubestate[53:51];
+                        cubestate[53:51] <= cubestate[65:63];
+                        cubestate[65:63] <= cubestate[29:27];
+                        cubestate[29:27] <= cubestate[5:3];
+                        // edges not on L face
+                        cubestate[104:102] <= cubestate[77:75];
+                        cubestate[77:75] <= cubestate[122:120];
+                        cubestate[122:120] <= cubestate[137:135];
+                        cubestate[137:135] <= cubestate[104:102];
+                        // L face
+                        cubestate[23:21] <= cubestate[14:12];
+                        cubestate[14:12] <= cubestate[17:15];
+                        cubestate[17:15] <= cubestate[20:18];
+                        cubestate[20:18] <= cubestate[23:21];
+                        cubestate[95:93] <= cubestate[86:84];
+                        cubestate[86:84] <= cubestate[89:87];
+                        cubestate[89:87] <= cubestate[92:90];
+                        cubestate[92:90] <= cubestate[95:93];
                     end
                     Li: begin
+                        // corners not on L face
+                        cubestate[50:48] <= cubestate[2:0];
+                        cubestate[62:60] <= cubestate[50:48];
+                        cubestate[26:24] <= cubestate[62:60];
+                        cubestate[2:0] <= cubestate[26:24];
+                        cubestate[53:51] <= cubestate[5:3];
+                        cubestate[65:63] <= cubestate[53:51];
+                        cubestate[29:27] <= cubestate[65:63];
+                        cubestate[5:3] <= cubestate[29:27];
+                        // edges not on L face
+                        cubestate[77:75] <= cubestate[104:102];
+                        cubestate[122:120] <= cubestate[77:75];
+                        cubestate[137:135] <= cubestate[122:120];
+                        cubestate[104:102] <= cubestate[137:135];
+                        // L face
+                        cubestate[14:12] <= cubestate[23:21];
+                        cubestate[17:15] <= cubestate[14:12];
+                        cubestate[20:18] <= cubestate[17:15];
+                        cubestate[23:21] <= cubestate[20:18];
+                        cubestate[86:84] <= cubestate[95:93];
+                        cubestate[89:87] <= cubestate[86:84];
+                        cubestate[92:90] <= cubestate[89:87];
+                        cubestate[95:93] <= cubestate[92:90];
                     end
                     B: begin
+                        // corners not on B face
+                        cubestate[2:0] <= cubestate[38:36];
+                        cubestate[38:36] <= cubestate[68:66];
+                        cubestate[68:66] <= cubestate[14:12];
+                        cubestate[14:12] <= cubestate[2:0];
+                        cubestate[11:9] <= cubestate[47:45];
+                        cubestate[47:45] <= cubestate[65:63];
+                        cubestate[65:63] <= cubestate[23:21];
+                        cubestate[23:21] <= cubestate[11:9];
+                        // edges not on B face
+                        cubestate[74:72] <= cubestate[119:117];
+                        cubestate[119:117] <= cubestate[134:132];
+                        cubestate[134:132] <= cubestate[95:93];
+                        cubestate[95:93] <= cubestate[74:72];
+                        // B face
+                        cubestate[56:54] <= cubestate[59:57];
+                        cubestate[59:57] <= cubestate[50:48];
+                        cubestate[50:48] <= cubestate[53:51];
+                        cubestate[53:51] <= cubestate[56:54];
+                        cubestate[128:126] <= cubestate[125:123];
+                        cubestate[125:123] <= cubestate[122:120];
+                        cubestate[122:120] <= cubestate[131:129];
+                        cubestate[131:129] <= cubestate[122:120];
                     end
                     Bi: begin
+                        // corners not on B face
+                        cubestate[38:36] <= cubestate[2:0];
+                        cubestate[68:66] <= cubestate[38:36];
+                        cubestate[14:12] <= cubestate[68:66];
+                        cubestate[2:0] <= cubestate[14:12];
+                        cubestate[47:45] <= cubestate[11:9];
+                        cubestate[65:63] <= cubestate[47:45];
+                        cubestate[23:21] <= cubestate[65:63];
+                        cubestate[11:9] <= cubestate[23:21];
+                        // edges not on B face
+                        cubestate[119:117] <= cubestate[74:72];
+                        cubestate[134:132] <= cubestate[119:117];
+                        cubestate[95:93] <= cubestate[134:132];
+                        cubestate[74:72] <= cubestate[95:93];
+                        // B face
+                        cubestate[59:57] <= cubestate[56:54];
+                        cubestate[50:48] <= cubestate[59:57];
+                        cubestate[53:51] <= cubestate[50:48];
+                        cubestate[56:54] <= cubestate[53:51];
+                        cubestate[125:123] <= cubestate[128:126];
+                        cubestate[122:120] <= cubestate[125:123];
+                        cubestate[131:129] <= cubestate[122:120];
+                        cubestate[122:120] <= cubestate[131:129];
                     end
                     D: begin
                     end
