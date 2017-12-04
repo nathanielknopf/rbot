@@ -25,8 +25,6 @@ module main(
    input BTNC, BTNU, BTNL, BTNR, BTND,
    inout[7:0] JA, 
    inout[7:0] JB,
-   output LED16_B, LED16_G, LED16_R,
-   output LED17_B, LED17_G, LED17_R,
    output[15:0] LED,
    output[7:0] SEG,  // segments A-G (0-6), DP (7)
    output[7:0] AN    // Display 0-7
@@ -49,53 +47,93 @@ module main(
     wire debounce_BTNL;
     wire debounce_BTNR;
     wire debounce_BTND;
-    wire debounce_SW7;
     wire reset;
     
     debounce btnc_deb(.reset(reset), .clock(clock_25mhz), .noisy(BTNC), .clean(debounce_BTNC));
+    debounce btnu_deb(.reset(reset), .clock(clock_25mhz), .noisy(BTNU), .clean(debounce_BTNU));
+    debounce btnl_deb(.reset(reset), .clock(clock_25mhz), .noisy(BTNL), .clean(debounce_BTNL));
+    debounce btnr_deb(.reset(reset), .clock(clock_25mhz), .noisy(BTNR), .clean(debounce_BTNR));
+    debounce btnd_deb(.reset(reset), .clock(clock_25mhz), .noisy(BTND), .clean(debounce_BTND));
     
     assign reset = SW[15];
      
     reg [15:0] led_state = 16'd0;
     
-    localparam TCS_ADDRESS = 7'h68;
-    localparam TCS_ENABLE = 8'h3F;
+    localparam CS_ADDRESS = 7'h44;
+    localparam CS_CONFIG_REG1 = 8'h01;
+    localparam CS_CONFIG_REG2 = 8'h02;
+    localparam CS_CONFIG_REG3 = 8'h03;
+    localparam CS_R_HIGH = 8'h0C;
+    localparam CS_R_LOW = 8'h0B;
+    localparam CS_G_HIGH = 8'h0A;
+    localparam CS_G_LOW = 8'h09;
+    localparam CS_B_HIGH = 8'h0E;
+    localparam CS_B_LOW = 8'h0D;
     
-    reg setup_done = 1;
-     
-    reg [7:0] tcs_reg_addr = TCS_ENABLE;
+    localparam CS_CONFIG_REG1_VALUE = 8'h05;
+    
+    localparam CONFIG1 = 0;
+    localparam POLL_SENS = 1;
+    
+    wire setup_done;
+    reg start_setup = 0;
+    reg setup_state = CONFIG1; 
+    reg [7:0] cs_setup_reg = CS_CONFIG_REG1;
     
     //assign data = {3'b000,SW[15],2'b00,SW[7],debounce_SW7, 8'h00, curr_state,time_left, 2'b00,SW[5:4], SW[3:0]};
     wire [5:0] state_display;
-    wire [15:0] value;
+    wire [47:0] value;
     wire poll_stop;
     assign poll_stop = reset | !setup_done;
     
-//    i2c_poll poll(.clock(clock_25mhz), .reset(poll_stop), .reading(value), .scl(JA[3]), .sda(JA[2]), .state_out(state_display), .sys_clock(JA[1]), .register_address(TCS_ENABLE), .device_address(TCS_ADDRESS));
-//    i2c_setup setup(.clock(clock_25mhz), .reset(reset), .scl(JA[3]), .sda(JA[2]), .sys_clock(JA[1]), .register_address(tcs_reg_addr), .device_address(TCS_ADDRESS));
+    wire i2c_clock;
     
-    assign data = {4'h0, tcs_reg_addr,4'h0,value[15:0]};
+    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
+    
+    i2c_poll #(.NUM_DATA_BYTES(6)) poll(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(poll_stop), .reading(value), .scl(JA[3]), .sda(JA[2]), .state_out(state_display), .register_address(CS_G_LOW), .device_address(CS_ADDRESS));
+    i2c_setup setup(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .scl(JA[3]), .sda(JA[2]), .register_address(cs_setup_reg), .device_address(CS_ADDRESS), .data_in(CS_CONFIG_REG1_VALUE), .start(start_setup), .done(setup_done));
+    
+    assign data = {value[31:0]};
 
     assign LED[0] = (state_display==6'd0) ? 1'b1:1'b0;
     assign LED[1] = led_state[1] & !reset | (state_display==6'd8) ? 1'b1:1'b0;
     assign LED[2] = led_state[2] & !reset | (state_display==6'd10) ? 1'b1:1'b0;
     assign LED[3] = led_state[3] & !reset | (state_display==6'd32) ? 1'b1:1'b0;
+    assign LED[4] = setup_done;
     
-    reg prev_butt;
-    reg start_stepper;
-    
-    always @(posedge clock_25mhz)begin
-        prev_butt <= debounce_BTNC;
-        start_stepper <= debounce_BTNC & !prev_butt;
+    always @(posedge clock_25mhz) begin
+        if(reset) begin
+            setup_state <= CONFIG1;
+        end else begin
+            case(setup_state)
+                CONFIG1: begin
+                    start_setup <= 1;
+                    if(!setup_done)begin
+                        setup_state <= POLL_SENS;
+                    end
+                end
+                POLL_SENS: begin
+                    start_setup <= 0;
+                end
+            endcase
+        end
     end
     
-    wire [5:0] stepper_dir_pins;
-    wire [5:0] stepper_step_pins;
+//    reg prev_butt;
+//    reg start_stepper;
     
-    assign JB[3] = stepper_step_pins[0];
-    assign JB[2] = stepper_dir_pins[0];
+//    always @(posedge clock_25mhz)begin
+//        prev_butt <= debounce_BTNC;
+//        start_stepper <= debounce_BTNC & !prev_butt;
+//    end
     
-    move_to_step steppers(.clock(clock_25mhz), .next_move(0), .move_start(start_stepper), .move_done(LED[4]), .dir_pin(stepper_dir_pins), .step_pin(stepper_step_pins));
+//    wire [5:0] stepper_dir_pins;
+//    wire [5:0] stepper_step_pins;
+    
+//    assign JB[3] = stepper_step_pins[0];
+//    assign JB[2] = stepper_dir_pins[0];
+    
+//    move_to_step steppers(.clock(clock_25mhz), .next_move(0), .move_start(start_stepper), .move_done(LED[4]), .dir_pin(stepper_dir_pins), .step_pin(stepper_step_pins));
     
 //    localparam CONFIGA = 4'd0;
 //    localparam CONFIGB = 4'd1;
