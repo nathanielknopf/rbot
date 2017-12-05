@@ -26,7 +26,8 @@ module move_to_step(
     input move_start,
     output move_done,
     output dir_pin,
-    output [5:0] step_pin
+    output step_pin,
+    output [5:0] en_pins
     );
     
     localparam QUARTER_TURN = 50;
@@ -57,6 +58,7 @@ module move_to_step(
     
     wire step_clock;
     clock_100hz local_clock(.reset(move_start), .clock(clock), .slow_clock(step_clock));
+    assign step_pin = step_clock;
     
     wire dir;
     assign dir_pin = next_move[0];
@@ -72,11 +74,11 @@ module move_to_step(
     wire [5:0] done;
     assign move_done = &done;  
     
-    stepper_driver up_stepper(.clock(clock), .step_clock(step_clock), .start(start[UP]), .steps(QUARTER_TURN), .step_out(step_pin[UP]), .done(done[UP]));
-    stepper_driver down_stepper(.clock(clock), .step_clock(step_clock), .start(start[DOWN]), .steps(QUARTER_TURN), .step_out(step_pin[DOWN]), .done(done[DOWN]));
-    stepper_driver right_stepper(.clock(clock), .step_clock(step_clock), .start(start[RIGHT]), .steps(QUARTER_TURN), .step_out(step_pin[RIGHT]), .done(done[RIGHT]));
-    stepper_driver left_stepper(.clock(clock), .step_clock(step_clock), .start(start[LEFT]), .steps(QUARTER_TURN), .step_out(step_pin[LEFT]), .done(done[LEFT]));
-    stepper_driver front_stepper(.clock(clock), .step_clock(step_clock), .start(start[FRONT]), .steps(QUARTER_TURN), .step_out(step_pin[FRONT]), .done(done[FRONT]));
-    stepper_driver back_stepper(.clock(clock), .step_clock(step_clock), .start(start[BACK]), .steps(QUARTER_TURN), .step_out(step_pin[BACK]), .done(done[BACK]));
+    stepper_driver up_stepper(.clock(clock), .step_clock(step_clock), .start(start[UP]), .steps(QUARTER_TURN), .en_out(en_pins[UP]), .done(done[UP]));
+    stepper_driver down_stepper(.clock(clock), .step_clock(step_clock), .start(start[DOWN]), .steps(QUARTER_TURN), .en_out(en_pins[DOWN]), .done(done[DOWN]));
+    stepper_driver right_stepper(.clock(clock), .step_clock(step_clock), .start(start[RIGHT]), .steps(QUARTER_TURN), .en_out(en_pins[RIGHT]), .done(done[RIGHT]));
+    stepper_driver left_stepper(.clock(clock), .step_clock(step_clock), .start(start[LEFT]), .steps(QUARTER_TURN), .en_out(en_pins[LEFT]), .done(done[LEFT]));
+    stepper_driver front_stepper(.clock(clock), .step_clock(step_clock), .start(start[FRONT]), .steps(QUARTER_TURN), .en_out(en_pins[FRONT]), .done(done[FRONT]));
+    stepper_driver back_stepper(.clock(clock), .step_clock(step_clock), .start(start[BACK]), .steps(QUARTER_TURN), .en_out(en_pins[BACK]), .done(done[BACK]));
     
 endmodule
