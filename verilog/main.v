@@ -57,7 +57,50 @@ module main(
     
     assign reset = SW[15];
      
-//    reg [15:0] led_state = 16'd0;
+    reg [15:0] led_state = 16'd0;
+    
+    // STEPPERS
+    wire stepper_dir_pin;
+    wire stepper_step_pin;
+    wire [5:0] stepper_en_pins;
+    
+    assign JB[2] = stepper_dir_pin;
+    assign JB[6] = stepper_step_pin;
+    
+    assign JB[3] = stepper_en_pins[0];
+    assign JB[1] = stepper_en_pins[1];
+    assign JB[0] = stepper_en_pins[2];
+    assign JB[5] = stepper_en_pins[3];
+    assign JB[4] = stepper_en_pins[4];
+    assign JB[7] = stepper_en_pins[5];
+    
+    wire [3:0] next_move;
+    wire move_start;
+    wire move_done;
+    
+    move_to_step steppers(.clock(clock_25mhz), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
+
+    
+    // COLOR SENSORS
+    wire [2:0] edge_color;
+    wire [2:0] corner_color;
+    wire i2c_clock;
+    
+    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
+    
+    color_reader edge_reader(.sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
+    color_reader corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
+    
+    
+    //SEQUENCER
+    wire seq_complete;
+    wire moves_avail_to_queue;
+    wire [199:0] new_moves_to_queue;
+    wire seq_done;
+    
+    sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .move_done(move_done));
+
+// I2C TEST    
     
 //    localparam CS_ADDRESS = 7'h44;
 //    localparam CS_CONFIG_REG1 = 8'h01;
@@ -93,7 +136,7 @@ module main(
 //    i2c_poll #(.NUM_DATA_BYTES(6)) poll(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(poll_stop), .reading(value), .scl(JA[3]), .sda(JA[2]), .state_out(state_display), .register_address(CS_G_LOW), .device_address(CS_ADDRESS));
 //    i2c_setup setup(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .scl(JA[3]), .sda(JA[2]), .register_address(cs_setup_reg), .device_address(CS_ADDRESS), .data_in(CS_CONFIG_REG1_VALUE), .start(start_setup), .done(setup_done));
     
-//    assign data = {value[31:0]};
+//    assign data = {8'h0, value[31:24], value[15:8], value[47:40]};
 
 //    assign LED[0] = (state_display==6'd0) ? 1'b1:1'b0;
 //    assign LED[1] = led_state[1] & !reset | (state_display==6'd8) ? 1'b1:1'b0;
@@ -118,32 +161,36 @@ module main(
 //            endcase
 //        end
 //    end
+
+// STEPPER TEST
     
-    reg prev_butt;
-    reg start_stepper;
+//    reg prev_butt;
+//    reg start_stepper;
     
-    always @(posedge clock_25mhz)begin
-        prev_butt <= debounce_BTNC;
-        start_stepper <= debounce_BTNC & !prev_butt;
-    end
+//    always @(posedge clock_25mhz)begin
+//        prev_butt <= debounce_BTNC;
+//        start_stepper <= debounce_BTNC & !prev_butt;
+//    end
     
-    wire stepper_dir_pin;
-    wire stepper_step_pin;
-    wire [5:0] stepper_en_pins;
+//    wire stepper_dir_pin;
+//    wire stepper_step_pin;
+//    wire [5:0] stepper_en_pins;
     
-    assign JB[2] = stepper_dir_pin;
-    assign JB[6] = stepper_step_pin;
+//    assign JB[2] = stepper_dir_pin;
+//    assign JB[6] = stepper_step_pin;
     
-    assign JB[3] = stepper_en_pins[0];
-    assign JB[1] = stepper_en_pins[1];
-    assign JB[0] = stepper_en_pins[2];
-    assign JB[5] = stepper_en_pins[3];
-    assign JB[4] = stepper_en_pins[4];
-    assign JB[7] = stepper_en_pins[5];
+//    assign JB[3] = stepper_en_pins[0];
+//    assign JB[1] = stepper_en_pins[1];
+//    assign JB[0] = stepper_en_pins[2];
+//    assign JB[5] = stepper_en_pins[3];
+//    assign JB[4] = stepper_en_pins[4];
+//    assign JB[7] = stepper_en_pins[5];
     
-    assign LED[3:0] = SW[3:0];
+//    assign LED[3:0] = SW[3:0];
     
-    move_to_step steppers(.clock(clock_25mhz), .next_move(SW[3:0]), .move_start(start_stepper), .move_done(LED[4]), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
+//    move_to_step steppers(.clock(clock_25mhz), .next_move(SW[3:0]), .move_start(start_stepper), .move_done(LED[4]), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
+
+// OLD I2C TEST
     
 //    localparam CONFIGA = 4'd0;
 //    localparam CONFIGB = 4'd1;
