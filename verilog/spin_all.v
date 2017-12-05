@@ -27,8 +27,8 @@
         // L R' B' U L R' {BL, BD, BR, BU} R L' U' B R L'
         // R2 L2 F2 B2 {DB, DL, DF, DR} B2 F2 L2 R2
 
-module spin_all(input send_setup_moves, clock, [5:0] counter
-                output reg [59:0] moves, reg new_moves);    
+module spin_all(input send_setup_moves, clock, [5:0] counter,
+                output reg [59:0] moves, reg new_moves=0);    
 
     // moves
     parameter R = 4'd2;
@@ -49,8 +49,6 @@ module spin_all(input send_setup_moves, clock, [5:0] counter
 
     // FSM state - either sending moves or waiting for a signal from determine_state module to spit out new moves
     reg state = 0;
-    // goes high when moves register has actual moves in it, and we want them to be executed by the robot
-    reg new_moves = 0;
 
     always @(posedge clock) begin
         case (state)
@@ -118,7 +116,6 @@ module spin_all(input send_setup_moves, clock, [5:0] counter
                     43: moves <= moves | {U};
                     // done, gotta make sure we do these moves....
                     44: moves <= moves | {B,B,F,F,L,L,R,R};
-                    default : moves <= {NULL};
                 endcase
                 state <= IDLE;
                 new_moves <= 1;
@@ -129,5 +126,6 @@ module spin_all(input send_setup_moves, clock, [5:0] counter
                 new_moves <= 0;
             end
             default : state <= IDLE;
+        endcase
     end
 endmodule
