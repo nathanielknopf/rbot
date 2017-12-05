@@ -32,9 +32,9 @@ module clock_100hz(
     always @(posedge clock)begin
         if (reset) begin
             count <= 0;
-            slow_clock <= 1;
+            slow_clock <= 0;
         end else begin
-            if (count == 124999)begin
+            if (count == 62499)begin
                 count <= 0;
                 slow_clock <= !slow_clock;
             end else begin
