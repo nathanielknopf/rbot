@@ -40,7 +40,8 @@ module color_sensor(
     localparam CS_B_HIGH = 8'h0E;
     localparam CS_B_LOW = 8'h0D;
     
-    localparam CS_CONFIG_REG1_VALUE = 8'h05;
+    localparam CS_CONFIG_REG1_VALUE = 8'b00001101;
+    localparam CS_CONFIG_REG2_VALUE = 8'b00111111;
     
     localparam CONFIG1 = 0;
     localparam POLL_SENS = 1;
@@ -55,7 +56,7 @@ module color_sensor(
     assign poll_stop = reset | !setup_done;
     
     i2c_poll #(.NUM_DATA_BYTES(6)) poll(.clock(clock), .scl_clock(scl_clock), .reset(poll_stop), .reading(value), .scl(scl), .sda(sda), .state_out(state_display), .register_address(CS_G_LOW), .device_address(CS_ADDRESS));
-    i2c_setup setup(.clock(clock), .scl_clock(scl_clock), .reset(reset), .scl(scl), .sda(sda), .register_address(CS_CONFIG_REG1), .device_address(CS_ADDRESS), .data_in(CS_CONFIG_REG1_VALUE), .start(start_setup), .done(setup_done));
+    i2c_setup #(.NUM_WRITE_BYTES(2)) setup(.clock(clock), .scl_clock(scl_clock), .reset(reset), .scl(scl), .sda(sda), .register_address(CS_CONFIG_REG1), .device_address(CS_ADDRESS), .data_in({CS_CONFIG_REG1_VALUE, CS_CONFIG_REG2_VALUE}), .start(start_setup), .done(setup_done));
     
     color_reader identifier(.clock(clock), .red(value[31:24]), .green(value[15:8]), .blue(value[47:40]), .color(color));
     

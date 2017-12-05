@@ -22,7 +22,8 @@
 //i2c_master module:
 //clock comes in at 25MHz...locally generates one at 100kHz to 400kHz (potentially up to 3.8 MHz, I believe, but won't hold breath
 
-module i2c_setup(input clock,
+module i2c_setup #(parameter NUM_WRITE_BYTES=1)
+    (input clock,
     input scl_clock,
     input reset,
     inout sda,
@@ -30,7 +31,7 @@ module i2c_setup(input clock,
     output [4:0] state_out,
     input [7:0] register_address,
     input [6:0] device_address,
-    input [7:0] data_in,
+    input [(NUM_WRITE_BYTES*8)-1:0] data_in,
     input start,
     output reg done=1);
     
@@ -60,6 +61,7 @@ module i2c_setup(input clock,
     //reg [6:0] device_address = 7'h68;
     //reg [7:0] register_address = 8'h75;
     reg [7:0] count;
+    reg [3:0] bytes_rem;
     
     reg [5:0] state = IDLE;
     assign state_out = state;
@@ -83,6 +85,7 @@ module i2c_setup(input clock,
                         state <= IDLE;
                     end else if (start)begin
                         state <= START1;
+                        bytes_rem <= NUM_WRITE_BYTES;
                         count <=0;
                         done <= 0;
                     end else begin
@@ -171,10 +174,14 @@ module i2c_setup(input clock,
                     if (sda ==1'b1)begin //no acknowledgement
                         state <= IDLE;
                         count <=0;
-                    end else begin
+                    end else if(bytes_rem != 0) begin
+                        bytes_rem <= bytes_rem - 1;
                         state <= WRITE1B;
-                        sda_val<=data_in[count];
-                    end 
+                        sda_val<=data_in[count+(bytes_rem<<3)-8];
+                    end else begin
+                        state <= STOP1A;
+                        sda_val <= 0;
+                    end
                 end
                 WRITE1A: begin
                     scl_val <=0;
@@ -187,29 +194,29 @@ module i2c_setup(input clock,
                         count <= count -1;
                         state <= WRITE1A;
                     end else begin
-                        state <= ACKNACK3A;
+                        state <= ACKNACK2A;
                     end
                 end
-                ACKNACK3A: begin
-                    scl_val <=0;
-                    sda_val <=1; //float sda for listening next time
-                    state <= ACKNACK3B;
-                end
-                ACKNACK3B: begin
-                    scl_val <=1;
-                    state <=ACKNACK3C;
-                end
-                ACKNACK3C: begin
-                    scl_val <=0;
-                    //acknowledge <= sda;  //what do we have?
-                    if (sda ==1'b1)begin //no acknowledgement
-                        count <=0;
-                        state <= IDLE;
-                    end else begin
-                        state <= STOP1A;
-                        sda_val <= 0;            
-                    end 
-                end
+//                ACKNACK3A: begin
+//                    scl_val <=0;
+//                    sda_val <=1; //float sda for listening next time
+//                    state <= ACKNACK3B;
+//                end
+//                ACKNACK3B: begin
+//                    scl_val <=1;
+//                    state <=ACKNACK3C;
+//                end
+//                ACKNACK3C: begin
+//                    scl_val <=0;
+//                    //acknowledge <= sda;  //what do we have?
+//                    if (sda ==1'b1)begin //no acknowledgement
+//                        count <=0;
+//                        state <= IDLE;
+//                    end else begin
+//                        state <= STOP1A;
+//                        sda_val <= 0;            
+//                    end 
+//                end
                 STOP1A: begin
                     scl_val <= 1;
                     sda_val <=0;
