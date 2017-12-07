@@ -25,7 +25,7 @@
         // R2 L2 F2 B2 {DB, DL, DF, DR} B2 F2 L2 R2
 
 module determine_state(input start, edge_color_sensor, corner_color_sensor, color_sensor_stable, clock,
-                        output reg send_setup_moves, reg [5:0] counter);
+                        output reg send_setup_moves, reg [5:0] counter, reg[161:0] cubestate_output, reg cubestate_determined);
 
     // the values used to represent colors in state register
     // colors are 3 bit numbers, explaining why state is 54*3 bit register
@@ -61,6 +61,14 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, colo
 
     always @(posedge clock) begin
         case (state)
+            SETUP: begin
+                // these should be true anyway, just making sure
+                counter <= 0;
+                index <= 0;
+                // this is to make sure this shit ain't fucked
+                cubestate_determined <= 0;
+                state <= PREP;
+            end
             PREP: begin
                 // we need to tell the spin_all module to send the appropriate moves
                 // to the motors. Then we go to IDLE
@@ -85,7 +93,10 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, colo
             end
             DONE: begin
                 state <= DONE;
+                cubestate_output <= cubestate;
+                cubestate_determined <= 1;
             end
+            default: 
         endcase
     end
 endmodule

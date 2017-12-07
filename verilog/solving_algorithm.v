@@ -1,5 +1,5 @@
 module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
-                        output reg[199:0] next_moves, reg cube_solved);}
+                        output reg[199:0] next_moves, reg cube_solved);
 
     // the values used to represent colors in cubestate register
     parameter W = 0;
@@ -50,6 +50,8 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
     reg state = MOVE;
 
     reg cube_solved = 0;
+
+    reg [5:0] counter = 0;
 
     // piece counter counts the sub-step of the step of the method (0th corner, 1st corner, ...)
     reg[1:0] piece_counter = 0;
@@ -1443,12 +1445,18 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
                 endcase
             end
 
+            WAIT: begin
+                counter <= counter + 1;
+                state <= (counter == 60) ? MOVE : WAIT;
+            end
+
             UPDATE_STATE:begin
                 next_moves <= 0;
                 new_moves_ready <= 0;
+                counter <= 0;
                 // if we get the thing then go to the MOVE state
                 if (state_updated) begin
-                    state <= MOVE;
+                    state <= WAIT;
                     // probably some other kinda shit i need to do here huh...
                 end
             end

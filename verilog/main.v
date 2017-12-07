@@ -90,16 +90,71 @@ module main(
     
     color_reader edge_reader(.sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
     color_reader corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
-    
-    
+
     //SEQUENCER
-    wire seq_complete;
-    wire moves_avail_to_queue;
-    wire [199:0] new_moves_to_queue;
-    wire seq_done;
-    
+    reg seq_complete;
+    reg moves_avail_to_queue;
+    reg [199:0] new_moves_to_queue;
+    reg seq_done;
+
+    // wire these things:
+    // moves_avail_to_queue -- when a set of moves have been output that should be thrown on the queue
+    // new_moves_to_queue -- the actual moves output by solving_algorithm
+    // seq_complete - the solving_algorithm is done
+
+    // the values used to represent colors in cubestate register
+    parameter W = 0;
+    parameter O = 1;
+    parameter G = 2;
+    parameter Red = 3;
+    parameter Blue = 4;
+    parameter Y = 5;    
+    // moves
+    parameter R = 4'd2;
+    parameter Ri = 4'd3;
+    parameter U = 4'd4;
+    parameter Ui = 4'd5;
+    parameter F = 4'd6;
+    parameter Fi = 4'd7;
+    parameter L = 4'd8;
+    parameter Li = 4'd9;
+    parameter B = 4'd10;
+    parameter Bi = 4'd11;
+    parameter D = 4'd12;
+    parameter Di = 4'd13;
+    // since we haven't implemented the color sensor stuff yet, let's do this for now
+    // reg [161:0] starting_cubestate = {Y,Blue,Red,G,O,W,W,G,Red,Blue,Blue,Blue,Red,Red,W,Blue,O,Y,Red,O,O,Y,O,G,W,G,G,Y,W,Y,G,Y,Blue,G,O,O,O,Y,Blue,Y,Red,G,W,Red,Red,O,W,W,W,Red,Y,Blue,G,Blue};
+    // this ^^^ is a known scramble - this can be reached by applying the following moves to a solved Rubik's Cube:
+    // R2 B R2 B2 F L2 U2 B R2 D2 L2 Di Li U2 B2 F R2 Bi Di Ui 
+    reg [199:0] solution = 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R}
+
+    // wire [161:0] cubestate_for_solving_algorithm;
+    // wire [161:0] updated_cubestate;
+
+    // assign cubestate_for_solving_algorithm = () ? starting_cubestate : updated_cubestate;
+
+
+    // update_state.v
+    // update_state upd_st(.clock(clock_25mhz),.moves_input(new_moves_to_queue))
     sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .move_done(move_done));
 
+    parameter send_moves = 0;
+    parameter tell_it_to_go = 1;
+
+    always @(posedge clock_25mhz) begin
+        case (state)
+            send_moves: begin
+                new_moves_to_queue <= solution;
+                state <= tell_it_to_go
+            end
+            tell_it_to_go: begin
+                moves_avail_to_queue <= 1;
+                seq_complete <= 1
+            end
+            default : state <= state_one;
+        endcase
+    end
+    
 // I2C TEST    
     
 //    localparam CS_ADDRESS = 7'h44;
