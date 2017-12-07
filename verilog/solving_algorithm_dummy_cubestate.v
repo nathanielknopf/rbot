@@ -1,4 +1,4 @@
-module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
+module solving_algorithm(input start, clock, [161:0] cubestate_input_real, state_updated
                         output reg[199:0] next_moves, reg cube_solved);}
 
     // the values used to represent colors in cubestate register
@@ -13,7 +13,7 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
     // in the event that we want to test this, we should use a dummy cubestate, provided below
     // this is a known scramble - this can be reached by applying the following moves to a solved Rubik's Cube:
     // R2 B R2 B2 F L2 U2 B R2 D2 L2 Di Li U2 B2 F R2 Bi Di Ui 
-    // reg [161:0] cubestate = {Y,Blue,Red,G,O,W,W,G,Red,Blue,Blue,Blue,Red,Red,W,Blue,O,Y,Red,O,O,Y,O,G,W,G,G,Y,W,Y,G,Y,Blue,G,O,O,O,Y,Blue,Y,Red,G,W,Red,Red,O,W,W,W,Red,Y,Blue,G,Blue};
+    reg [161:0] cubestate = {Y,Blue,Red,G,O,W,W,G,Red,Blue,Blue,Blue,Red,Red,W,Blue,O,Y,Red,O,O,Y,O,G,W,G,G,Y,W,Y,G,Y,Blue,G,O,O,O,Y,Blue,Y,Red,G,W,Red,Red,O,W,W,W,Red,Y,Blue,G,Blue};
     //                      |----centers-----|----------edges----------edges----------edges----------edges-------|---------corners---------corners---------corners---------corners---|
     // moves
     parameter R = 4'd2;
