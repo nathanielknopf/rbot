@@ -53,6 +53,559 @@ module solving_algorithm(input start, clock, cubestate, state_updated
             MOVE:begin
                 case (step)
                     CROSS: begin
+                        case (piece_counter)
+                            0: begin
+                                // WG edge needs to go in UF
+                                // edge is in UF and solved
+                                if (cubestate[80:78] == W && cubestate[107:105] == G) piece_counter <= 1;
+                                // edge is in UF and flipped
+                                else if (cubestate[80:78] == G && cubestate[107:105] == W) begin
+                                    next_moves <= next_moves | {F,Ui,R,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in UR
+                                else if (cubestate[83:81] == W && cubestate[110:108] == G) begin
+                                    next_moves <= next_moves | {Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[83:81] == G && cubestate[110:108] == W) begin
+                                    next_moves <= next_moves | {Ri,Fi};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in UB
+                                else if (cubestate[74:72] == W && cubestate[131:129] == G) begin
+                                    next_moves <= next_moves | {U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[74:72] == G && cubestate[131:129] == W) begin
+                                    next_moves <= next_moves | {Bi,Ri,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in UL
+                                else if (cubestate[77:75] == W && cubestate[92:90] == G) begin
+                                    next_moves <= next_moves | {Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[77:75] == G && cubestate[92:90] == W) begin
+                                    next_moves <= next_moves | {L,F};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in DF
+                                else if (cubestate[140:138] == W && cubestate[101:99] == G) begin
+                                    next_moves <= next_moves | {F,F};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[140:138] == G && cubestate[101:99] == W) begin
+                                    next_moves <= next_moves | {Fi,R,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in DR
+                                else if (cubestate[143:141] == W && cubestate[116:114] == G) begin
+                                    next_moves <= next_moves | {R,R,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[143:141] == G && cubestate[116:114] == W) begin
+                                    next_moves <= next_moves | {R,Fi};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in DB
+                                else if (cubestate[134:132] == W && cubestate[125:123] == G) begin
+                                    next_moves <= next_moves | {B,B,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[134:132] == G && cubestate[125:123] == W) begin
+                                    next_moves <= next_moves | {B,Ri,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in DL
+                                else if (cubestate[137:135] == W && cubestate[86:84] == G) begin
+                                    next_moves <= next_moves | {L,L,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[137:135] == G && cubestate[86:84] == W) begin
+                                    next_moves <= next_moves | {Li,F};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in FL
+                                else if (cubestate[104:102] == W && cubestate[89:87] == G) begin
+                                    next_moves <= next_moves | {Li,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[104:102] == G && cubestate[89:87] == W) begin
+                                    next_moves <= next_moves | {F};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in FR
+                                else if (cubestate[98:96] == W && cubestate[113:111] == G) begin
+                                    next_moves <= next_moves | {R,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[98:96] == G && cubestate[113:111] == W) begin
+                                    next_moves <= next_moves | {Fi};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in BR
+                                else if (cubestate[128:126] == W && cubestate[119:117] == G) begin
+                                    next_moves <= next_moves | {Ri,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[128:126] == G && cubestate[119:117] == W) begin
+                                    next_moves <= next_moves | {B,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                // edge is in BL
+                                else if (cubestate[122:120] == W && cubestate[95:93] == G) begin
+                                    next_moves <= next_moves | {L,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                                else if (cubestate[122:120] == G && cubestate[95:93] == W) begin
+                                    next_moves <= next_moves | {Bi,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 0;
+                                end
+                            end
+                            1: begin
+                                // WO edge needs to go in UL
+                                // edge can't be in UF because UF is solved
+                                // edge is in UL and solved
+                                else if (cubestate[77:75] == W && cubestate[92:90] == O) piece_counter <= 2;
+                                else if (cubestate[77:75] == O && cubestate[92:90] == W) begin
+                                    next_moves <= next_moves | {Li,U,Bi,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in UR
+                                else if (cubestate[83:81] == W && cubestate[110:108] == O) begin
+                                    next_moves <= next_moves | {R,U,U,Ri,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[83:81] == O && cubestate[110:108] == W) begin
+                                    next_moves <= next_moves | {R,U,B,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in UB
+                                else if (cubestate[74:72] == W && cubestate[131:129] == O) begin
+                                    next_moves <= next_moves | {U,R,U,Ri,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[74:72] == O && cubestate[131:129] == W) begin
+                                    next_moves <= next_moves | {B,L};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in DF
+                                else if (cubestate[140:138] == W && cubestate[101:99] == O) begin
+                                    next_moves <= next_moves | {Di,L,L};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[140:138] == O && cubestate[101:99] == W) begin
+                                    next_moves <= next_moves | {L,U,Bi,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in DR
+                                else if (cubestate[143:141] == W && cubestate[116:114] == O) begin
+                                    next_moves <= next_moves | {D,D,L,L};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[143:141] == O && cubestate[116:114] == W) begin
+                                    next_moves <= next_moves | {Ri,U,B,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in DB
+                                else if (cubestate[134:132] == W && cubestate[125:123] == O) begin
+                                    next_moves <= next_moves | {D,L,L};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[134:132] == O && cubestate[125:123] == W) begin
+                                    next_moves <= next_moves | {Bi,L};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in DL
+                                else if (cubestate[137:135] == W && cubestate[86:84] == O) begin
+                                    next_moves <= next_moves | {L,L};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[137:135] == O && cubestate[86:84] == W) begin
+                                    next_moves <= next_moves | {L,U,Bi,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in FL
+                                else if (cubestate[104:102] == W && cubestate[89:87] == O) begin
+                                    next_moves <= next_moves | {Li};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[104:102] == O && cubestate[89:87] == W) begin
+                                    next_moves <= next_moves | {Ui,F,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in FR
+                                else if (cubestate[98:96] == W && cubestate[113:111] == O) begin
+                                    next_moves <= next_moves | {U,U,R,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[98:96] == O && cubestate[113:111] == W) begin
+                                    next_moves <= next_moves | {Ui,Fi,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in BR
+                                else if (cubestate[128:126] == W && cubestate[119:117] == O) begin
+                                    next_moves <= next_moves | {U,U,Ri,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[128:126] == O && cubestate[119:117] == W) begin
+                                    next_moves <= next_moves | {U,B,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                // edge is in BL
+                                else if (cubestate[122:120] == W && cubestate[95:93] == O) begin
+                                    next_moves <= next_moves | {L};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                                else if (cubestate[122:120] == O && cubestate[95:93] == W) begin
+                                    next_moves <= next_moves | {U,Bi,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
+                                end
+                            end
+                            2: begin
+                                // WB edge needs to go in UB
+                                // edge can't be in UF because UF is solved
+                                // edge can't be in UL because UL is solved
+                                // edge is in UB and solved
+                                // edge is in UB and solved
+                                else if (cubestate[74:72] == W && cubestate[131:129] == Blue) piece_counter <= 3;
+                                // edge is in UB and unsolved
+                                else if (cubestate[74:72] == Blue && cubestate[131:129] == W) begin
+                                    next_moves <= next_moves | {Bi,U,Ri,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in UR
+                                else if (cubestate[83:81] == W && cubestate[110:108] == Blue) begin
+                                    next_moves <= next_moves | {R,U,Ri,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[83:81] == Blue && cubestate[110:108] == W) begin
+                                    next_moves <= next_moves | {R,B};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in DF
+                                else if (cubestate[140:138] == W && cubestate[101:99] == Blue) begin
+                                    next_moves <= next_moves | {D,D,B,B};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[140:138] == Blue && cubestate[101:99] == W) begin
+                                    next_moves <= next_moves | {D,Ri,B};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in DR
+                                else if (cubestate[143:141] == W && cubestate[116:114] == Blue) begin
+                                    next_moves <= next_moves | {U,R,R};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[143:141] == Blue && cubestate[116:114] == W) begin
+                                    next_moves <= next_moves | {Ri,B};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in DB
+                                else if (cubestate[134:132] == W && cubestate[125:123] == Blue) begin
+                                    next_moves <= next_moves | {B,B};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[134:132] == Blue && cubestate[125:123] == W) begin
+                                    next_moves <= next_moves | {B,U,Ri,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in DL
+                                else if (cubestate[137:135] == W && cubestate[86:84] == Blue) begin
+                                    next_moves <= next_moves | {Di,B,B};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[137:135] == Blue && cubestate[86:84] == W) begin
+                                    next_moves <= next_moves | {L,Bi,Li};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in FL
+                                else if (cubestate[104:102] == W && cubestate[89:87] == Blue) begin
+                                    next_moves <= next_moves | {Ui,Li,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[104:102] == Blue && cubestate[89:87] == W) begin
+                                    next_moves <= next_moves | {U,U,F,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in FR
+                                else if (cubestate[98:96] == W && cubestate[113:111] == Blue) begin
+                                    next_moves <= next_moves | {U,R,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[98:96] == Blue && cubestate[113:111] == W) begin
+                                    next_moves <= next_moves | {U,U,Fi,U,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in BR
+                                else if (cubestate[128:126] == W && cubestate[119:117] == Blue) begin
+                                    next_moves <= next_moves | {U,Ri,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[128:126] == Blue && cubestate[119:117] == W) begin
+                                    next_moves <= next_moves | {B};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                // edge is in BL
+                                else if (cubestate[122:120] == W && cubestate[95:93] == Blue) begin
+                                    next_moves <= next_moves | {Ui,L,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                                else if (cubestate[122:120] == Blue && cubestate[95:93] == W) begin
+                                    next_moves <= next_moves | {Bi};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 2;
+                                end
+                            end
+                            3: begin
+                                // WRed edge needs to go in UR
+                                // edge can't be in UF because UF is solved
+                                // edge can't be in UL because UL is solved
+                                // edge can't be in UB because UB is solved
+                                // edge is in UR and solved
+                                else if (cubestate[83:81] == W && cubestate[110:108] == Red) begin
+                                    piece_counter <= 0;
+                                    step <= BOTTOM_CORNERS;
+                                end
+                                else if (cubestate[83:81] == Red && cubestate[110:108] == W) begin
+                                    next_moves <= next_moves | {Ri,U,Fi,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                // edge is in DF
+                                else if (cubestate[140:138] == W && cubestate[101:99] == Red) begin
+                                    next_moves <= next_moves | {D,R,R};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                else if (cubestate[140:138] == Red && cubestate[101:99] == W) begin
+                                    next_moves <= next_moves | {Fi,R,F};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                // edge is in DR
+                                else if (cubestate[143:141] == W && cubestate[116:114] == Red) begin
+                                    next_moves <= next_moves | {R,R};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                else if (cubestate[143:141] == Red && cubestate[116:114] == W) begin
+                                    next_moves <= next_moves | {Di,Fi,Ri,F};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                // edge is in DB
+                                else if (cubestate[134:132] == W && cubestate[125:123] == Red) begin
+                                    next_moves <= next_moves | {Di,R,R};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                else if (cubestate[134:132] == Red && cubestate[125:123] == W) begin
+                                    next_moves <= next_moves | {B,Ri,Bi};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                // edge is in DL
+                                else if (cubestate[137:135] == W && cubestate[86:84] == Red) begin
+                                    next_moves <= next_moves | {D,D,R,R};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                else if (cubestate[137:135] == Red && cubestate[86:84] == W) begin
+                                    next_moves <= next_moves | {D,Fi,R,F};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                // edge is in FL
+                                else if (cubestate[104:102] == W && cubestate[89:87] == Red) begin
+                                    next_moves <= next_moves | {F,F,R,F,F};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                else if (cubestate[104:102] == Red && cubestate[89:87] == W) begin
+                                    next_moves <= next_moves | {U,F,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                // edge is in FR
+                                else if (cubestate[98:96] == W && cubestate[113:111] == Red) begin
+                                    next_moves <= next_moves | {R};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                else if (cubestate[98:96] == Red && cubestate[113:111] == W) begin
+                                    next_moves <= next_moves | {U,Fi,Ui};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                // edge is in BR
+                                else if (cubestate[128:126] == W && cubestate[119:117] == Red) begin
+                                    next_moves <= next_moves | {Ri};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                else if (cubestate[128:126] == Red && cubestate[119:117] == W) begin
+                                    next_moves <= next_moves | {Ui,B,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                // edge is in BL
+                                else if (cubestate[122:120] == W && cubestate[95:93] == Red) begin
+                                    next_moves <= next_moves | {B,B,Ri,B,B};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                                else if (cubestate[122:120] == Red && cubestate[95:93] == W) begin
+                                    next_moves <= next_moves | {Ui,Bi,U};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 3;
+                                end
+                            end
+                            default : piece_counter <= 0;
+                        endcase
                     end
 
                     BOTTOM_CORNERS: begin
@@ -897,6 +1450,4 @@ module solving_algorithm(input start, clock, cubestate, state_updated
             default : state <= UPDATE_STATE; // uhh.....
         endcase
     end
-
-
 endmodule

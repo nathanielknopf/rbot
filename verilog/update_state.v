@@ -337,7 +337,7 @@ module update_state (
                 counter <= counter + 1;
                 moves <= moves << 4
                 next_move <= moves[195:192]
-                // if we've just done our 50th move (counter == 49) then go to IDLE
+                // if we've just done our 50th move (counter == 49) then go to DONE
                 state <= (counter < 49) ? MOVING : DONE
             end
             DONE: begin
