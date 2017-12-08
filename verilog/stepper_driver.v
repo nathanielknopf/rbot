@@ -25,20 +25,24 @@ module stepper_driver(
     input step_clock,
     input start,
     input [7:0] steps,
-    output en_out,
+    output reg en_out=1,
     output reg done
     );
     
     reg [7:0] steps_left = 0;
     reg prev_step_clock = 0;
     
-    assign en_out = done;
+    localparam END_MOVE_DELAY = 50;
     
     always @(posedge clock)begin
         prev_step_clock <= step_clock;
         if (start)begin
-            steps_left <= steps + 1; // add 1, so that last step completes
+            steps_left <= steps + END_MOVE_DELAY + 1; // add 1, so that last step completes
             done <= 0;
+            en_out <= 0;
+        end else if (steps_left == END_MOVE_DELAY)begin
+            en_out <= 1;
+            steps_left <= steps_left - 1;
         end else if (steps_left == 0)begin
             done <= 1;
         end else if (step_clock & !prev_step_clock)begin

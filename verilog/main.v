@@ -67,12 +67,26 @@ module main(
     assign JB[2] = stepper_dir_pin;
     assign JB[6] = stepper_step_pin;
     
-    assign JB[3] = stepper_en_pins[0];
-    assign JB[1] = stepper_en_pins[1];
-    assign JB[0] = stepper_en_pins[2];
-    assign JB[5] = stepper_en_pins[3];
-    assign JB[4] = stepper_en_pins[4];
-    assign JB[7] = stepper_en_pins[5];
+    localparam RIGHT = 0;
+    localparam UP = 1;
+    localparam FRONT = 2;
+    localparam LEFT = 3;
+    localparam BACK = 4;
+    localparam DOWN = 5;
+    
+    assign JB[3] = stepper_en_pins[FRONT];
+    assign JB[1] = stepper_en_pins[RIGHT];
+    assign JB[0] = stepper_en_pins[BACK];
+    assign JB[5] = stepper_en_pins[LEFT];
+    assign JB[4] = stepper_en_pins[DOWN];
+    assign JB[7] = stepper_en_pins[UP];
+    
+//    assign JB[3] = stepper_en_pins[0];
+//    assign JB[1] = stepper_en_pins[1];
+//    assign JB[0] = stepper_en_pins[2];
+//    assign JB[5] = stepper_en_pins[3];
+//    assign JB[4] = stepper_en_pins[4];
+//    assign JB[7] = stepper_en_pins[5];
     
     wire [3:0] next_move;
     wire move_start;
@@ -82,20 +96,22 @@ module main(
 
     
     // COLOR SENSORS
-    wire [2:0] edge_color;
-    wire [2:0] corner_color;
-    wire i2c_clock;
+//    wire [2:0] edge_color;
+//    wire [2:0] corner_color;
+//    wire i2c_clock;
     
-    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
+//    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
     
-    color_reader edge_reader(.sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
-    color_reader corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
+//    color_reader edge_reader(.sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
+//    color_reader corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
 
     //SEQUENCER
-    reg seq_complete;
-    reg moves_avail_to_queue;
+    reg seq_complete = 0;
+    reg moves_avail_to_queue = 0;
     reg [199:0] new_moves_to_queue;
-    reg seq_done;
+    wire [7:0] num_moves_loaded;
+    wire [7:0] current_step;
+    wire seq_done;
 
     // wire these things:
     // moves_avail_to_queue -- when a set of moves have been output that should be thrown on the queue
@@ -110,24 +126,25 @@ module main(
     parameter Blue = 4;
     parameter Y = 5;    
     // moves
-    parameter R = 4'd2;
-    parameter Ri = 4'd3;
-    parameter U = 4'd4;
-    parameter Ui = 4'd5;
-    parameter F = 4'd6;
-    parameter Fi = 4'd7;
-    parameter L = 4'd8;
-    parameter Li = 4'd9;
-    parameter B = 4'd10;
-    parameter Bi = 4'd11;
-    parameter D = 4'd12;
-    parameter Di = 4'd13;
+    parameter R = 4'd2;     //0010 2
+    parameter Ri = 4'd3;    //0011 3
+    parameter U = 4'd4;     //0100 4
+    parameter Ui = 4'd5;    //0101 5
+    parameter F = 4'd6;     //0110 6
+    parameter Fi = 4'd7;    //0111 7
+    parameter L = 4'd8;     //1000 8
+    parameter Li = 4'd9;    //1001 9
+    parameter B = 4'd10;    //1010 a
+    parameter Bi = 4'd11;   //1011 b
+    parameter D = 4'd12;    //1100 c
+    parameter Di = 4'd13;   //1101 d
     // since we haven't implemented the color sensor stuff yet, let's do this for now
     // reg [161:0] starting_cubestate = {Y,Blue,Red,G,O,W,W,G,Red,Blue,Blue,Blue,Red,Red,W,Blue,O,Y,Red,O,O,Y,O,G,W,G,G,Y,W,Y,G,Y,Blue,G,O,O,O,Y,Blue,Y,Red,G,W,Red,Red,O,W,W,W,Red,Y,Blue,G,Blue};
     // this ^^^ is a known scramble - this can be reached by applying the following moves to a solved Rubik's Cube:
     // R2 B R2 B2 F L2 U2 B R2 D2 L2 Di Li U2 B2 F R2 Bi Di Ui 
-    reg [199:0] solution = 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R}
-
+//    reg [199:0] solution = 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R};
+//    reg [199:0] solution = 200'd0 | {R,Ri,R,Ri,U,Ui,F,Fi,L,Li,D,Di,B,Bi};
+        reg [199:0] solution = 200'd0 | R;
     // wire [161:0] cubestate_for_solving_algorithm;
     // wire [161:0] updated_cubestate;
 
@@ -136,23 +153,41 @@ module main(
 
     // update_state.v
     // update_state upd_st(.clock(clock_25mhz),.moves_input(new_moves_to_queue))
-    sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .move_done(move_done));
-
+    sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
+    
+    assign data = {12'h0, next_move, current_step, num_moves_loaded};
+    
     parameter send_moves = 0;
-    parameter tell_it_to_go = 1;
+    parameter tell_it_to_load = 1;
+    parameter tell_it_to_go = 2;
+    parameter idle = 3;
+    
+    reg [1:0] state = 0;
 
     always @(posedge clock_25mhz) begin
-        case (state)
-            send_moves: begin
-                new_moves_to_queue <= solution;
-                state <= tell_it_to_go
-            end
-            tell_it_to_go: begin
-                moves_avail_to_queue <= 1;
-                seq_complete <= 1
-            end
-            default : state <= state_one;
-        endcase
+        if(reset) begin
+            state <= send_moves;
+        end else begin
+            case (state)
+                send_moves: begin
+                    new_moves_to_queue <= solution;
+                    state <= tell_it_to_load;
+                end
+                tell_it_to_load: begin
+                    moves_avail_to_queue <= 1;
+                    state <= tell_it_to_go;
+                end
+                tell_it_to_go: begin
+                    moves_avail_to_queue <= 0;
+                    seq_complete <= 1;
+                    state <= idle;
+                end
+                idle: begin
+                    state <= idle;
+                end
+                default : state <= idle;
+            endcase
+        end
     end
     
 // I2C TEST    

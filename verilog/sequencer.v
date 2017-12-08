@@ -28,20 +28,21 @@ module sequencer
     output reg seq_done,
     output reg [3:0] next_move,
     output reg start_move,
+    output reg [7:0] num_moves = 0,
+    output reg [7:0] curr_step = 0,
     input move_done
     );
     
     localparam IDLE = 0;
     localparam ADD_TO_QUEUE = 1;
     localparam LOAD_MOVE = 2;
-    localparam WAIT_FOR_MOVE = 3;
-    localparam SEQ_FINISHED = 4;
+    localparam WAIT_FOR_MOVE_1 = 3;
+    localparam WAIT_FOR_MOVE_2 = 4;
+    localparam SEQ_FINISHED = 5;
     
     reg [2:0] state = IDLE;
     reg [199:0] part_seq;
     reg [3:0] moves [7:0];
-    reg [7:0] curr_step = 0;
-    reg [7:0] num_moves = 0;
     
     always @(posedge clock)begin
         case(state)
@@ -50,7 +51,7 @@ module sequencer
                 if(new_moves) begin
                     part_seq[199:0] <= seq[199:0];
                     state <= ADD_TO_QUEUE;
-                end else if(seq_complete) begin
+                end else if(seq_complete & |(num_moves)) begin
                     state <= LOAD_MOVE;
                 end
             end
@@ -64,18 +65,22 @@ module sequencer
                 next_move <= moves[curr_step];
                 curr_step <= curr_step + 1;
                 start_move <= 1;
-                state <= WAIT_FOR_MOVE;
+                state <= WAIT_FOR_MOVE_1;
             end
-            WAIT_FOR_MOVE: begin
+            WAIT_FOR_MOVE_1: begin
                 start_move <= 0;
+                state <= WAIT_FOR_MOVE_2;
+            end
+            WAIT_FOR_MOVE_2: begin
                 if(move_done) begin
-                    state <= (curr_step >= num_moves) ? LOAD_MOVE : SEQ_FINISHED;
+                    state <= (curr_step < num_moves) ? LOAD_MOVE : SEQ_FINISHED;
                 end
             end
             SEQ_FINISHED: begin
                 seq_done <= 1;
                 curr_step <= 0;
                 num_moves <= 0;
+                next_move <= 0;
                 state <= IDLE;
             end
         endcase

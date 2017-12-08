@@ -61,7 +61,7 @@ module move_to_step(
     assign step_pin = step_clock;
     
     wire dir;
-    assign dir_pin = next_move[0];
+    assign dir_pin = !next_move[0];
     
     wire [5:0] start;
     assign start[RIGHT] = (next_move[3:1] == R[3:1]) & move_start;
