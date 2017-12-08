@@ -15,7 +15,6 @@ module update_state (
     parameter Bi = 4'd11;
     parameter D = 4'd12;
     parameter Di = 4'd13;
-    parameter NULL = 4'd0;
 
     parameter IDLE = 0;
     parameter MOVING = 1;
@@ -25,18 +24,18 @@ module update_state (
 
     reg [5:0] counter = 0;
 
-    reg [161:0] cubestate = cubestate_input;
-    reg [199:0] moves = moves_input;
+    reg [161:0] cubestate = 0;
+    reg [199:0] moves = 0;
+    reg [3:0] next_move;
 
     always @(posedge clock) begin
         case (state)
             MOVING: begin
-                case (next_move):
-                    NULL: cubestate <= cubestate; //don't do anything with just 0000
+                case (next_move)
                     R: begin
                         // corners not on R face
                         cubestate[8:6] <= cubestate[32:30];
-                        cubestate[11:9] <= cubestate[35:33]
+                        cubestate[11:9] <= cubestate[35:33];
                         cubestate[56:54] <= cubestate[8:6];
                         cubestate[59:57] <= cubestate[11:9];
                         cubestate[68:66] <= cubestate[56:54];
@@ -150,7 +149,7 @@ module update_state (
                         cubestate[89:87] <= cubestate[140:138];
                         // F face
                         cubestate[35:33] <= cubestate[26:24];
-                        cubestate[32:30] <= cubestate[35:33]
+                        cubestate[32:30] <= cubestate[35:33];
                         cubestate[29:27] <= cubestate[32:30];
                         cubestate[26:24] <= cubestate[29:27];
                         cubestate[107:105] <= cubestate[104:102];
@@ -160,28 +159,28 @@ module update_state (
                     end
                     Fi: begin
                         // corners not on F face
-                        cubestate[5:3] <= cubestate[41:39]
-                        cubestate[41:39] <= cubestate[71:69]
-                        cubestate[71:69] <= cubestate[17:15]
-                        cubestate[17:15] <= cubestate[5:3]
-                        cubestate[8:6] <= cubestate[44:42]
-                        cubestate[44:42] <= cubestate[62:60]
-                        cubestate[62:60] <= cubestate[20:18]
-                        cubestate[20:18] <= cubestate[8:6]
+                        cubestate[5:3] <= cubestate[41:39];
+                        cubestate[41:39] <= cubestate[71:69];
+                        cubestate[71:69] <= cubestate[17:15];
+                        cubestate[17:15] <= cubestate[5:3];
+                        cubestate[8:6] <= cubestate[44:42];
+                        cubestate[44:42] <= cubestate[62:60];
+                        cubestate[62:60] <= cubestate[20:18];
+                        cubestate[20:18] <= cubestate[8:6];
                         // edges not on F face
-                        cubestate[89:87] <= cubestate[80:78]
-                        cubestate[80:78] <= cubestate[113:111]
-                        cubestate[113:111] <= cubestate[140:138]
-                        cubestate[140:138] <= cubestate[89:87]
+                        cubestate[89:87] <= cubestate[80:78];
+                        cubestate[80:78] <= cubestate[113:111];
+                        cubestate[113:111] <= cubestate[140:138];
+                        cubestate[140:138] <= cubestate[89:87];
                         // F face
-                        cubestate[26:24] <= cubestate[35:33]
-                        cubestate[35:33] <= cubestate[32:30]
-                        cubestate[32:30] <= cubestate[29:27]
-                        cubestate[29:27] <= cubestate[26:24]
-                        cubestate[104:102] <= cubestate[107:105]
-                        cubestate[107:105] <= cubestate[98:96]
-                        cubestate[98:96] <= cubestate[101:99]
-                        cubestate[101:99] <= cubestate[104:102]
+                        cubestate[26:24] <= cubestate[35:33];
+                        cubestate[35:33] <= cubestate[32:30];
+                        cubestate[32:30] <= cubestate[29:27];
+                        cubestate[29:27] <= cubestate[26:24];
+                        cubestate[104:102] <= cubestate[107:105];
+                        cubestate[107:105] <= cubestate[98:96];
+                        cubestate[98:96] <= cubestate[101:99];
+                        cubestate[101:99] <= cubestate[104:102];
                     end
                     L: begin
                         // corners not on L face
@@ -335,20 +334,23 @@ module update_state (
                     end
                 endcase
                 counter <= counter + 1;
-                moves <= moves << 4
-                next_move <= moves[195:192]
+                moves <= moves << 4;
+                next_move <= moves[195:192];
                 // if we've just done our 50th move (counter == 49) then go to DONE
-                state <= (counter < 49) ? MOVING : DONE
+                state <= (counter < 49) ? MOVING : DONE;
             end
             DONE: begin
                 state_updated <= 1;
                 cubestate_updated <= cubestate;
                 state <= IDLE;
+            end
             IDLE: begin
                 counter <= 0; // always be ready...
                 state_updated <= 0;
                 if (new_moves_ready) begin
-                    next_move <= moves[199:196];
+                    cubestate <= cubestate_input;
+                    moves <= moves_input;
+                    next_move <= moves_input[199:196];
                     state <= MOVING;
                 end
             end

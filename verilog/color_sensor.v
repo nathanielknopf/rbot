@@ -26,7 +26,8 @@ module color_sensor(
     input clock,
     input scl_clock,
     input reset,
-    output [2:0] color
+    output [2:0] color,
+    output state
     );
     
     localparam CS_ADDRESS = 7'h44;
@@ -54,6 +55,8 @@ module color_sensor(
     wire [47:0] value;
     wire poll_stop;
     assign poll_stop = reset | !setup_done;
+    
+    assign state = setup_state[0];
     
     i2c_poll #(.NUM_DATA_BYTES(6)) poll(.clock(clock), .scl_clock(scl_clock), .reset(poll_stop), .reading(value), .scl(scl), .sda(sda), .state_out(state_display), .register_address(CS_G_LOW), .device_address(CS_ADDRESS));
     i2c_setup #(.NUM_WRITE_BYTES(2)) setup(.clock(clock), .scl_clock(scl_clock), .reset(reset), .scl(scl), .sda(sda), .register_address(CS_CONFIG_REG1), .device_address(CS_ADDRESS), .data_in({CS_CONFIG_REG1_VALUE, CS_CONFIG_REG2_VALUE}), .start(start_setup), .done(setup_done));

@@ -1,5 +1,5 @@
-module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
-                        output reg[199:0] next_moves, reg cube_solved, reg new_moves_ready);
+module solving_algorithm(input start, clock, [161:0] cubestate, state_updated,
+                        output reg[199:0] next_moves, reg cube_solved=0, reg new_moves_ready, [2:0]step_stuff, [1:0]state_stuff);
 
     // the values used to represent colors in cubestate register
     parameter W = 0;
@@ -42,14 +42,15 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
     // states are either find a move, or wait for state to update
     parameter MOVE = 0; // should figure out the next set of moves
     parameter UPDATE_STATE = 1; // waiting for the turn_state module to return updated state
+    parameter WAIT = 2;
 
     // FSM: step starts at cross
     reg[2:0] step = CROSS;
+    assign step_stuff = step;
 
     // state is either MOVE or UPDATE_STATE
-    reg state = MOVE;
-
-    reg cube_solved = 0;
+    reg [1:0] state = MOVE;
+    assign state_stuff = state;
 
     reg [5:0] counter = 0;
 
@@ -1009,7 +1010,7 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
                                     new_moves_ready <= 1;
                                     state <= UPDATE_STATE;
                                     piece_counter <= 0;
-                                
+                                end
                                 // edge is in LB
                                 else if (cubestate[95:93] == G && cubestate[122:120] == O) begin
                                     next_moves <= next_moves | {Di,L,U,Li,D,Ui,F,Ui,Fi};
@@ -1295,7 +1296,7 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
                         end
-
+                    end
                     PLL_EDGES: begin
                         // 8 different U perms, 2 Z perms...
                         // solved
@@ -1378,7 +1379,7 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
                         else begin
                             next_moves <= next_moves | {U};
                             new_moves_ready <= 1;
-                            state <= UPDATE_STATE
+                            state <= UPDATE_STATE;
                         end
                     end
 
@@ -1444,6 +1445,8 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
                         // h perm - only one orientation
                         else if (cubestate[26:24] == Blue && cubestate[35:33] == Blue && cubestate[56:54] == G && cubestate[53:51] == G) begin
                             next_moves <= next_moves | {R,R,U,U,R,R,U,U,R,R,U,R,R,U,U,R,R,U,U,R,R,U};
+                            new_moves_ready <= 1;
+                            state <= UPDATE_STATE;
                         end
                     end
 

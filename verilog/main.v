@@ -108,7 +108,7 @@ module main(
     //SEQUENCER
     reg seq_complete = 0;
     reg moves_avail_to_queue = 0;
-    reg [199:0] new_moves_to_queue;
+    wire [199:0] new_moves_to_queue;
     wire [7:0] num_moves_loaded;
     wire [7:0] current_step;
     wire seq_done;
@@ -141,18 +141,20 @@ module main(
 
     // use this scramble
     // U Bi Li F B R2 Li B Ui F D Fi L2 Fi U2 Li U2 D B2 L R2 F B L Bi Di
-    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,W,Red,Red,Blue,O,O,W,G,O,Blue,Red,G,O,W,G,Blue,Red,Blue,Y,Blue,Red,Blue,G,G,W,Red,Y,G,O,Y,O,W,W,Y,Blue,G,O,W,O,Red,Red}
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,W,Red,Red,Blue,O,O,W,G,O,Blue,Red,G,O,W,G,Blue,Red,Blue,Y,Blue,Red,Blue,G,G,W,Red,Y,G,O,Y,O,W,W,Y,Blue,G,O,W,O,Red,Red};
     //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
 
 
     reg [161:0] cubestate_for_solving_algorithm;
-    reg [161:0] cubestate_updated;
+    wire [161:0] cubestate_updated;
     wire cube_solution_finished;
     wire new_moves_ready;
     wire state_updated;
     reg start_finding_solution;
+    wire [2:0] step_stuff;
+    wire [1:0] state_stuff;
 
-    solving_algorithm sa(.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready));
+    solving_algorithm sa(.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
 
 
@@ -160,7 +162,7 @@ module main(
     parameter FIND_SOLUTION = 1;
     parameter DONE_PLANNING_SOLUTION = 2;
     parameter HOLY_SHIT_IS_IT_WORKING = 3;
-    reg [2:0] state = 0;;
+    reg [2:0] state = 0;
 
     always @(posedge clock_25mhz) begin
         if (reset) begin
@@ -178,7 +180,7 @@ module main(
                     // some bullshit here
                     // this should just go until it's done...? i have no idea what the fuck is going on here
                     cubestate_for_solving_algorithm <= cubestate_updated;
-                    state <= (cube_solution_finished) ? DONE : FIND_SOLUTION;
+                    state <= (cube_solution_finished) ? DONE_PLANNING_SOLUTION : FIND_SOLUTION;
                 end
                 DONE_PLANNING_SOLUTION: begin
                     // tell sequence to go
@@ -192,7 +194,7 @@ module main(
 
     sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
-    assign data = {SW[3:0],8'h0, next_move, current_step, num_moves_loaded};
+    assign data = {1'h0, step_stuff, 2'h0, state_stuff, 4'h0, next_move, current_step, num_moves_loaded};
 
 
     
