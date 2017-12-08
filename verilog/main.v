@@ -168,7 +168,7 @@ module main(
     parameter LOAD_INIT_STATE = 0;
     parameter FIND_SOLUTION = 1;
     parameter DONE_PLANNING_SOLUTION = 2;
-    parameter CALCULATING_NEW_STATE = 3;
+    parameter CALCULATE_NEW_STATE = 3;
     reg [2:0] state = 0;
 
     always @(posedge clock_25mhz) begin
@@ -180,26 +180,63 @@ module main(
         else begin
             case (state)
                 LOAD_INIT_STATE: begin
-                    cubestate_for_solving_algorithm <= cubestate_initial;
+                    start_finding_solution <= 1;
                     state <= FIND_SOLUTION;
                 end
+
                 FIND_SOLUTION: begin
-                    // this should just go until it's done...? i have no idea what the fuck is going on here
-                    state <= (cube_solution_finished) ? DONE_PLANNING_SOLUTION : (new_moves_ready) ? CALCULATING_NEW_STATE : FIND_SOLUTION;
+                    // we don't want to fuck with the input cubestate here
+                    if (cube_solution_finished) state <= DONE_PLANNING_SOLUTION;
+                    else if (new_moves_ready) state <= CALCULATE_NEW_STATE;
+                    else state <= FIND_SOLUTION;
                 end
-                CALCULATING_NEW_STATE: begin
+
+                CALCULATE_NEW_STATE: begin
+                    // the first time we enter this state, we want to change the input cubestate to solving_algorithm from
+                    // cubestate_initial to cubestate_updated, which is produced by update_state.v module
                     cubestate_for_solving_algorithm <= cubestate_updated;
-                    state <= (state_updated) ? FIND_SOLUTION : CALCULATING_NEW_STATE;
+                    state <= (state_updated) ? FIND_SOLUTION : CALCULATE_NEW_STATE;
                 end
+
                 DONE_PLANNING_SOLUTION: begin
-                    // tell sequence to go
                     seq_complete <= 1;
                     state <= DONE_PLANNING_SOLUTION;
                 end
+            
                 default : state <= LOAD_INIT_STATE;
             endcase
         end
     end
+
+    // always @(posedge clock_25mhz) begin
+    //     if (reset) begin
+    //         seq_complete <= 0;
+    //         state <= LOAD_INIT_STATE;
+    //         cubestate_for_solving_algorithm <= cubestate_initial;
+    //     end
+    //     else begin
+    //         case (state)
+    //             LOAD_INIT_STATE: begin
+    //                 cubestate_for_solving_algorithm <= cubestate_initial;
+    //                 state <= FIND_SOLUTION;
+    //             end
+    //             FIND_SOLUTION: begin
+    //                 // this should just go until it's done...? i have no idea what the fuck is going on here
+    //                 state <= (cube_solution_finished) ? DONE_PLANNING_SOLUTION : (new_moves_ready) ? CALCULATE_NEW_STATE : FIND_SOLUTION;
+    //             end
+    //             CALCULATE_NEW_STATE: begin
+    //                 cubestate_for_solving_algorithm <= cubestate_updated;
+    //                 state <= (state_updated) ? FIND_SOLUTION : CALCULATE_NEW_STATE;
+    //             end
+    //             DONE_PLANNING_SOLUTION: begin
+    //                 // tell sequence to go
+    //                 seq_complete <= 1;
+    //                 state <= DONE_PLANNING_SOLUTION;
+    //             end
+    //             default : state <= LOAD_INIT_STATE;
+    //         endcase
+    //     end
+    // end
 
     sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
