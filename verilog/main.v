@@ -187,6 +187,10 @@ module main(
                     seq_complete <= 1;
                     state <= HOLY_SHIT_IS_IT_WORKING;
                 end
+                HOLY_SHIT_IS_IT_WORKING: begin
+                    seq_complete <= 0;
+                    state <= HOLY_SHIT_IS_IT_WORKING;
+                end
                 default : state <= LOAD_INIT_STATE;
             endcase
         end
