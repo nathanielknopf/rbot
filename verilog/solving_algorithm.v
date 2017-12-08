@@ -46,7 +46,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     parameter SETUP = 3;
 
     // FSM: step starts at cross
-    reg[2:0] step = OLL_EDGES;
+    reg[2:0] step = OLL_CORNERS;
     assign step_stuff = step;
 
     // state is either MOVE or UPDATE_STATE
@@ -1047,53 +1047,55 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     
                         OLL_CORNERS: begin
                             // 7 cases. If we don't see one of them, oriented incorrectly, so do a U and check again 
-                            // sune: 35:33, 38:36, 53:51 W
-                            if (cubestate[35:33] == W && cubestate[38:36] == W && cubestate[53:51] == W) begin
-                                next_moves <= next_moves | {R,U,Ri,U,R,U,U,Ri};
-                                new_moves_ready <= 1;
-                                step <= PLL_EDGES;
-                                state <= UPDATE_STATE;
-                            end
-                            // antisune: 41:39, 26:24, 23:21 W
-                            if (cubestate[41:39] == W && cubestate[26:24] == W && cubestate[23:21] == W) begin
-                                next_moves <= next_moves | {R,U,U,Ri,Ui,R,Ui,Ri};
-                                new_moves_ready <= 1;
-                                step <= PLL_EDGES;
-                                state <= UPDATE_STATE;
-                            end
+                            // correct: 11:9, 8:6, 5:3, 2:0 are W
+                            if (cubestate[11:9] == W && cubestate[8:6] == W && cubestate[5:3] == W && cubestate[2:0] == W) step <= PLL_EDGES;
                             // doublesune: 41:39, 38:36, 20:18, 23:21 W
-                            if (cubestate[41:39] == W && cubestate[38:36] == W && cubestate[20:18] == W && cubestate[23:21] == W) begin
+                            else if (cubestate[41:39] == W && cubestate[38:36] == W && cubestate[20:18] == W && cubestate[23:21] == W) begin
                                 next_moves <= next_moves | {R,U,Ri,U,R,Ui,Ri,U,R,U,U,Ri};
                                 new_moves_ready <= 1;
-                                step <= PLL_EDGES;
+                                step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
                             // headlights: 26:24, 35:33 W
-                            if (cubestate[26:24] == W && cubestate[35:33] == W) begin
+                            else if (cubestate[26:24] == W && cubestate[35:33] == W) begin
                                 next_moves <= next_moves | {R,R,D,Ri,U,U,R,Di,Ri,U,U,Ri};
                                 new_moves_ready <= 1;
-                                step <= PLL_EDGES;
+                                step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
                             // weird bullfrog looking one: 26:24, 53:51 W
-                            if (cubestate[26:24] == W && cubestate[53:51] == W) begin
+                            else if (cubestate[26:24] == W && cubestate[53:51] == W) begin
                                 next_moves <= next_moves | {L,F,Ri,Fi,Li,F,R,Fi};
                                 new_moves_ready <= 1;
-                                step <= PLL_EDGES;
+                                step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
                             // bowtie/butterfly: 41:39, 53:51 W
-                            if (cubestate[41:39] == W && cubestate[53:51] == W) begin
+                            else if (cubestate[41:39] == W && cubestate[53:51] == W) begin
                                 next_moves <= next_moves | {R,U,Ri,Ui,Ri,F,R,U,R,Ui,Ri,Fi};
                                 new_moves_ready <= 1;
-                                step <= PLL_EDGES;
+                                step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
                             // superman: 35:33, 53:51, 20:18, 23:21 W
-                            if (cubestate[35:33] == W && cubestate[53:51] == W && cubestate[20:18] == W && cubestate[23:21] == W) begin
+                            else if (cubestate[35:33] == W && cubestate[57:54] == W && cubestate[20:18] == W && cubestate[23:21] == W) begin
                                 next_moves <= next_moves | {R,U,U,R,R,Ui,R,R,Ui,R,R,U,U,R};
                                 new_moves_ready <= 1;
-                                step <= PLL_EDGES;
+                                step <= OLL_CORNERS;
+                                state <= UPDATE_STATE;
+                            end
+                            // sune: 35:33, 38:36, 53:51 W
+                            else if (cubestate[35:33] == W && cubestate[38:36] == W && cubestate[53:51] == W) begin
+                                next_moves <= next_moves | {R,U,Ri,U,R,U,U,Ri};
+                                new_moves_ready <= 1;
+                                step <= OLL_CORNERS;
+                                state <= UPDATE_STATE;
+                            end
+                            // antisune: 41:39, 26:24, 23:21 W
+                            else if (cubestate[41:39] == W && cubestate[26:24] == W && cubestate[23:21] == W) begin
+                                next_moves <= next_moves | {R,U,U,Ri,Ui,R,Ui,Ri};
+                                new_moves_ready <= 1;
+                                step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
                             // otherwise we do a U and check again
@@ -1269,7 +1271,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                         SOLVED: cube_solved <= 1;
     
                         // another hack for things...
-                        default : step <= OLL_EDGES;
+                        default : step <= OLL_CORNERS;
                     endcase
                 end
     
