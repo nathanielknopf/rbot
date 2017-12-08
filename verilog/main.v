@@ -122,12 +122,12 @@ module main(
     // seq_complete - the solving_algorithm is done
 
     // the values used to represent colors in cubestate register
-    parameter W = 0;
-    parameter O = 1;
-    parameter G = 2;
-    parameter Red = 3;
-    parameter Blue = 4;
-    parameter Y = 5;    
+    parameter W = 3'd0;
+    parameter O = 3'd1;
+    parameter G = 3'd2;
+    parameter Red = 3'd3;
+    parameter Blue = 3'd4;
+    parameter Y = 3'd5;    
     // moves
     parameter R = 4'd2;     //0010 2
     parameter Ri = 4'd3;    //0011 3
