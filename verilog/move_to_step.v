@@ -22,6 +22,7 @@
 
 module move_to_step(
     input clock,
+    input reset,
     input [3:0] next_move,
     input move_start,
     output move_done,
@@ -64,12 +65,12 @@ module move_to_step(
     assign dir_pin = !next_move[0];
     
     wire [5:0] start;
-    assign start[RIGHT] = (next_move[3:1] == R[3:1]) & move_start;
-    assign start[UP] = (next_move[3:1] == U[3:1]) & move_start;
-    assign start[FRONT] = (next_move[3:1] == F[3:1]) & move_start;
-    assign start[LEFT] = (next_move[3:1] == L[3:1]) & move_start;
-    assign start[BACK] = (next_move[3:1] == B[3:1]) & move_start;
-    assign start[DOWN] = (next_move[3:1] == D[3:1]) & move_start;
+    assign start[RIGHT] = (next_move[3:1] == R[3:1]) & move_start & !reset;
+    assign start[UP] = (next_move[3:1] == U[3:1]) & move_start & !reset;
+    assign start[FRONT] = (next_move[3:1] == F[3:1]) & move_start & !reset;
+    assign start[LEFT] = (next_move[3:1] == L[3:1]) & move_start & !reset;
+    assign start[BACK] = (next_move[3:1] == B[3:1]) & move_start & !reset;
+    assign start[DOWN] = (next_move[3:1] == D[3:1]) & move_start & !reset;
 
     wire [5:0] done;
     assign move_done = &done;  

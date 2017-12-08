@@ -42,7 +42,7 @@ module sequencer
     
     reg [2:0] state = IDLE;
     reg [199:0] part_seq;
-    reg [3:0] moves [7:0];
+    reg [3:0] moves [199:0];
     
     always @(posedge clock)begin
         case(state)

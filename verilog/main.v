@@ -92,7 +92,7 @@ module main(
     wire move_start;
     wire move_done;
     
-    move_to_step steppers(.clock(clock_25mhz), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
+    move_to_step steppers(.clock(clock_25mhz), .reset(reset), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
 
     
     // COLOR SENSORS
@@ -155,7 +155,7 @@ module main(
     // update_state upd_st(.clock(clock_25mhz),.moves_input(new_moves_to_queue))
     sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
-    assign data = {12'h0, next_move, current_step, num_moves_loaded};
+    assign data = {SW[3:0],8'h0, next_move, current_step, num_moves_loaded};
     
     parameter send_moves = 0;
     parameter tell_it_to_load = 1;
@@ -180,7 +180,9 @@ module main(
                 9: solution <= 200'd0 | {Bi,Di,Fi,Li,Ui,Ri};
                 10: solution <= 200'd0 | {R,U,L,F,D,B,Bi,Di,Fi,Li,Ui,Ri};
                 11: solution <= 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R};
-                default solution <= 200'd0 | Ri
+                12: solution <= 200'd0 | {R,Ri,R,Ri,R,Ri,R,Ri,L};
+                13: solution <= 200'd0 | {R,Ri,R,Ri,R,Ri,R,Ri};
+                default solution <= 200'd0 | Ri;
             endcase
         end else begin
             case (state)
