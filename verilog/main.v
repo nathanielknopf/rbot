@@ -96,13 +96,17 @@ module main(
 
     
     // COLOR SENSORS
-//    wire [2:0] edge_color;
-//    wire [2:0] corner_color;
-//    wire i2c_clock;
+    wire [2:0] edge_color;
+    wire [2:0] corner_color;
+    wire i2c_clock;
     
-//    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
+    wire [7:0] red;
+    wire [7:0] green;
+    wire [7:0] blue;
     
-//    color_reader edge_reader(.sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
+    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
+    
+    color_reader edge_reader(.state(LED[15]), .red(red), .green(green), .blue(blue), .sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
 //    color_reader corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
 
     //SEQUENCER
@@ -143,7 +147,7 @@ module main(
     // U Bi Li F B R2 Li B Ui F D Fi L2 Fi U2 Li U2 D B2 L R2 F B L Bi Di
     // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,W,Red,Red,Blue,O,O,W,G,O,Blue,Red,G,O,W,G,Blue,Red,Blue,Y,Blue,Red,Blue,G,G,W,Red,Y,G,O,Y,O,W,W,Y,Blue,G,O,W,O,Red,Red};
     //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
-    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Red,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Blue,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Red,Red,Blue,Red,Red,G,G,O,G,G,O,Blue,Blue,O,O,W,W,W,W};
+//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Red,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Blue,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Red,Red,Blue,Red,Red,G,G,O,G,G,O,Blue,Blue,O,O,W,W,W,W};
     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
 
 
@@ -156,10 +160,11 @@ module main(
     wire [2:0] step_stuff;
     wire [1:0] state_stuff;
 
-    solving_algorithm sa(.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready));
+    solving_algorithm sa(.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
 
-
+    assign LED[0] = cube_solution_finished;
+    
     parameter LOAD_INIT_STATE = 0;
     parameter FIND_SOLUTION = 1;
     parameter DONE_PLANNING_SOLUTION = 2;

@@ -26,6 +26,9 @@ module color_sensor(
     input clock,
     input scl_clock,
     input reset,
+	output [7:0] red,
+	output [7:0] green,
+	output [7:0] blue,
     output [2:0] color,
     output state
     );

@@ -1,5 +1,5 @@
 module solving_algorithm(input start, clock, [161:0] cubestate, state_updated,
-                        output reg[199:0] next_moves, reg cube_solved=0, reg new_moves_ready, [2:0]step_stuff, [1:0]state_stuff);
+                        output reg[199:0] next_moves, reg cube_solved=0, reg new_moves_ready, [2:0]step_stuff, [1:0]state_stuff, reg fucked=0);
 
     // the values used to represent colors in cubestate register
     parameter W = 0;
@@ -43,13 +43,14 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated,
     parameter MOVE = 0; // should figure out the next set of moves
     parameter UPDATE_STATE = 1; // waiting for the turn_state module to return updated state
     parameter WAIT = 2;
+    parameter SETUP = 3;
 
     // FSM: step starts at cross
     reg[2:0] step = PLL_CORNERS;
     assign step_stuff = step;
 
     // state is either MOVE or UPDATE_STATE
-    reg [1:0] state = MOVE;
+    reg [1:0] state = SETUP;
     assign state_stuff = state;
 
     reg [5:0] counter = 0;
@@ -59,6 +60,11 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated,
 
     always @(posedge clock) begin
         case (state)
+            SETUP:begin
+                if(start)begin
+                    state <= MOVE;
+                end
+            end
             MOVE:begin
                 case (step)
                     // closed for renovations
@@ -1253,6 +1259,7 @@ module solving_algorithm(input start, clock, [161:0] cubestate, state_updated,
                             next_moves <= next_moves | U;
                             new_moves_ready <= 1;
                             state <= UPDATE_STATE;
+                            fucked <= 1;
                         end
                     end
 
