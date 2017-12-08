@@ -26,6 +26,10 @@ module clock_100hz(
     output reg slow_clock
     );
     
+    localparam CLOCK_100HZ = 124999;
+    localparam CLOCK_200HZ = 62499;
+    localparam CLOCK_400HZ = 31249;
+    
     //assume incoming signal is 25 mhz, so we need to slow clock down by 250000
     //every 125000 posedges of clock we will toggle slow_clock state
     reg [16:0] count = 0;
@@ -34,7 +38,7 @@ module clock_100hz(
             count <= 0;
             slow_clock <= 0;
         end else begin
-            if (count == 31249)begin
+            if (count == CLOCK_100HZ)begin
                 count <= 0;
                 slow_clock <= !slow_clock;
             end else begin
