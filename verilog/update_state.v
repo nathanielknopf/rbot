@@ -1,6 +1,6 @@
 module update_state (
     input clock, [199:0] moves_input, new_moves_ready, [161:0] cubestate_input,
-    output reg[161:0] cubestate_updated, reg state_updated
+    output reg[161:0] cubestate_updated, reg state_updated, [1:0]state_stuff
 );
     // moves
     parameter R = 4'd2;
@@ -21,6 +21,7 @@ module update_state (
     parameter DONE = 2;
 
     reg [1:0] state = IDLE;
+    assign state_stuff = state;
 
     reg [5:0] counter = 0;
 
