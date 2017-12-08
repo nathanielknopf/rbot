@@ -111,7 +111,6 @@ module main(
 
     //SEQUENCER
     reg seq_complete = 0;
-    reg moves_avail_to_queue = 0;
     wire [199:0] new_moves_to_queue;
     wire [7:0] num_moves_loaded;
     wire [7:0] current_step;
@@ -156,11 +155,11 @@ module main(
     wire cube_solution_finished;
     wire new_moves_ready;
     wire state_updated;
-    reg start_finding_solution;
+    reg start_finding_solution=0;
     wire [2:0] step_stuff;
     wire [1:0] state_stuff;
 
-    solving_algorithm sa(.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready));
+    solving_algorithm sa(.reset(reset),.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
 
     assign LED[0] = cube_solution_finished;
@@ -169,24 +168,26 @@ module main(
     parameter FIND_SOLUTION = 1;
     parameter DONE_PLANNING_SOLUTION = 2;
     parameter CALCULATE_NEW_STATE = 3;
-    reg [2:0] state = 0;
+    reg [3:0] state = 0;
 
     always @(posedge clock_25mhz) begin
         if (reset) begin
             seq_complete <= 0;
             state <= LOAD_INIT_STATE;
-            cubestate_for_solving_algorithm <= cubestate_initial;
+            start_finding_solution <= 0;
         end
         else begin
             case (state)
                 LOAD_INIT_STATE: begin
-                    start_finding_solution <= 1;
+                    cubestate_for_solving_algorithm <= cubestate_initial;
                     state <= FIND_SOLUTION;
                 end
 
                 FIND_SOLUTION: begin
                     // we don't want to fuck with the input cubestate here
+                    start_finding_solution <= 1;
                     if (cube_solution_finished) state <= DONE_PLANNING_SOLUTION;
+                    else if (num_moves_loaded == 100) state <= DONE_PLANNING_SOLUTION;
                     else if (new_moves_ready) state <= CALCULATE_NEW_STATE;
                     else state <= FIND_SOLUTION;
                 end
@@ -237,10 +238,10 @@ module main(
     //         endcase
     //     end
     // end
-
-    sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
-    assign data = {1'h0, step_stuff, 2'h0, state_stuff, 4'h0, next_move, current_step, num_moves_loaded};
+    sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
+    
+    assign data = {1'h0, step_stuff, 2'h0, state_stuff, state, next_move, current_step, num_moves_loaded};
 
 
     
