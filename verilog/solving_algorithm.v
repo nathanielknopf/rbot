@@ -2,12 +2,12 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                         output reg[199:0] next_moves, reg cube_solved=0, reg new_moves_ready, [2:0]step_stuff, [1:0]state_stuff, reg fucked=0);
 
     // the values used to represent colors in cubestate register
-    parameter W = 0;
-    parameter O = 1;
-    parameter G = 2;
-    parameter Red = 3;
-    parameter Blue = 4;
-    parameter Y = 5;
+    parameter W = 3'd0;
+    parameter O = 3'd1;
+    parameter G = 3'd2;
+    parameter Red = 3'd3;
+    parameter Blue = 3'd4;
+    parameter Y = 3'd5;
 
 
     // in the event that we want to test this, we should use a dummy cubestate, provided below
