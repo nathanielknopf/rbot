@@ -177,7 +177,7 @@ module i2c_setup #(parameter NUM_WRITE_BYTES=1)
                     end else if(bytes_rem != 0) begin
                         bytes_rem <= bytes_rem - 1;
                         state <= WRITE1B;
-                        sda_val<=data_in[count+(bytes_rem<<3)-8];
+                        sda_val<=data_in[count+(bytes_rem*8)-8];
                     end else begin
                         state <= STOP1A;
                         sda_val <= 0;

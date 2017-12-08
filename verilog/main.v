@@ -104,7 +104,14 @@ module main(
     wire [7:0] green;
     wire [7:0] blue;
     
+    reg poll_stop = 0;
+    wire [55:0] value;
+    
+//    assign data = {16'h0, value[55:48], value[7:0]};
+    
     clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
+    
+    i2c_poll #(.NUM_DATA_BYTES(7)) poll(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(poll_stop), .reading(value), .scl(JA[3]), .sda(JA[2]), .register_address(0), .device_address(7'h44));
     
 //    color_sensor edge_reader(.state(LED[15]), .red(red), .green(green), .blue(blue), .sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
 //    color_sensor corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
@@ -147,7 +154,10 @@ module main(
     // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,W,Red,Red,Blue,O,O,W,G,O,Blue,Red,G,O,W,G,Blue,Red,Blue,Y,Blue,Red,Blue,G,G,W,Red,Y,G,O,Y,O,W,W,Y,Blue,G,O,W,O,Red,Red};
     //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Red,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Blue,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Red,Red,Blue,Red,Red,G,G,O,G,G,O,Blue,Blue,O,O,W,W,W,W};
-    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
+//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
+//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Red,Red,Blue,Red,Red,O,G,Blue,G,G,G,Blue,O,O,O,W,W,W,W};
+
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,O,G,Blue,Red,Red,Red,Blue,Blue,W,G,G,O,W,Blue,O,O,W,G,Red,W,O,Y,G,Red,Blue,G,Blue,O,Red,W,Y,Red,O,Blue,W,W,Y,Blue,G,W,Y,G,R,O};
 
 
     reg [161:0] cubestate_for_solving_algorithm;
