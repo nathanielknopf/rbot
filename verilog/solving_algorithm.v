@@ -1,5 +1,5 @@
 module solving_algorithm(input start, clock, [161:0] cubestate, state_updated
-                        output reg[199:0] next_moves, reg cube_solved);
+                        output reg[199:0] next_moves, reg cube_solved, reg new_moves_ready);
 
     // the values used to represent colors in cubestate register
     parameter W = 0;

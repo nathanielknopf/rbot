@@ -138,74 +138,113 @@ module main(
     parameter Bi = 4'd11;   //1011 b
     parameter D = 4'd12;    //1100 c
     parameter Di = 4'd13;   //1101 d
-    // since we haven't implemented the color sensor stuff yet, let's do this for now
-    // reg [161:0] starting_cubestate = {Y,Blue,Red,G,O,W,W,G,Red,Blue,Blue,Blue,Red,Red,W,Blue,O,Y,Red,O,O,Y,O,G,W,G,G,Y,W,Y,G,Y,Blue,G,O,O,O,Y,Blue,Y,Red,G,W,Red,Red,O,W,W,W,Red,Y,Blue,G,Blue};
-    // this ^^^ is a known scramble - this can be reached by applying the following moves to a solved Rubik's Cube:
-    // R2 B R2 B2 F L2 U2 B R2 D2 L2 Di Li U2 B2 F R2 Bi Di Ui 
-//    reg [199:0] solution = 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R};
-//    reg [199:0] solution = 200'd0 | {R,Ri,R,Ri,U,Ui,F,Fi,L,Li,D,Di,B,Bi};
-        reg [199:0] solution = 200'd0;
-    // wire [161:0] cubestate_for_solving_algorithm;
-    // wire [161:0] updated_cubestate;
 
-    // assign cubestate_for_solving_algorithm = () ? starting_cubestate : updated_cubestate;
+    // use this scramble
+    // U Bi Li F B R2 Li B Ui F D Fi L2 Fi U2 Li U2 D B2 L R2 F B L Bi Di
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,W,Red,Red,Blue,O,O,W,G,O,Blue,Red,G,O,W,G,Blue,Red,Blue,Y,Blue,Red,Blue,G,G,W,Red,Y,G,O,Y,O,W,W,Y,Blue,G,O,W,O,Red,Red}
+    //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
 
 
-    // update_state.v
-    // update_state upd_st(.clock(clock_25mhz),.moves_input(new_moves_to_queue))
-    sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
-    
-    assign data = {SW[3:0],8'h0, next_move, current_step, num_moves_loaded};
-    
-    parameter send_moves = 0;
-    parameter tell_it_to_load = 1;
-    parameter tell_it_to_go = 2;
-    parameter idle = 3;
-    
-    reg [1:0] state = 0;
+    reg [161:0] cubestate_for_solving_algorithm;
+    reg [161:0] cubestate_updated;
+    wire cube_solution_finished;
+    wire new_moves_ready;
+    wire state_updated;
+    reg start_finding_solution;
+
+    solving_algorithm sa(.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready));
+    update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
+
+
+    parameter LOAD_INIT_STATE = 0;
+    parameter FIND_SOLUTION = 1;
+    parameter DONE_PLANNING_SOLUTION = 2;
+    parameter HOLY_SHIT_IS_IT_WORKING = 3;
+    reg [2:0] state = 0;;
 
     always @(posedge clock_25mhz) begin
-        if(reset) begin
-            state <= send_moves;
-            case (SW[3:0])
-                0: solution <= 200'd0 | Ri;
-                1: solution <= 200'd0 | {R,Ri};
-                2: solution <= 200'd0 | {R,Ri,R,Ri};
-                3: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li};
-                4: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li,R,Ri};
-                5: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li,R,Ri,R,Ri};
-                6: solution <= 200'd0 | {R,U,Ri,Ui};
-                7: solution <= 200'd0 | {U,R,Ui,Ri};
-                8: solution <= 200'd0 | {R,U,L,F,D,B};
-                9: solution <= 200'd0 | {Bi,Di,Fi,Li,Ui,Ri};
-                10: solution <= 200'd0 | {R,U,L,F,D,B,Bi,Di,Fi,Li,Ui,Ri};
-                11: solution <= 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R};
-                12: solution <= 200'd0 | {R,Ri,R,Ri,R,Ri,R,Ri,L};
-                13: solution <= 200'd0 | {R,Ri,R,Ri,R,Ri,R,Ri};
-                default solution <= 200'd0 | Ri;
-            endcase
-        end else begin
+        if (reset) begin
+            seq_complete <= 0;
+            state <= LOAD_INIT_STATE;
+            cubestate_for_solving_algorithm <= cubestate_initial;
+        end
+        else begin
             case (state)
-                send_moves: begin
-                    new_moves_to_queue <= solution;
-                    state <= tell_it_to_load;
+                LOAD_INIT_STATE: begin
+                    cubestate_for_solving_algorithm <= cubestate_initial;
+                    state <= FIND_SOLUTION;
                 end
-                tell_it_to_load: begin
-                    moves_avail_to_queue <= 1;
-                    state <= tell_it_to_go;
+                FIND_SOLUTION: begin
+                    // some bullshit here
+                    // this should just go until it's done...? i have no idea what the fuck is going on here
+                    cubestate_for_solving_algorithm <= cubestate_updated;
+                    state <= (cube_solution_finished) ? DONE : FIND_SOLUTION;
                 end
-                tell_it_to_go: begin
-                    moves_avail_to_queue <= 0;
+                DONE_PLANNING_SOLUTION: begin
+                    // tell sequence to go
                     seq_complete <= 1;
-                    state <= idle;
+                    state <= HOLY_SHIT_IS_IT_WORKING;
                 end
-                idle: begin
-                    state <= idle;
-                end
-                default : state <= idle;
+                default : state <= LOAD_INIT_STATE;
             endcase
         end
     end
+
+    sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(moves_avail_to_queue), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
+    
+    assign data = {SW[3:0],8'h0, next_move, current_step, num_moves_loaded};
+
+
+    
+    // parameter send_moves = 0;
+    // parameter tell_it_to_load = 1;
+    // parameter tell_it_to_go = 2;
+    // parameter idle = 3;
+    
+    // reg [1:0] state = 0;
+
+    // always @(posedge clock_25mhz) begin
+    //     if(reset) begin
+    //         state <= send_moves;
+    //         case (SW[3:0])
+    //             0: solution <= 200'd0 | Ri;
+    //             1: solution <= 200'd0 | {R,Ri};
+    //             2: solution <= 200'd0 | {R,Ri,R,Ri};
+    //             3: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li};
+    //             4: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li,R,Ri};
+    //             5: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li,R,Ri,R,Ri};
+    //             6: solution <= 200'd0 | {R,U,Ri,Ui};
+    //             7: solution <= 200'd0 | {U,R,Ui,Ri};
+    //             8: solution <= 200'd0 | {R,U,L,F,D,B};
+    //             9: solution <= 200'd0 | {Bi,Di,Fi,Li,Ui,Ri};
+    //             10: solution <= 200'd0 | {R,U,L,F,D,B,Bi,Di,Fi,Li,Ui,Ri};
+    //             11: solution <= 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R};
+    //             12: solution <= 200'd0 | {R,Ri,R,Ri,R,Ri,R,Ri,L};
+    //             13: solution <= 200'd0 | {R,Ri,R,Ri,R,Ri,R,Ri};
+    //             default solution <= 200'd0 | Ri;
+    //         endcase
+    //     end else begin
+    //         case (state)
+    //             send_moves: begin
+    //                 new_moves_to_queue <= solution;
+    //                 state <= tell_it_to_load;
+    //             end
+    //             tell_it_to_load: begin
+    //                 moves_avail_to_queue <= 1;
+    //                 state <= tell_it_to_go;
+    //             end
+    //             tell_it_to_go: begin
+    //                 moves_avail_to_queue <= 0;
+    //                 seq_complete <= 1;
+    //                 state <= idle;
+    //             end
+    //             idle: begin
+    //                 state <= idle;
+    //             end
+    //             default : state <= idle;
+    //         endcase
+    //     end
+    // end
     
 // I2C TEST    
     
