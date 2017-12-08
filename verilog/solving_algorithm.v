@@ -1056,22 +1056,22 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                                 step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
-                            // headlights: 26:24, 35:33 W
-                            else if (cubestate[26:24] == W && cubestate[35:33] == W) begin
+                            // headlights: 26:24, 35:33 W, as is [2:0] and [11:9]
+                            else if (cubestate[26:24] == W && cubestate[35:33] == W && cubestate[11:9] == W && cubestate[2:0] == W) begin
                                 next_moves <= next_moves | {R,R,D,Ri,U,U,R,Di,Ri,U,U,Ri};
                                 new_moves_ready <= 1;
                                 step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
-                            // weird bullfrog looking one: 26:24, 53:51 W
-                            else if (cubestate[26:24] == W && cubestate[53:51] == W) begin
+                            // weird bullfrog looking one: 26:24, 53:51 W, as is [11:9] and [8:6]
+                            else if (cubestate[26:24] == W && cubestate[53:51] == W && cubestate[11:9] == W && cubestate[8:6] == W) begin
                                 next_moves <= next_moves | {L,F,Ri,Fi,Li,F,R,Fi};
                                 new_moves_ready <= 1;
                                 step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
-                            // bowtie/butterfly: 41:39, 53:51 W
-                            else if (cubestate[41:39] == W && cubestate[53:51] == W) begin
+                            // bowtie/butterfly: 41:39, 53:51 W, and [5:3] and [11:9] on top
+                            else if (cubestate[41:39] == W && cubestate[53:51] == W && cubestate[11:9] == W && cubestate[5:3] == W) begin
                                 next_moves <= next_moves | {R,U,Ri,Ui,Ri,F,R,U,R,Ui,Ri,Fi};
                                 new_moves_ready <= 1;
                                 step <= OLL_CORNERS;
@@ -1084,15 +1084,15 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                                 step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
-                            // sune: 35:33, 38:36, 53:51 W
-                            else if (cubestate[35:33] == W && cubestate[38:36] == W && cubestate[53:51] == W) begin
+                            // sune: 35:33, 38:36, 53:51 W, as is the ULF top corner [5:3]
+                            else if (cubestate[35:33] == W && cubestate[38:36] == W && cubestate[53:51] == W && cubestate[5:3] == W) begin
                                 next_moves <= next_moves | {R,U,Ri,U,R,U,U,Ri};
                                 new_moves_ready <= 1;
                                 step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
-                            // antisune: 41:39, 26:24, 23:21 W
-                            else if (cubestate[41:39] == W && cubestate[26:24] == W && cubestate[23:21] == W) begin
+                            // antisune: 41:39, 26:24, 23:21 W, as is URB top corner [11:9]
+                            else if (cubestate[41:39] == W && cubestate[26:24] == W && cubestate[23:21] == W && cubestate[11:9] == W) begin
                                 next_moves <= next_moves | {R,U,U,Ri,Ui,R,Ui,Ri};
                                 new_moves_ready <= 1;
                                 step <= OLL_CORNERS;
