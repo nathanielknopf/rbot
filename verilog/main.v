@@ -106,8 +106,8 @@ module main(
     
     clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
     
-    color_reader edge_reader(.state(LED[15]), .red(red), .green(green), .blue(blue), .sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
-//    color_reader corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
+//    color_sensor edge_reader(.state(LED[15]), .red(red), .green(green), .blue(blue), .sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
+//    color_sensor corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
 
     //SEQUENCER
     reg seq_complete = 0;
@@ -189,12 +189,12 @@ module main(
                 end
                 CALCULATING_NEW_STATE: begin
                     cubestate_for_solving_algorithm <= cubestate_updated;
-                    state <+ (state_updated) ? FIND_SOLUTION : CALCULATING_NEW_STATE;
+                    state <= (state_updated) ? FIND_SOLUTION : CALCULATING_NEW_STATE;
                 end
                 DONE_PLANNING_SOLUTION: begin
                     // tell sequence to go
                     seq_complete <= 1;
-                    state <= DONE_PLANNING_SOLUTION
+                    state <= DONE_PLANNING_SOLUTION;
                 end
                 default : state <= LOAD_INIT_STATE;
             endcase
