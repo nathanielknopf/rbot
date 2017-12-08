@@ -46,7 +46,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     parameter SETUP = 3;
 
     // FSM: step starts at cross
-    reg[2:0] step = BOTTOM_CORNERS;
+    reg[2:0] step = PLL_EDGES;
     assign step_stuff = step;
 
     // state is either MOVE or UPDATE_STATE
@@ -1269,7 +1269,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                         SOLVED: cube_solved <= 1;
     
                         // another hack for things...
-                        default : step <= BOTTOM_CORNERS;
+                        default : step <= PLL_EDGES;
                     endcase
                 end
     
