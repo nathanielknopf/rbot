@@ -144,7 +144,7 @@ module main(
     // R2 B R2 B2 F L2 U2 B R2 D2 L2 Di Li U2 B2 F R2 Bi Di Ui 
 //    reg [199:0] solution = 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R};
 //    reg [199:0] solution = 200'd0 | {R,Ri,R,Ri,U,Ui,F,Fi,L,Li,D,Di,B,Bi};
-        reg [199:0] solution = 200'd0 | R;
+        reg [199:0] solution = 200'd0;
     // wire [161:0] cubestate_for_solving_algorithm;
     // wire [161:0] updated_cubestate;
 
@@ -167,6 +167,21 @@ module main(
     always @(posedge clock_25mhz) begin
         if(reset) begin
             state <= send_moves;
+            case (SW[3:0])
+                0: solution <= 200'd0 | Ri;
+                1: solution <= 200'd0 | {R,Ri};
+                2: solution <= 200'd0 | {R,Ri,R,Ri};
+                3: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li};
+                4: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li,R,Ri};
+                5: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li,R,Ri,R,Ri};
+                6: solution <= 200'd0 | {R,U,Ri,Ui};
+                7: solution <= 200'd0 | {U,R,Ui,Ri};
+                8: solution <= 200'd0 | {R,U,L,F,D,B};
+                9: solution <= 200'd0 | {Bi,Di,Fi,Li,Ui,Ri};
+                10: solution <= 200'd0 | {R,U,L,F,D,B,Bi,Di,Fi,Li,Ui,Ri};
+                11: solution <= 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R};
+                default solution <= 200'd0 | Ri
+            endcase
         end else begin
             case (state)
                 send_moves: begin
