@@ -46,7 +46,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     parameter SETUP = 3;
 
     // FSM: step starts at cross
-    reg[2:0] step = MIDDLE_LAYER;
+    reg[2:0] step = CROSS;
     assign step_stuff = step;
 
     // state is either MOVE or UPDATE_STATE
@@ -62,7 +62,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     always @(posedge clock) begin
         if(reset)begin
             state <= SETUP;
-            step <= MIDDLE_LAYER; // this would normally be cross...
+            step <= CROSS; // this would normally be cross...
             piece_counter <= 0;
             cube_solved <= 0;
             next_moves <= 0;
@@ -208,7 +208,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                                     // YO needs to go in DL
                                     // can't be in DF because that's already solved
                                     // solved: move on           
-                                    if ([137:135] == Y && cubestate[86:84] == O) piece_counter <= 2;       
+                                    if (cubestate[137:135] == Y && cubestate[86:84] == O) piece_counter <= 2;       
                                     // DL
                                     else if (cubestate[137:135] == O && cubestate[86:84] == Y) begin
                                         next_moves <= next_moves | {Li,D,Fi,Di};
@@ -1352,7 +1352,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                         SOLVED: cube_solved <= 1;
     
                         // another hack for things...
-                        default : step <= MIDDLE_LAYER;
+                        default : step <= CROSS;
                     endcase
                 end
     
