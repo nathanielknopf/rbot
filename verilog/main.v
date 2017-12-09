@@ -86,27 +86,34 @@ module main(
     wire move_start;
     wire move_done;
     
-    move_to_step steppers(.clock(clock_25mhz), .reset(reset), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
+    move_to_step steppers(.disable_steppers(SW[1]), .clock(clock_25mhz), .reset(reset), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
 
     // COLOR SENSORS
     wire [2:0] edge_color;
     wire [2:0] corner_color;
     wire i2c_clock;
     
-    wire [7:0] red;
-    wire [7:0] green;
-    wire [7:0] blue;
+    wire [7:0] r_edge;
+    wire [7:0] g_edge;
+    wire [7:0] b_edge;
+    wire [7:0] r_corner;
+    wire [7:0] g_corner;
+    wire [7:0] b_corner;
     
-    wire [47:0] value;
+    wire [47:0] corner_val;
+    wire [47:0] edge_val;
     
-    assign red = value[31:24];
-    assign green = value[15:8];
-    assign blue = value[47:40];
+    assign r_edge = edge_val[31:24];
+    assign g_edge = edge_val[15:8];
+    assign b_edge = edge_val[47:40];
+    assign r_corner = corner_val[31:24];
+    assign g_corner = corner_val[15:8];
+    assign b_corner = corner_val[47:40];
     
     clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
     
-    color_sensor edge_reader(.value(value), .scl(JA[3]), .sda(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
-    color_sensor corner_reader(.scl(JA[1]), .sda(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
+    color_sensor edge_reader(.value(edge_val), .scl(JA[3]), .sda(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
+    color_sensor corner_reader(.value(corner_val), .scl(JA[1]), .sda(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
 
     //SEQUENCER
     reg seq_complete = 0;
@@ -220,7 +227,7 @@ module main(
     
     //USER DEBUG OUTPUT
 //    assign data = {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded};
-    assign data = {1'h0, step_stuff, 2'h0, pcs, state, num_moves_loaded, red[3:0], 1'h0, corner_color, 1'h0, edge_color};
+    assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded} : {r_edge[3:0], g_edge[3:0], b_edge[3:0], 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
     assign LED[0] = cube_solution_finished;
 
 

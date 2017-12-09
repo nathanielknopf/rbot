@@ -23,6 +23,7 @@
 module move_to_step(
     input clock,
     input reset,
+    input disable_steppers,
     input [3:0] next_move,
     input move_start,
     output move_done,
@@ -64,7 +65,7 @@ module move_to_step(
     localparam CLOCK_600HZ = 20832;
     localparam CLOCK_800HZ = 15624;
     
-    localparam BETWEEN_STEP_DELAY = 10;
+    localparam BETWEEN_STEP_DELAY = 400;
     
     wire step_clock;
     clock_100hz #(.CLOCK_PERIOD(CLOCK_400HZ)) local_clock(.reset(move_start), .clock(clock), .slow_clock(step_clock));
@@ -74,12 +75,12 @@ module move_to_step(
     assign dir_pin = !next_move[0];
     
     wire [5:0] start;
-    assign start[RIGHT] = (next_move[3:1] == R[3:1]) & move_start & !reset;
-    assign start[UP] = (next_move[3:1] == U[3:1]) & move_start & !reset;
-    assign start[FRONT] = (next_move[3:1] == F[3:1]) & move_start & !reset;
-    assign start[LEFT] = (next_move[3:1] == L[3:1]) & move_start & !reset;
-    assign start[BACK] = (next_move[3:1] == B[3:1]) & move_start & !reset;
-    assign start[DOWN] = (next_move[3:1] == D[3:1]) & move_start & !reset;
+    assign start[RIGHT] = (next_move[3:1] == R[3:1]) & move_start & !reset & !disable_steppers;
+    assign start[UP] = (next_move[3:1] == U[3:1]) & move_start & !reset & !disable_steppers;
+    assign start[FRONT] = (next_move[3:1] == F[3:1]) & move_start & !reset & !disable_steppers;
+    assign start[LEFT] = (next_move[3:1] == L[3:1]) & move_start & !reset & !disable_steppers;
+    assign start[BACK] = (next_move[3:1] == B[3:1]) & move_start & !reset & !disable_steppers;
+    assign start[DOWN] = (next_move[3:1] == D[3:1]) & move_start & !reset & !disable_steppers;
 
     wire [5:0] done;
     assign move_done = &done;  
