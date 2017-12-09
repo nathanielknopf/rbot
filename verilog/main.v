@@ -88,7 +88,6 @@ module main(
     
     move_to_step steppers(.clock(clock_25mhz), .reset(reset), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
 
-    
     // COLOR SENSORS
     wire [2:0] edge_color;
     wire [2:0] corner_color;
@@ -151,10 +150,10 @@ module main(
     // solved cube
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
     // G Perm (bar in back left with opposite on left)    
-//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
 // full last layer    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,W,W,Blue,Red,Red,W,G,O,G,G,Red,G,W,O,O,O,Blue,Blue,Red};
     //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
-    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
+//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
     //Fi L2 F R2 Fi R2 Fi R2 Fi L2 D2 R D L2 U2 F D2 Li U L2 F2 (actual scramble ends here, setup moves:) R D Li Fi R Di R Li Ui Ri L F Bi Ui Fi B U L Ui Li Ri Ui R U Ri Ui R
 
 
@@ -221,7 +220,8 @@ module main(
     
     sequencer seq(.reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
-    assign data = {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded};
+//    assign data = {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded};
+    assign data = {1'h0, step_stuff, 2'h0, pcs, state, num_moves_loaded, red[3:0], green[3:0], blue[3:0]};
 
 
     
