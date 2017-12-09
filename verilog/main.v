@@ -86,7 +86,7 @@ module main(
     wire move_start;
     wire move_done;
     
-    move_to_step steppers(.disable_steppers(SW[1]), .clock(clock_25mhz), .reset(reset), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
+    move_to_step steppers(.disable_steppers(SW[1]),  .clock(clock_25mhz), .reset(reset), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
 
     // COLOR SENSORS
     wire [2:0] edge_color;
