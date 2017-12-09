@@ -48,14 +48,13 @@ module sequencer
     always @(posedge clock)begin
         if(reset)begin
             state <= IDLE;
+            curr_step <= 0;
+            num_moves <= 0;
+            start_move <= 0;
         end else begin
             case(state)
                 IDLE: begin
                     seq_done <= 0;
-                    curr_step <= 0;
-                    num_moves <= 0;
-                    next_move <= 0;
-                    start_move <= 0;
                     if(new_moves) begin
                         part_seq[199:0] <= seq[199:0];
                         state <= ADD_TO_QUEUE;
@@ -86,6 +85,9 @@ module sequencer
                 end
                 SEQ_FINISHED: begin
                     seq_done <= 1;
+                    curr_step <= 0;
+                    num_moves <= 0;
+                    next_move <= 0;
                     state <= IDLE;
                 end
             endcase
