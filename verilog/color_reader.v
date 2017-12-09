@@ -31,14 +31,27 @@ module color_reader(
     parameter W = 3'd0;
     parameter O = 3'd1;
     parameter G = 3'd2;
-    parameter R = 3'd3;
-    parameter B = 3'd4;
+    parameter Red = 3'd3;
+    parameter Blue = 3'd4;
     parameter Y = 3'd5;
     
     always @(posedge clock)begin
         if(red >= 8'h7)begin // W,O,Y
+            if(blue >= 8'h4)begin
+                color <= W;
+            end else if(green >= 8'h6)begin
+                color <= Y;
+            end else begin
+                color <= O;
+            end
         end else begin // R,G,B
-            if
+            if(red >= 8'h5)begin
+                color <= Red;
+            end else if((blue > green) && (green < 8'h5))begin
+                color <= Blue;
+            end else begin
+                color <= G;
+            end
         end
     end
     

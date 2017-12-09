@@ -196,7 +196,7 @@ module main(
                     // we don't want to fuck with the input cubestate here
                     start_finding_solution <= 1;
                     if (cube_solution_finished) state <= DONE_PLANNING_SOLUTION;
-                    else if (num_moves_loaded == 100) state <= DONE_PLANNING_SOLUTION;
+                    else if (num_moves_loaded >= 100) state <= DONE_PLANNING_SOLUTION;
                     else if (new_moves_ready) state <= CALCULATE_NEW_STATE;
                     else state <= FIND_SOLUTION;
                 end
