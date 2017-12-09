@@ -157,7 +157,7 @@ module main(
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
 // G Perm (bar in back left with opposite on left)    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
 // full last layer    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,W,W,Blue,Red,Red,W,G,O,G,G,Red,G,W,O,O,O,Blue,Blue,Red};
-    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,G,Blue,O,W,Red,Red,Red,Blue,G,G,G,W,Blue,O,O,W,Red,W,O,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,W,G,Blue,G,G,G,Blue,O,O,O,W,Red,W,O};
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,Blue,Blue,Blue,Red,Red,Red,W,W,G,G,G,O,W,O,O,G,Blue,O,Red,Y,Y,Y,Y,Blue,G,W,Blue,Red,Red,Blue,O,W,G,G,G,Red,W,O,O,W,O,Red,Blue};
 
     reg [161:0] cubestate_for_solving_algorithm;
     wire [161:0] cubestate_updated;
@@ -169,7 +169,7 @@ module main(
     wire [1:0] state_stuff;
     wire [1:0] pcs;
 
-    solving_algorithm sa(.reset(reset),.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready).piece_counter_stuff(pcs));
+    solving_algorithm sa(.reset(reset),.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready),.piece_counter_stuff(pcs));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
 
     assign LED[0] = cube_solution_finished;
@@ -184,7 +184,6 @@ module main(
         if (reset) begin
             seq_complete <= 0;
             state <= LOAD_INIT_STATE;
-            reset_solving_algorithm <= 1;
             start_finding_solution <= 0;
         end
         else begin
@@ -192,7 +191,6 @@ module main(
                 LOAD_INIT_STATE: begin
                     cubestate_for_solving_algorithm <= cubestate_initial;
                     state <= FIND_SOLUTION;
-                    reset_solving_algorithm <= 0;
                 end
 
                 FIND_SOLUTION: begin

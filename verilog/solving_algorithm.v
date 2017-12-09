@@ -46,7 +46,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     parameter SETUP = 3;
 
     // FSM: step starts at cross
-    reg[2:0] step = MIDDLE_LAYER;
+    reg[2:0] step = OLL_EDGES;
     assign step_stuff = step;
 
     // state is either MOVE or UPDATE_STATE
@@ -62,7 +62,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     always @(posedge clock) begin
         if(reset)begin
             state <= SETUP;
-            step <= MIDDLE_LAYER; // this would normally be cross...
+            step <= OLL_EDGES; // this would normally be cross...
             piece_counter <= 0;
         end else begin
             case (state)
@@ -1019,24 +1019,22 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                         OLL_EDGES: begin
                             // either dot, L in back, or line left to right. otherwise, do a U until recognize
                             // dot - 92:90, 107:105, 110:108, 131:129 are all white
-                            if(cubestate[92:90] == W && cubestate[107:105] == W && cubestate[110:108] == W && cubestate[131:129] == W) begin
+                            if(cubestate[83:81] == W && cubestate[80:78] == W && cubestate[77:75] == W && cubestate[74:72] == W) step <= OLL_CORNERS;
+                            else if(cubestate[92:90] == W && cubestate[107:105] == W && cubestate[110:108] == W && cubestate[131:129] == W) begin
                                 next_moves <= next_moves | {F,U,R,Ui,Ri,Fi,U,F,R,U,Ri,Ui,Fi};
                                 new_moves_ready <= 1;
-                                step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
                             // L - 77:75 and 74:72 are white
                             else if(cubestate[77:75] == W && cubestate[74:72] == W) begin
                                 next_moves <= next_moves | {F,U,R,Ui,Ri,Fi};
                                 new_moves_ready <= 1;
-                                step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
                             // Line - 77:75 and 83:81 are white
                             else if(cubestate[77:75] == W && cubestate[83:81] == W) begin
                                 next_moves <= next_moves | {F,R,U,Ri,Ui,Fi};
                                 new_moves_ready <= 1;
-                                step <= OLL_CORNERS;
                                 state <= UPDATE_STATE;
                             end
                             // otherwise it's either L or Line, but oriented incorrectly so do a U move and check again
@@ -1274,7 +1272,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                         SOLVED: cube_solved <= 1;
     
                         // another hack for things...
-                        default : step <= MIDDLE_LAYER;
+                        default : step <= OLL_EDGES;
                     endcase
                 end
     
