@@ -1,6 +1,6 @@
 module update_state (
     input clock, [199:0] moves_input, new_moves_ready, [161:0] cubestate_input,
-    output reg[161:0] cubestate_updated, reg state_updated, [1:0]state_stuff
+    output reg[161:0] cubestate_updated, reg state_updated, [1:0]state_stuff, reg illegal_state, reg [3:0] bad_move=4'd15
 );
     // moves
     parameter R = 4'd2;
@@ -15,19 +15,44 @@ module update_state (
     parameter Bi = 4'd11;
     parameter D = 4'd12;
     parameter Di = 4'd13;
+    parameter NULL = 4'd15;
+
+    // colors/pieces
+    parameter W = 3'd0;
+    parameter O = 3'd1;
+    parameter G = 3'd2;
+    parameter Red = 3'd3;
+    parameter Blue = 3'd4;
+    parameter Y = 3'd5;
 
     parameter IDLE = 0;
     parameter MOVING = 1;
     parameter DONE = 2;
+    parameter CHECK_CUBESTATE_LEGAL = 3;
+    parameter CHECK_CUBESTATE_LEGAL_COUNTING = 4;
 
-    reg [1:0] state = IDLE;
+    reg [2:0] state = IDLE;
     assign state_stuff = state;
 
-    reg [5:0] counter = 0;
+    reg [5:0] move_counter = 0;
+    reg [5:0] legality_counter = 0;
+
+    // for counting legality
+    reg [5:0] w_counter = 0;
+    reg [5:0] o_counter = 0;
+    reg [5:0] g_counter = 0;
+    reg [5:0] r_counter = 0;
+    reg [5:0] b_counter = 0;
+    reg [5:0] y_counter = 0;
+
 
     reg [161:0] cubestate = 0;
     reg [199:0] moves = 0;
+
     reg [3:0] next_move;
+    reg [3:0] old_move = 0;
+
+    reg [5:0] legality_piece;
 
     always @(posedge clock) begin
         case (state)
@@ -334,11 +359,45 @@ module update_state (
                         cubestate[140:138] <= cubestate[143:141];
                     end
                 endcase
-                counter <= counter + 1;
+                move_counter <= move_counter + 1;
                 moves <= moves << 4;
                 next_move <= moves[195:192];
-                // if we've just done our 50th move (counter == 49) then go to DONE
-                state <= (counter < 49) ? MOVING : DONE;
+                old_move <= next_move
+
+                // prepare to check if this cubestate is legal
+                state <= CHECK_CUBESTATE_LEGAL;
+                legality_counter <= 0;
+                legality_cubestate <= cubestate;
+                legality_piece <= cubestate[161:159];
+
+                w_counter = 0;
+                o_counter = 0;
+                g_counter = 0;
+                r_counter = 0;
+                b_counter = 0;
+                y_counter = 0;
+
+                state <= CHECK_CUBESTATE_LEGAL_COUNTING;
+            end
+            CHECK_CUBESTATE_LEGAL_COUNTING: begin
+                case(legality_piece):
+                    Red: r_counter <= r_counter + 1;
+                    W: w_counter <= w_counter + 1;
+                    Blue: b_counter <= b_counter + 1;
+                    O: o_counter <= o_counter + 1;
+                    G: g_counter <= g_counter + 1;
+                    Y: y_counter <= y_counter + 1; 
+                endcase
+                legality_cubestate <= legality_cubestate << 3;
+                legality_piece <= legality_cubestate[161:159];
+                state <= (legality_counter < 49) ? CHECK_CUBESTATE_LEGAL_COUNTING : CHECK_CUBESTATE_LEGAL
+            end
+            CHECK_CUBESTATE_LEGAL: begin
+                if (r_counter != 9 || w_counter != 9 || b_counter != 9 || o_counter != 9 || g_counter != 9 || y_counter != 9) begin
+                    illegal_state <= 1;
+                    bad_move <= old_move;
+                end
+                state <= (move_counter < 49) ? MOVE : DONE;
             end
             DONE: begin
                 state_updated <= 1;
