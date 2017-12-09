@@ -390,7 +390,7 @@ module update_state (
                     Y: y_counter <= y_counter + 1; 
                 endcase
                 legality_cubestate <= legality_cubestate << 3;
-                legality_piece <= legality_cubestate[161:159];
+                legality_piece <= legality_cubestate[158:156];
                 state <= (legality_counter < 49) ? CHECK_CUBESTATE_LEGAL_COUNTING : CHECK_CUBESTATE_LEGAL;
             end
             CHECK_CUBESTATE_LEGAL: begin
