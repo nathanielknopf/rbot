@@ -11,7 +11,8 @@
 // Description: real simple i2c implementation to get accelerations from mpu9250
 // 
 // Dependencies: 
-// 
+//  swiezy being dumb 
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
