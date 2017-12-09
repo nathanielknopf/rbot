@@ -256,7 +256,7 @@ module update_state (
                         cubestate[128:126] <= cubestate[125:123];
                         cubestate[125:123] <= cubestate[122:120];
                         cubestate[122:120] <= cubestate[131:129];
-                        cubestate[131:129] <= cubestate[122:120];
+                        cubestate[131:129] <= cubestate[128:126];
                     end
                     Bi: begin
                         // corners not on B face
