@@ -53,6 +53,7 @@ module update_state (
     reg [3:0] old_move = 0;
 
     reg [5:0] legality_piece;
+    reg [161:0] legality_cubestate;
 
     always @(posedge clock) begin
         case (state)
@@ -362,7 +363,7 @@ module update_state (
                 move_counter <= move_counter + 1;
                 moves <= moves << 4;
                 next_move <= moves[195:192];
-                old_move <= next_move
+                old_move <= next_move;
 
                 // prepare to check if this cubestate is legal
                 state <= CHECK_CUBESTATE_LEGAL;
@@ -380,7 +381,7 @@ module update_state (
                 state <= CHECK_CUBESTATE_LEGAL_COUNTING;
             end
             CHECK_CUBESTATE_LEGAL_COUNTING: begin
-                case(legality_piece):
+                case(legality_piece)
                     Red: r_counter <= r_counter + 1;
                     W: w_counter <= w_counter + 1;
                     Blue: b_counter <= b_counter + 1;
@@ -390,14 +391,14 @@ module update_state (
                 endcase
                 legality_cubestate <= legality_cubestate << 3;
                 legality_piece <= legality_cubestate[161:159];
-                state <= (legality_counter < 49) ? CHECK_CUBESTATE_LEGAL_COUNTING : CHECK_CUBESTATE_LEGAL
+                state <= (legality_counter < 49) ? CHECK_CUBESTATE_LEGAL_COUNTING : CHECK_CUBESTATE_LEGAL;
             end
             CHECK_CUBESTATE_LEGAL: begin
                 if (r_counter != 9 || w_counter != 9 || b_counter != 9 || o_counter != 9 || g_counter != 9 || y_counter != 9) begin
                     illegal_state <= 1;
                     bad_move <= old_move;
                 end
-                state <= (move_counter < 49) ? MOVE : DONE;
+                state <= (move_counter < 49) ? MOVING : DONE;
             end
             DONE: begin
                 state_updated <= 1;
@@ -405,7 +406,7 @@ module update_state (
                 state <= IDLE;
             end
             IDLE: begin
-                counter <= 0; // always be ready...
+                move_counter <= 0; // always be ready...
                 state_updated <= 0;
                 if (new_moves_ready) begin
                     cubestate <= cubestate_input;

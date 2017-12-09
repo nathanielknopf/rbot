@@ -154,8 +154,10 @@ module main(
     // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,W,Red,Red,Blue,O,O,W,G,O,Blue,Red,G,O,W,G,Blue,Red,Blue,Y,Blue,Red,Blue,G,G,W,Red,Y,G,O,Y,O,W,W,Y,Blue,G,O,W,O,Red,Red};
     //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Red,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Blue,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Red,Red,Blue,Red,Red,G,G,O,G,G,O,Blue,Blue,O,O,W,W,W,W};
-// solved cube:    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
-// G Perm (bar in back left with opposite on left)    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
+    // solved cube
+//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
+    // G Perm (bar in back left with opposite on left)    
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
 // full last layer    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,W,W,Blue,Red,Red,W,G,O,G,G,Red,G,W,O,O,O,Blue,Blue,Red};
 
     reg [161:0] cubestate_for_solving_algorithm;
@@ -184,8 +186,9 @@ module main(
             seq_complete <= 0;
             state <= LOAD_INIT_STATE;
             start_finding_solution <= 0;
-        end
-        else begin
+        end else if(SW[14])begin
+            state <= DONE_PLANNING_SOLUTION;
+        end else begin
             case (state)
                 LOAD_INIT_STATE: begin
                     cubestate_for_solving_algorithm <= cubestate_initial;
@@ -217,36 +220,6 @@ module main(
             endcase
         end
     end
-
-    // always @(posedge clock_25mhz) begin
-    //     if (reset) begin
-    //         seq_complete <= 0;
-    //         state <= LOAD_INIT_STATE;
-    //         cubestate_for_solving_algorithm <= cubestate_initial;
-    //     end
-    //     else begin
-    //         case (state)
-    //             LOAD_INIT_STATE: begin
-    //                 cubestate_for_solving_algorithm <= cubestate_initial;
-    //                 state <= FIND_SOLUTION;
-    //             end
-    //             FIND_SOLUTION: begin
-    //                 // this should just go until it's done...? i have no idea what the fuck is going on here
-    //                 state <= (cube_solution_finished) ? DONE_PLANNING_SOLUTION : (new_moves_ready) ? CALCULATE_NEW_STATE : FIND_SOLUTION;
-    //             end
-    //             CALCULATE_NEW_STATE: begin
-    //                 cubestate_for_solving_algorithm <= cubestate_updated;
-    //                 state <= (state_updated) ? FIND_SOLUTION : CALCULATE_NEW_STATE;
-    //             end
-    //             DONE_PLANNING_SOLUTION: begin
-    //                 // tell sequence to go
-    //                 seq_complete <= 1;
-    //                 state <= DONE_PLANNING_SOLUTION;
-    //             end
-    //             default : state <= LOAD_INIT_STATE;
-    //         endcase
-    //     end
-    // end
     
     sequencer seq(.clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
