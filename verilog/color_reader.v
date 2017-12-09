@@ -28,12 +28,12 @@ module color_reader(
     output reg [2:0] color
     );
     
-    parameter W = 0;
-    parameter O = 1;
-    parameter G = 2;
-    parameter R = 3;
-    parameter B = 4;
-    parameter Y = 5;
+    parameter W = 3'd0;
+    parameter O = 3'd1;
+    parameter G = 3'd2;
+    parameter R = 3'd3;
+    parameter B = 3'd4;
+    parameter Y = 3'd5;
     
     always @(posedge clock)begin
         
