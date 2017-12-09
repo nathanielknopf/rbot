@@ -319,10 +319,10 @@ module update_state (
                         cubestate[47:45] <= cubestate[50:48];
                         cubestate[32:30] <= cubestate[47:45];
                         // edges not on D face
-                        cubestate[101:99] <= cubestate[86:84];
-                        cubestate[86:84] <= cubestate[125:123];
-                        cubestate[125:123] <= cubestate[116:114];
-                        cubestate[116:114] <= cubestate[101:99];
+                        cubestate[101:99] <= cubestate[116:114];
+                        cubestate[116:114] <= cubestate[125:123];
+                        cubestate[125:123] <= cubestate[86:84];
+                        cubestate[86:84] <= cubestate[101:99];
                         // D face
                         cubestate[65:63] <= cubestate[62:60];
                         cubestate[68:66] <= cubestate[65:63];
