@@ -38,7 +38,7 @@ module clock_100hz(
             count <= 0;
             slow_clock <= 0;
         end else begin
-            if (count == CLOCK_100HZ)begin
+            if (count == CLOCK_200HZ)begin
                 count <= 0;
                 slow_clock <= !slow_clock;
             end else begin

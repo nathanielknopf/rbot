@@ -20,8 +20,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module stepper_driver(
-    input clock,
+module stepper_driver #(parameter END_MOVE_DELAY=50)
+    (input clock,
     input step_clock,
     input start,
     input [7:0] steps,
@@ -31,8 +31,6 @@ module stepper_driver(
     
     reg [7:0] steps_left = 0;
     reg prev_step_clock = 0;
-    
-    localparam END_MOVE_DELAY = 50;
     
     always @(posedge clock)begin
         prev_step_clock <= step_clock;
