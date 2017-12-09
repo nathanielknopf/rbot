@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module stepper_driver #(parameter END_MOVE_DELAY=10)
+module stepper_driver #(parameter END_MOVE_DELAY=400)
     (input clock,
     input step_clock,
     input start,
@@ -29,7 +29,7 @@ module stepper_driver #(parameter END_MOVE_DELAY=10)
     output reg done
     );
     
-    reg [7:0] steps_left = 0;
+    reg [8:0] steps_left = 0;
     reg prev_step_clock = 0;
     
     always @(posedge clock)begin

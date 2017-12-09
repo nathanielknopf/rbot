@@ -39,7 +39,7 @@ module color_reader(
         if(red >= 8'h7)begin // W,O,Y
             if(blue >= 8'h4)begin
                 color <= W;
-            end else if(green >= 8'h6)begin
+            end else if(green >= 8'h7)begin
                 color <= Y;
             end else begin
                 color <= O;
@@ -47,7 +47,7 @@ module color_reader(
         end else begin // R,G,B
             if(red >= 8'h5)begin
                 color <= Red;
-            end else if((blue > green) && (green < 8'h5))begin
+            end else if((blue > red) && (green < 8'h5))begin
                 color <= Blue;
             end else begin
                 color <= G;

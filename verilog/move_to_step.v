@@ -31,7 +31,7 @@ module move_to_step(
     output [5:0] en_pins
     );
     
-    localparam QUARTER_TURN = 52;
+    localparam QUARTER_TURN = 51;
     localparam HALF_TURN = 100;
     localparam FULL_TURN = 200;
     
