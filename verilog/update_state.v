@@ -281,7 +281,7 @@ module update_state (
                         cubestate[125:123] <= cubestate[128:126];
                         cubestate[122:120] <= cubestate[125:123];
                         cubestate[131:129] <= cubestate[122:120];
-                        cubestate[122:120] <= cubestate[131:129];
+                        cubestate[128:126] <= cubestate[131:129];
                     end
                     D: begin
                         // corners not on D face
