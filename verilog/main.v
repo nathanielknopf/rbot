@@ -160,8 +160,10 @@ module main(
     //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
     // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
     //Fi L2 F R2 Fi R2 Fi R2 Fi L2 D2 R D L2 U2 F D2 Li U L2 F2 (actual scramble ends here, setup moves:) R D Li Fi R Di R Li Ui Ri L F Bi Ui Fi B U L Ui Li Ri Ui R U Ri Ui R
-    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,W,G,Y,Blue,Y,Y,W,Blue,O,Blue,Red,Y,O,W,O,W,Blue,Red,Red,G,G,Red,W,Y,Red,G,Red,Red,O,G,G,Blue,W,Blue,Blue,O,W,Blue,Y,O,O,W,Y,Red,Y,G};
+    // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,W,G,Y,Blue,Y,Y,W,Blue,O,Blue,Red,Y,O,W,O,W,Blue,Red,Red,G,G,Red,W,Y,Red,G,Red,Red,O,G,G,Blue,W,Blue,Blue,O,W,Blue,Y,O,O,W,Y,Red,Y,G};
     // D2 F2 B' L U' F L2 F' B2 R U L2 B2 R2 F2 U' L2 U B2 U2 R2
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,Y,W,G,O,W,Blue,O,Y,O,G,W,Y,W,Red,Red,Y,G,Blue,Blue,G,O,Red,Red,Blue,O,W,Y,G};
+    // B2 U2 D R B' L U' L' D' F B2 U' D2 L2 D B2 D' F2 D2 R2 (fuck)
 
 
     reg [161:0] cubestate_for_solving_algorithm;
