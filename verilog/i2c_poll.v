@@ -86,7 +86,7 @@ module i2c_poll #(parameter NUM_DATA_BYTES=2)
     always @(posedge scl_clock)begin //update only on rising/fall edges of i2c clock
         if (reset &&(state !=IDLE))begin
             state <= IDLE;
-            count <=0;
+            count <= 0;
         end else begin
             case (state)
                 IDLE: begin
@@ -96,9 +96,9 @@ module i2c_poll #(parameter NUM_DATA_BYTES=2)
                     end
                     else if (count == 60)begin
                         state <= START1;
-                        count <=0;
+                        count <= 0;
                     end
-                    count <= count +1;
+                    count <= count + 1;
                     sda_val <=1;
                     scl_val <=1;
                     data_count <= 0;
