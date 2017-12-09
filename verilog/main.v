@@ -153,6 +153,8 @@ module main(
 // full last layer    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,W,W,Blue,Red,Red,W,G,O,G,G,Red,G,W,O,O,O,Blue,Blue,Red};
     //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
+    //Fi L2 F R2 Fi R2 Fi R2 Fi L2 D2 R D L2 U2 F D2 Li U L2 F2 (actual scramble ends here, setup moves:) R D Li Fi R Di R Li Ui Ri L F Bi Ui Fi B U L Ui Li Ri Ui R U Ri Ui R
+
 
     reg [161:0] cubestate_for_solving_algorithm;
     wire [161:0] cubestate_updated;
