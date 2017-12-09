@@ -145,13 +145,14 @@ module main(
     // use this scramble
     // U Bi Li F B R2 Li B Ui F D Fi L2 Fi U2 Li U2 D B2 L R2 F B L Bi Di
     // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,W,Red,Red,Blue,O,O,W,G,O,Blue,Red,G,O,W,G,Blue,Red,Blue,Y,Blue,Red,Blue,G,G,W,Red,Y,G,O,Y,O,W,W,Y,Blue,G,O,W,O,Red,Red};
-    //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Red,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Blue,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Red,Red,Blue,Red,Red,G,G,O,G,G,O,Blue,Blue,O,O,W,W,W,W};
     // solved cube
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
     // G Perm (bar in back left with opposite on left)    
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
 // full last layer    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,W,W,Blue,Red,Red,W,G,O,G,G,Red,G,W,O,O,O,Blue,Blue,Red};
+    //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
 
     reg [161:0] cubestate_for_solving_algorithm;
     wire [161:0] cubestate_updated;
