@@ -22,6 +22,7 @@
 
 module sequencer
     (input clock,
+    input reset,
     input seq_complete,
     input new_moves,
     input [199:0] seq,
@@ -45,45 +46,50 @@ module sequencer
     reg [3:0] moves [199:0];
     
     always @(posedge clock)begin
-        case(state)
-            IDLE: begin
-                seq_done <= 0;
-                if(new_moves) begin
-                    part_seq[199:0] <= seq[199:0];
-                    state <= ADD_TO_QUEUE;
-                end else if(seq_complete & |(num_moves)) begin
-                    state <= LOAD_MOVE;
+        if(reset)begin
+            state <= IDLE;
+        end else begin
+            case(state)
+                IDLE: begin
+                    seq_done <= 0;
+                    curr_step <= 0;
+                    num_moves <= 0;
+                    next_move <= 0;
+                    start_move <= 0;
+                    if(new_moves) begin
+                        part_seq[199:0] <= seq[199:0];
+                        state <= ADD_TO_QUEUE;
+                    end else if(seq_complete & |(num_moves)) begin
+                        state <= LOAD_MOVE;
+                    end
                 end
-            end
-            ADD_TO_QUEUE: begin
-                moves[num_moves] <= part_seq[199:196];
-                num_moves <= (|part_seq[199:196]) ? num_moves + 1 : num_moves;
-                part_seq <= part_seq << 4;
-                state <= (|(part_seq[195:0])) ? ADD_TO_QUEUE : IDLE;
-            end
-            LOAD_MOVE: begin
-                next_move <= moves[curr_step];
-                curr_step <= curr_step + 1;
-                start_move <= 1;
-                state <= WAIT_FOR_MOVE_1;
-            end
-            WAIT_FOR_MOVE_1: begin
-                start_move <= 0;
-                state <= WAIT_FOR_MOVE_2;
-            end
-            WAIT_FOR_MOVE_2: begin
-                if(move_done) begin
-                    state <= (curr_step < num_moves) ? LOAD_MOVE : SEQ_FINISHED;
+                ADD_TO_QUEUE: begin
+                    moves[num_moves] <= part_seq[199:196];
+                    num_moves <= (|part_seq[199:196]) ? num_moves + 1 : num_moves;
+                    part_seq <= part_seq << 4;
+                    state <= (|(part_seq[195:0])) ? ADD_TO_QUEUE : IDLE;
                 end
-            end
-            SEQ_FINISHED: begin
-                seq_done <= 1;
-                curr_step <= 0;
-                num_moves <= 0;
-                next_move <= 0;
-                state <= IDLE;
-            end
-        endcase
+                LOAD_MOVE: begin
+                    next_move <= moves[curr_step];
+                    curr_step <= curr_step + 1;
+                    start_move <= 1;
+                    state <= WAIT_FOR_MOVE_1;
+                end
+                WAIT_FOR_MOVE_1: begin
+                    start_move <= 0;
+                    state <= WAIT_FOR_MOVE_2;
+                end
+                WAIT_FOR_MOVE_2: begin
+                    if(move_done) begin
+                        state <= (curr_step < num_moves) ? LOAD_MOVE : SEQ_FINISHED;
+                    end
+                end
+                SEQ_FINISHED: begin
+                    seq_done <= 1;
+                    state <= IDLE;
+                end
+            endcase
+        end
     end
     
 endmodule
