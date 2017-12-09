@@ -251,8 +251,8 @@ module i2c_poll #(parameter NUM_DATA_BYTES=2)
                 end
                 READ1B: begin
                     scl_val <=0;
-                    incoming_data[count+(8*data_count)] <= sda;
-                    if (count >=1)begin
+                    incoming_data[count+(data_count<<3)] <= sda;
+                    if (count > 0)begin
                         count <= count -1;
                         state <= READ1A;
                     end else if(data_count >= (NUM_DATA_BYTES-1)) begin
