@@ -221,7 +221,7 @@ module main(
     sequencer seq(.reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
 //    assign data = {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded};
-    assign data = {1'h0, step_stuff, 2'h0, pcs, state, num_moves_loaded, red[3:0], green[3:0], blue[3:0]};
+    assign data = {1'h0, step_stuff, 2'h0, pcs, state, num_moves_loaded, red[3:0], green[3:0], 1'h0, edge_color};
 
 
     
