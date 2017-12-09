@@ -76,366 +76,437 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                 end
                 MOVE:begin
                     case (step)
-                        // closed for renovations
-                        // this is FUCKED!
-                        // CROSS: begin
-                        //     case (piece_counter)
-                        //         0: begin
-                        //             // YG needs to go in DF
-                        //             // solved: move on
-                        //             if (cubestate[101:99] == G && cubestate[140:138] == Y) piece_counter <= 1;
-                        //             // DF flipped
-                        //             else if (cubestate[101:99] == Y && cubestate[140:138] == Y) begin
-                        //                 next_moves <= next_moves | {Fi,Ri,Di};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 0;
-                        //             end
-                        //             // DL
-                        //             else if (cubestate[137:135] == Y && cubestate[86:84] == G) begin
-                        //                 next_moves <= next_moves | {D};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 0;
-                        //             end
-                        //             else if (cubestate[137:135] == G && cubestate[86:84] == Y) begin
-                        //                 next_moves <= next_moves | {Li,Fi};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 0;
-                        //             end
-                        //             // DB
-                        //             else if (cubestate[134:132] == Y && cubestate[125:123] == G) begin
-                        //                 next_moves <= next_moves | {D,D};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 0;
-                        //             end
-                        //             else if (cubestate[134:132] == G && cubestate[125:123] == Y) begin
-                        //                 next_moves <= next_moves | {B,R,Di};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 0;
-                        //             end
-                        //             // DR
-                        //             else if (cubestate[143:141] == Y && cubestate[116:114] == G) begin
-                        //                 next_moves <= next_moves | {Di};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 0;
-                        //             end
-                        //             else if (cubestate[143:141] == G && cubestate[116:114] == Y) begin
-                        //                 next_moves <= next_moves | {R,F};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 0;
-                        //             end
-    
-                        //             // RF
-                        //             else if (cubestate[98:96] == Y && cubestate[113:111] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[98:96] == OTHER && cubestate[113:111] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // LF
-                        //             else if (cubestate[104:102] == Y && cubestate[89:87] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[104:102] == OTHER && cubestate[89:87] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // RB
-                        //             else if (cubestate[128:126] == Y && cubestate[119:117] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[128:126] == OTHER && cubestate[119:117] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // LB
-                        //             else if (cubestate[122:120] == Y && cubestate[95:93] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[122:120] == OTHER && cubestate[95:93] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //         end
-                        //         1: begin
-                        //             // YO needs to go in DL
-                        //             // can't be in DF because that's already solved
-                        //             // solved: move on           
-                        //             if ([137:135] == Y && cubestate[86:84] == O) piece_counter <= 2;       
-                        //             // DL
-                        //             else if (cubestate[137:135] == O && cubestate[86:84] == Y) begin
-                        //                 next_moves <= next_moves | {Li,D,Fi,Di};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 1;
-                        //             end
-                        //             // DB
-                        //             else if (cubestate[134:132] == Y && cubestate[125:123] == O) begin
-                        //                 next_moves <= next_moves | {F,D,Fi};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 1;
-                        //             end
-                        //             else if (cubestate[134:132] == O && cubestate[125:123] == Y) begin
-                        //                 next_moves <= next_moves | {Bi,Li};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 1;
-                        //             end
-                        //             // DR
-                        //             else if (cubestate[143:141] == Y && cubestate[116:114] == O) begin
-                        //                 next_moves <= next_moves | {R,D,D,Ri,D,D};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 1;
-                        //             end
-                        //             else if (cubestate[143:141] == O && cubestate[116:114] == Y) begin
-                        //                 next_moves <= next_moves | {Ri,Di,Bi,D};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 1;
-                        //             end
-    
-                        //             // RF
-                        //             else if (cubestate[98:96] == Y && cubestate[113:111] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[98:96] == OTHER && cubestate[113:111] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // LF
-                        //             else if (cubestate[104:102] == Y && cubestate[89:87] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[104:102] == OTHER && cubestate[89:87] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // RB
-                        //             else if (cubestate[128:126] == Y && cubestate[119:117] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[128:126] == OTHER && cubestate[119:117] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // LB
-                        //             else if (cubestate[122:120] == Y && cubestate[95:93] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[122:120] == OTHER && cubestate[95:93] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end              
-                        //         end
-                        //         2: begin
-                        //             // YBlue needs to go in DB
-                        //             // can't be in DF because that's already solved
-                        //             // can't be in DL because that's already solved
-                        //             // solved: move on
-                        //             if (cubestate[134:132] == Y && cubestate[125:123] == Blue) piece_counter <= 3;
-                        //             // DB
-                        //             else if (cubestate[134:132] == Blue && cubestate[125:123] == Y) begin
-                        //                 next_moves <= next_moves | {B,Di,R,D};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 2;
-                        //             end
-                        //             // DR
-                        //             else if (cubestate[143:141] == Y && cubestate[116:114] == Blue) begin
-                        //                 next_moves <= next_moves | {R,Di,Ri};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 2;
-                        //             end
-                        //             else if (cubestate[143:141] == Blue && cubestate[116:114] == Y) begin
-                        //                 next_moves <= next_moves | {Ri,Bi};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 2;
-                        //             end 
-    
-                        //             // RF
-                        //             else if (cubestate[98:96] == Y && cubestate[113:111] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[98:96] == OTHER && cubestate[113:111] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // LF
-                        //             else if (cubestate[104:102] == Y && cubestate[89:87] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[104:102] == OTHER && cubestate[89:87] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // RB
-                        //             else if (cubestate[128:126] == Y && cubestate[119:117] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[128:126] == OTHER && cubestate[119:117] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // LB
-                        //             else if (cubestate[122:120] == Y && cubestate[95:93] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[122:120] == OTHER && cubestate[95:93] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end             
-                        //         end
-                        //         3: begin
-                        //             // YRed needs to go in DR
-                        //             // can't be in DF because that's already solved
-                        //             // can't be in DL because that's already solved
-                        //             // can't be in DB because that's already solved
-                        //             // solved: move on
-                        //             if (cubestate[116:114] == Red && cubestate[143:141] == Y) begin
-                        //                 piece_counter <= 0;
-                        //                 step <= BOTTOM_CORNERS;
-                        //             end
-                        //             else if (cubestate[116:114] == Y && cubestate[143:141] == Red) begin
-                        //                 next_moves <= next_moves | {R,Di,F,D};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= 3;
-                        //             end
-    
-                        //             // RF
-                        //             else if (cubestate[98:96] == Y && cubestate[113:111] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[98:96] == OTHER && cubestate[113:111] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // LF
-                        //             else if (cubestate[104:102] == Y && cubestate[89:87] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[104:102] == OTHER && cubestate[89:87] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // RB
-                        //             else if (cubestate[128:126] == Y && cubestate[119:117] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[128:126] == OTHER && cubestate[119:117] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             // LB
-                        //             else if (cubestate[122:120] == Y && cubestate[95:93] == OTHER) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //             else if (cubestate[122:120] == OTHER && cubestate[95:93] == Y) begin
-                        //                 next_moves <= next_moves | {};
-                        //                 new_moves_ready <= 1;
-                        //                 state <= UPDATE_STATE;
-                        //                 piece_counter <= COUNT;
-                        //             end
-                        //         end
-                            
-                        //         default : /* default */;
-                        //     endcase
-                        // end
-    
-                        // only works if the cross is already solved lol...
+                        // semi-open for testing
+                        // this is (likely) FUCKED!
                         CROSS: begin
-                            step <= BOTTOM_CORNERS;
-                            piece_counter <= 0;
+                            case (piece_counter)
+                                0: begin
+                                    // YG needs to go in DF
+                                    // solved: move on
+                                    if (cubestate[101:99] == G && cubestate[140:138] == Y) piece_counter <= 1;
+                                    // DF flipped
+                                    else if (cubestate[101:99] == Y && cubestate[140:138] == Y) begin
+                                        next_moves <= next_moves | {Fi,Ri,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    // DL
+                                    else if (cubestate[137:135] == Y && cubestate[86:84] == G) begin
+                                        next_moves <= next_moves | {D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    else if (cubestate[137:135] == G && cubestate[86:84] == Y) begin
+                                        next_moves <= next_moves | {Li,Fi};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    // DB
+                                    else if (cubestate[134:132] == Y && cubestate[125:123] == G) begin
+                                        next_moves <= next_moves | {D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    else if (cubestate[134:132] == G && cubestate[125:123] == Y) begin
+                                        next_moves <= next_moves | {B,R,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    // DR
+                                    else if (cubestate[143:141] == Y && cubestate[116:114] == G) begin
+                                        next_moves <= next_moves | {Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    else if (cubestate[143:141] == G && cubestate[116:114] == Y) begin
+                                        next_moves <= next_moves | {R,F};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+    
+                                    // RF
+                                    else if (cubestate[98:96] == Y && cubestate[113:111] == G) begin
+                                        next_moves <= next_moves | {Ri,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    else if (cubestate[98:96] == G && cubestate[113:111] == Y) begin
+                                        next_moves <= next_moves | {F};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    // LF
+                                    else if (cubestate[104:102] == Y && cubestate[89:87] == G) begin
+                                        next_moves <= next_moves | {L,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    else if (cubestate[104:102] == G && cubestate[89:87] == Y) begin
+                                        next_moves <= next_moves | {Fi};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    // RB
+                                    else if (cubestate[128:126] == Y && cubestate[119:117] == G) begin
+                                        next_moves <= next_moves | {R,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    else if (cubestate[128:126] == G && cubestate[119:117] == Y) begin
+                                        next_moves <= next_moves | {Bi,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    // LB
+                                    else if (cubestate[122:120] == Y && cubestate[95:93] == G) begin
+                                        next_moves <= next_moves | {Li,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    else if (cubestate[122:120] == G && cubestate[95:93] == Y) begin
+                                        next_moves <= next_moves | {B,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    // UF
+                                    else if (cubestate[80:78] == Y && cubestate[107:105] == G) begin
+                                        next_moves <= next_moves | {F,F};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    else if (cubestate[80:78] == G && cubestate[107:105] == Y) begin
+                                        next_moves <= next_moves | {U,L,Fi};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                    // otherwise, spin U (it's on the top face somewhere...)
+                                    else begin
+                                        next_moves <= next_moves | {U};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 0;
+                                    end
+                                end
+                                1: begin
+                                    // YO needs to go in DL
+                                    // can't be in DF because that's already solved
+                                    // solved: move on           
+                                    if ([137:135] == Y && cubestate[86:84] == O) piece_counter <= 2;       
+                                    // DL
+                                    else if (cubestate[137:135] == O && cubestate[86:84] == Y) begin
+                                        next_moves <= next_moves | {Li,D,Fi,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    // DB
+                                    else if (cubestate[134:132] == Y && cubestate[125:123] == O) begin
+                                        next_moves <= next_moves | {F,D,Fi};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    else if (cubestate[134:132] == O && cubestate[125:123] == Y) begin
+                                        next_moves <= next_moves | {Bi,Li};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    // DR
+                                    else if (cubestate[143:141] == Y && cubestate[116:114] == O) begin
+                                        next_moves <= next_moves | {R,D,D,Ri,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    else if (cubestate[143:141] == O && cubestate[116:114] == Y) begin
+                                        next_moves <= next_moves | {Ri,Di,Bi,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    // RF
+                                    else if (cubestate[98:96] == Y && cubestate[113:111] == O) begin
+                                        next_moves <= next_moves | {D,D,Ri,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    else if (cubestate[98:96] == O && cubestate[113:111] == Y) begin
+                                        next_moves <= next_moves | {D,F,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    // LF
+                                    else if (cubestate[104:102] == Y && cubestate[89:87] == O) begin
+                                        next_moves <= next_moves | {L};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    else if (cubestate[104:102] == O && cubestate[89:87] == Y) begin
+                                        next_moves <= next_moves | {D,Fi,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    // RB
+                                    else if (cubestate[128:126] == Y && cubestate[119:117] == O) begin
+                                        next_moves <= next_moves | {D,D,R,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    else if (cubestate[128:126] == O && cubestate[119:117] == Y) begin
+                                        next_moves <= next_moves | {Di,Bi,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    // LB
+                                    else if (cubestate[122:120] == Y && cubestate[95:93] == O) begin
+                                        next_moves <= next_moves | {Li};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    else if (cubestate[122:120] == O && cubestate[95:93] == Y) begin
+                                        next_moves <= next_moves | {Di,B,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    // UF
+                                    else if (cubestate[80:78] == Y && cubestate[107:105] == O) begin
+                                        next_moves <= next_moves | {U,L,L};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    else if (cubestate[80:78] == O && cubestate[107:105] == Y) begin
+                                        next_moves <= next_moves | {Fi,L,F};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end
+                                    // otherwise, spin U (it's on the top face somewhere...)
+                                    else begin
+                                        next_moves <= next_moves | {U};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 1;
+                                    end              
+                                end
+                                2: begin
+                                    // YBlue needs to go in DB
+                                    // can't be in DF because that's already solved
+                                    // can't be in DL because that's already solved
+                                    // solved: move on
+                                    if (cubestate[134:132] == Y && cubestate[125:123] == Blue) piece_counter <= 3;
+                                    // DB
+                                    else if (cubestate[134:132] == Blue && cubestate[125:123] == Y) begin
+                                        next_moves <= next_moves | {B,Di,R,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    // DR
+                                    else if (cubestate[143:141] == Y && cubestate[116:114] == Blue) begin
+                                        next_moves <= next_moves | {R,Di,Ri};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    else if (cubestate[143:141] == Blue && cubestate[116:114] == Y) begin
+                                        next_moves <= next_moves | {Ri,Bi};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end 
+                                    // RF
+                                    else if (cubestate[98:96] == Y && cubestate[113:111] == Blue) begin
+                                        next_moves <= next_moves | {Di,Ri,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    else if (cubestate[98:96] == Blue && cubestate[113:111] == Y) begin
+                                        next_moves <= next_moves | {D,D,F,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    // LF
+                                    else if (cubestate[104:102] == Y && cubestate[89:87] == Blue) begin
+                                        next_moves <= next_moves | {D,L,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    else if (cubestate[104:102] == Blue && cubestate[89:87] == Y) begin
+                                        next_moves <= next_moves | {D,D,Fi,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    // RB
+                                    else if (cubestate[128:126] == Y && cubestate[119:117] == Blue) begin
+                                        next_moves <= next_moves | {Di,R,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    else if (cubestate[128:126] == Blue && cubestate[119:117] == Y) begin
+                                        next_moves <= next_moves | {Bi};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    // LB
+                                    else if (cubestate[122:120] == Y && cubestate[95:93] == Blue) begin
+                                        next_moves <= next_moves | {D,Li,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    else if (cubestate[122:120] == Blue && cubestate[95:93] == Y) begin
+                                        next_moves <= next_moves | {B};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    // UF
+                                    else if (cubestate[80:78] == Y && cubestate[107:105] == Blue) begin
+                                        next_moves <= next_moves | {U,U,B,B};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    else if (cubestate[80:78] == Blue && cubestate[107:105] == Y) begin
+                                        next_moves <= next_moves | {Ui,R,Bi};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end
+                                    // otherwise, spin U (it's on the top face somewhere...)
+                                    else begin
+                                        next_moves <= next_moves | {U};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 2;
+                                    end             
+                                end
+                                3: begin
+                                    // YRed needs to go in DR
+                                    // can't be in DF because that's already solved
+                                    // can't be in DL because that's already solved
+                                    // can't be in DB because that's already solved
+                                    // solved: move on
+                                    if (cubestate[116:114] == Red && cubestate[143:141] == Y) begin
+                                        piece_counter <= 0;
+                                        step <= BOTTOM_CORNERS;
+                                    end
+                                    else if (cubestate[116:114] == Y && cubestate[143:141] == Red) begin
+                                        next_moves <= next_moves | {R,Di,F,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    // RF
+                                    else if (cubestate[98:96] == Y && cubestate[113:111] == Red) begin
+                                        next_moves <= next_moves | {Ri};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    else if (cubestate[98:96] == Red && cubestate[113:111] == Y) begin
+                                        next_moves <= next_moves | {Di,F,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    // LF
+                                    else if (cubestate[104:102] == Y && cubestate[89:87] == Red) begin
+                                        next_moves <= next_moves | {D,D,L,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    else if (cubestate[104:102] == Red && cubestate[89:87] == Y) begin
+                                        next_moves <= next_moves | {Di,Fi,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    // RB
+                                    else if (cubestate[128:126] == Y && cubestate[119:117] == Red) begin
+                                        next_moves <= next_moves | {R};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    else if (cubestate[128:126] == Red && cubestate[119:117] == Y) begin
+                                        next_moves <= next_moves | {D,Bi,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    // LB
+                                    else if (cubestate[122:120] == Y && cubestate[95:93] == Red) begin
+                                        next_moves <= next_moves | {D,D,Li,D,D};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    else if (cubestate[122:120] == Red && cubestate[95:93] == Y) begin
+                                        next_moves <= next_moves | {D,B,Di};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    // UF
+                                    else if (cubestate[80:78] == Y && cubestate[107:105] == Red) begin
+                                        next_moves <= next_moves | {Ui,R,R};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    else if (cubestate[80:78] == Red && cubestate[107:105] == Y) begin
+                                        next_moves <= next_moves | {F,Ri,Fi};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                    // otherwise, spin U (it's on the top face somewhere...)
+                                    else begin
+                                        next_moves <= next_moves | {U};
+                                        new_moves_ready <= 1;
+                                        state <= UPDATE_STATE;
+                                        piece_counter <= 3;
+                                    end
+                                end
+                                default : piece_counter <= 0;
+                            endcase
                         end
+
     
                         BOTTOM_CORNERS: begin
                             case (piece_counter)
