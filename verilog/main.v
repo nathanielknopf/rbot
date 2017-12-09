@@ -105,10 +105,8 @@ module main(
     
     clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
     
-//    i2c_poll #(.NUM_DATA_BYTES(7)) poll(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(poll_stop), .reading(value), .scl(JA[3]), .sda(JA[2]), .register_address(0), .device_address(7'h44));
-    
     color_sensor edge_reader(.value(value), .scl(JA[3]), .sda(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
-//    color_sensor corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
+    color_sensor corner_reader(.scl(JA[1]), .sda(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
 
     //SEQUENCER
     reg seq_complete = 0;
@@ -169,9 +167,9 @@ module main(
 
     solving_algorithm sa(.reset(reset),.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready),.piece_counter_stuff(pcs));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
-
-    assign LED[0] = cube_solution_finished;
+    sequencer seq(.reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
+    //STATE MACHINE
     parameter LOAD_INIT_STATE = 4'd0;
     parameter FIND_SOLUTION = 4'd1;
     parameter DONE_PLANNING_SOLUTION = 4'd2;
@@ -218,10 +216,10 @@ module main(
         end
     end
     
-    sequencer seq(.reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
-    
+    //USER DEBUG OUTPUT
 //    assign data = {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded};
-    assign data = {1'h0, step_stuff, 2'h0, pcs, state, num_moves_loaded, red[3:0], green[3:0], 1'h0, edge_color};
+    assign data = {1'h0, step_stuff, 2'h0, pcs, state, num_moves_loaded, red[3:0], 1'h0, corner_color, 1'h0, edge_color};
+    assign LED[0] = cube_solution_finished;
 
 
     

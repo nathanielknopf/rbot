@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module stepper_driver #(parameter END_MOVE_DELAY=400)
+module stepper_driver #(parameter END_MOVE_DELAY=10)
     (input clock,
     input step_clock,
     input start,

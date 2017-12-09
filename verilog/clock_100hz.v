@@ -20,15 +20,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module clock_100hz(
-    input reset,
+module clock_100hz #(parameter CLOCK_PERIOD=124999)
+    (input reset,
     input clock,
     output reg slow_clock
     );
-    
-    localparam CLOCK_100HZ = 124999;
-    localparam CLOCK_200HZ = 62499;
-    localparam CLOCK_400HZ = 31249;
     
     //assume incoming signal is 25 mhz, so we need to slow clock down by 250000
     //every 125000 posedges of clock we will toggle slow_clock state
@@ -38,7 +34,7 @@ module clock_100hz(
             count <= 0;
             slow_clock <= 0;
         end else begin
-            if (count == CLOCK_400HZ)begin
+            if (count == CLOCK_PERIOD)begin
                 count <= 0;
                 slow_clock <= !slow_clock;
             end else begin

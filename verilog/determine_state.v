@@ -32,8 +32,8 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, colo
     parameter W = 3'd0;
     parameter O = 3'd1;
     parameter G = 3'd2;
-    parameter R = 3'd3;
-    parameter B = 3'd4;
+    parameter Red = 3'd3;
+    parameter Blue = 3'd4;
     parameter Y = 3'd5;
 
     // cubestate is a 54*3=162 bit register
@@ -41,7 +41,7 @@ module determine_state(input start, edge_color_sensor, corner_color_sensor, colo
     // cubestate[143:72] is reserved for edges
     // cubestate[161:144] are the centers - hardcoded below
     // see sticker-state-indices.png in ../supportingdocs for layout
-    reg [161:0] cubestate = {144'd0, Y, B, R, G, O, W};
+    reg [161:0] cubestate = {144'd0, Y, Blue, Red, G, O, W};
     
     // states for the FSM
     // PREP: send setup moves to motor, go immediately to wait
