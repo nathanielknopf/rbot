@@ -1,5 +1,5 @@
 module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_updated,
-                        output reg[199:0] next_moves, reg cube_solved=0, reg new_moves_ready, [2:0]step_stuff, [1:0]state_stuff, reg fucked=0);
+                        output reg[199:0] next_moves, reg cube_solved=0, reg new_moves_ready, [2:0]step_stuff, [1:0]state_stuff, reg fucked=0, [1:0]piece_counter_stuff);
 
     // the values used to represent colors in cubestate register
     parameter W = 3'd0;
@@ -57,6 +57,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
 
     // piece counter counts the sub-step of the step of the method (0th corner, 1st corner, ...)
     reg[1:0] piece_counter = 0;
+    assign piece_counter_stuff = piece_counter;
 
     always @(posedge clock) begin
         if(reset)begin
