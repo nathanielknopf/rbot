@@ -157,7 +157,7 @@ module main(
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
 // G Perm (bar in back left with opposite on left)    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
 // full last layer    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,W,W,Blue,Red,Red,W,G,O,G,G,Red,G,W,O,O,O,Blue,Blue,Red};
-    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,W,Blue,G,O,Red,O,O,Blue,W,G,G,W,G,Red,O,Blue,Red,Red,Blue,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,W,O,Blue,G,G,G,O,W,O,O,W,Red,Red,W};
+    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,O,W,Red,O,Red,O,W,G,G,W,Blue,Red,O,G,Blue,Red,Blue,Y,Y,Y,Y,Blue,O,G,Blue,Red,Red,Blue,Blue,Red,G,G,G,W,W,O,O,W,W,Red,O};
 
     reg [161:0] cubestate_for_solving_algorithm;
     wire [161:0] cubestate_updated;
@@ -183,6 +183,7 @@ module main(
         if (reset) begin
             seq_complete <= 0;
             state <= LOAD_INIT_STATE;
+            reset_solving_algorithm <= 1;
             start_finding_solution <= 0;
         end
         else begin
@@ -190,6 +191,7 @@ module main(
                 LOAD_INIT_STATE: begin
                     cubestate_for_solving_algorithm <= cubestate_initial;
                     state <= FIND_SOLUTION;
+                    reset_solving_algorithm <= 0;
                 end
 
                 FIND_SOLUTION: begin

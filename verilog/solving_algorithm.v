@@ -61,6 +61,8 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     always @(posedge clock) begin
         if(reset)begin
             state <= SETUP;
+            step <= MIDDLE_LAYER; // this would normally be cross...
+            piece_counter <= 0;
         end else begin
             case (state)
                 SETUP:begin
