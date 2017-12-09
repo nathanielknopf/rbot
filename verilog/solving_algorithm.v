@@ -784,81 +784,87 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     
                         MIDDLE_LAYER: begin
                             case (piece_counter)
+//                                0: begin
+//                                    // OG edge needs to go in LF
+//                                    // edge is in LF and solved
+//                                    if (cubestate[89:87] == O && cubestate[104:102] == G) piece_counter <= 1;
+//                                    // edge is in LF and flipped
+//                                    else if (cubestate[89:87] == G && cubestate[104:102] == O) begin
+//                                        next_moves <= next_moves | {Li,U,L,Ui,F,U,U,Fi,U,U,F,Ui,Fi};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+    
+//                                    // edge is in RF
+//                                    else if (cubestate[98:96] == G && cubestate[113:111] == O) begin
+//                                        next_moves <= next_moves | {B,B,D,D,F,F,D,D,B,B};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+//                                    else if( cubestate[98:96] == O && cubestate[113:111] == G) begin
+//                                        next_moves <= next_moves | {D,R,U,Ri,Di,U,F,Ui,Fi};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+    
+//                                    // edge is in RB
+//                                    else if (cubestate[128:126] == G && cubestate[119:117] == O) begin
+//                                        next_moves <= next_moves | {D,D,Ri,U,R,D,D,U,U,Li,U,L};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+//                                    else if( cubestate[128:126] == O && cubestate[119:117] == G) begin
+//                                        next_moves <= next_moves | {Ri,U,R,Ui,Li,U,L,U,F,Ui,Fi,U,Ri,Ui,R};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+//                                    // edge is in LB
+//                                    else if (cubestate[95:93] == G && cubestate[122:120] == O) begin
+//                                        next_moves <= next_moves | {Di,L,U,Li,D,Ui,F,Ui,Fi};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+//                                    else if( cubestate[95:93] == O && cubestate[122:120] == G) begin
+//                                        next_moves <= next_moves | {R,R,D,D,L,L,D,D,R,R};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+    
+//                                    // edge is in UF
+//                                    else if (cubestate[80:78] == G && cubestate[107:105] == O) begin
+//                                        next_moves <= next_moves | {U,U,F,Ui,Fi,Ui,Li,U,L};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+//                                    else if(cubestate[80:78] == O && cubestate[107:105] == G) begin
+//                                        next_moves <= next_moves | {Ui,Li,U,L,U,F,Ui,Fi};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+    
+//                                    // otherwise, it's on the top face somewhere so just do a U move and 
+//                                    // check if it's in UF yet (yay efficiency)
+//                                    else begin
+//                                        next_moves <= next_moves | {U};
+//                                        new_moves_ready <= 1;
+//                                        state <= UPDATE_STATE;
+//                                        piece_counter <= 0;
+//                                    end
+//                                end
                                 0: begin
-                                    // OG edge needs to go in LF
-                                    // edge is in LF and solved
-                                    if (cubestate[89:87] == O && cubestate[104:102] == G) piece_counter <= 1;
-                                    // edge is in LF and flipped
-                                    else if (cubestate[89:87] == G && cubestate[104:102] == O) begin
-                                        next_moves <= next_moves | {Li,U,L,Ui,F,U,U,Fi,U,U,F,Ui,Fi};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-    
-                                    // edge is in RF
-                                    else if (cubestate[98:96] == G && cubestate[113:111] == O) begin
-                                        next_moves <= next_moves | {B,B,D,D,F,F,D,D,B,B};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-                                    else if( cubestate[98:96] == O && cubestate[113:111] == G) begin
-                                        next_moves <= next_moves | {D,R,U,Ri,Di,U,F,Ui,Fi};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-    
-                                    // edge is in RB
-                                    else if (cubestate[128:126] == G && cubestate[119:117] == O) begin
-                                        next_moves <= next_moves | {D,D,Ri,U,R,D,D,U,U,Li,U,L};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-                                    else if( cubestate[128:126] == O && cubestate[119:117] == G) begin
-                                        next_moves <= next_moves | {Ri,U,R,Ui,Li,U,L,U,F,Ui,Fi,U,Ri,Ui,R};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-                                    // edge is in LB
-                                    else if (cubestate[95:93] == G && cubestate[122:120] == O) begin
-                                        next_moves <= next_moves | {Di,L,U,Li,D,Ui,F,Ui,Fi};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-                                    else if( cubestate[95:93] == O && cubestate[122:120] == G) begin
-                                        next_moves <= next_moves | {R,R,D,D,L,L,D,D,R,R};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-    
-                                    // edge is in UF
-                                    else if (cubestate[80:78] == G && cubestate[107:105] == O) begin
-                                        next_moves <= next_moves | {U,U,F,Ui,Fi,Ui,Li,U,L};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-                                    else if(cubestate[80:78] == O && cubestate[107:105] == G) begin
-                                        next_moves <= next_moves | {Ui,Li,U,L,U,F,Ui,Fi};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
-    
-                                    // otherwise, it's on the top face somewhere so just do a U move and 
-                                    // check if it's in UF yet (yay efficiency)
-                                    else begin
-                                        next_moves <= next_moves | {U};
-                                        new_moves_ready <= 1;
-                                        state <= UPDATE_STATE;
-                                        piece_counter <= 0;
-                                    end
+                                    next_moves <= next_moves | {Ui,Li,U,L,U,F,Ui,Fi};
+                                    new_moves_ready <= 1;
+                                    state <= UPDATE_STATE;
+                                    piece_counter <= 1;
                                 end
                                 1: begin
                                     // RG edge needs to go in RF

@@ -36,7 +36,10 @@ module color_reader(
     parameter Y = 3'd5;
     
     always @(posedge clock)begin
-        
+        if(red >= 8'h7)begin // W,O,Y
+        end else begin // R,G,B
+            if
+        end
     end
     
 endmodule
