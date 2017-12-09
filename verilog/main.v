@@ -98,16 +98,17 @@ module main(
     wire [7:0] green;
     wire [7:0] blue;
     
-    reg poll_stop = 0;
-    wire [55:0] value;
+    wire [47:0] value;
     
-//    assign data = {16'h0, value[55:48], value[7:0]};
+    assign red = value[31:24];
+    assign green = value[15:8];
+    assign blue = value[47:40];
     
-//    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
+    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
     
 //    i2c_poll #(.NUM_DATA_BYTES(7)) poll(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(poll_stop), .reading(value), .scl(JA[3]), .sda(JA[2]), .register_address(0), .device_address(7'h44));
     
-//    color_sensor edge_reader(.state(LED[15]), .red(red), .green(green), .blue(blue), .sda(JA[3]), .scl(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
+    color_sensor edge_reader(.value(value), .scl(JA[3]), .sda(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
 //    color_sensor corner_reader(.sda(JA[1]), .scl(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
 
     //SEQUENCER
@@ -172,10 +173,10 @@ module main(
 
     assign LED[0] = cube_solution_finished;
     
-    parameter LOAD_INIT_STATE = 0;
-    parameter FIND_SOLUTION = 1;
-    parameter DONE_PLANNING_SOLUTION = 2;
-    parameter CALCULATE_NEW_STATE = 3;
+    parameter LOAD_INIT_STATE = 4'd0;
+    parameter FIND_SOLUTION = 4'd1;
+    parameter DONE_PLANNING_SOLUTION = 4'd2;
+    parameter CALCULATE_NEW_STATE = 4'd3;
     reg [3:0] state = 0;
 
     always @(posedge clock_25mhz) begin
