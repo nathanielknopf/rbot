@@ -85,7 +85,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                                     // solved: move on
                                     if (cubestate[101:99] == G && cubestate[140:138] == Y) piece_counter <= 1;
                                     // DF flipped
-                                    else if (cubestate[101:99] == Y && cubestate[140:138] == Y) begin
+                                    else if (cubestate[101:99] == Y && cubestate[140:138] == G) begin
                                         next_moves <= next_moves | {Fi,Ri,Di};
                                         new_moves_ready <= 1;
                                         state <= UPDATE_STATE;
