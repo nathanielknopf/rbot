@@ -149,6 +149,8 @@ module main(
     parameter Bi = 4'd11;   //1011 b
     parameter D = 4'd12;    //1100 c
     parameter Di = 4'd13;   //1101 d
+    
+    reg [161:0] cubestate_initial [3:0];
 
     // use this scramble
     // U Bi Li F B R2 Li B Ui F D Fi L2 Fi U2 Li U2 D B2 L R2 F B L Bi Di
@@ -164,12 +166,29 @@ module main(
 //     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
     //Fi L2 F R2 Fi R2 Fi R2 Fi L2 D2 R D L2 U2 F D2 Li U L2 F2 (actual scramble ends here, setup moves:) R D Li Fi R Di R Li Ui Ri L F Bi Ui Fi B U L Ui Li Ri Ui R U Ri Ui R
 
-     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,W,G,Y,Blue,Y,Y,W,Blue,O,Blue,Red,Y,O,W,O,W,Blue,Red,Red,G,G,Red,W,Y,Red,G,Red,Red,O,G,G,Blue,W,Blue,Blue,O,W,Blue,Y,O,O,W,Y,Red,Y,G};
+//     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,W,G,Y,Blue,Y,Y,W,Blue,O,Blue,Red,Y,O,W,O,W,Blue,Red,Red,G,G,Red,W,Y,Red,G,Red,Red,O,G,G,Blue,W,Blue,Blue,O,W,Blue,Y,O,O,W,Y,Red,Y,G};
      // D2 F2 B' L U' F L2 F' B2 R U L2 B2 R2 F2 U' L2 U B2 U2 R2
 
-//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,G,Blue,Blue,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O};
-    // B2 U2 D R B' L U' L' D' F B2 U' D2 L2 D B2 D' F2 D2 R2 (fuck)
-
+    initial begin
+        cubestate_initial[0] = {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,G,Blue,Blue,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O};
+        // B2 U2 D R B' L U' L' D' F B2 U' D2 L2 D B2 D' F2 D2 R2 (fuck)
+        // scramble: U F L' U' R F' D L D2 F R B2 L B2 R' F2 R2 B2 U2 R B2    
+        //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
+        cubestate_initial[1] = {Y,Blue,Red,G,O,W,Y,O,Red,Red,Blue,W,G,Red,G,Blue,Y,G,O,Y,W,O,W,G,Red,Blue,O,Blue,Y,W,W,Blue,Y,W,W,G,Blue,Blue,Red,G,Blue,Red,W,Red,O,G,Red,Y,G,O,Y,O,O,Y};
+        
+        // scramble: F' U2 F2 D2 B' R2 F' D2 F' L2 F2 R' U B' L R B F2 D' U
+        //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
+        cubestate_initial[2] = {Y,Blue,Red,G,O,W,Red,O,G,Blue,Y,Y,Red,G,Red,W,G,O,O,Blue,W,O,Red,Blue,W,W,Blue,Y,Y,G,O,Blue,Red,G,Red,O,W,W,Y,W,G,G,O,Blue,Y,Y,G,Blue,Red,Blue,Y,W,O,Red};
+        
+        // scramble: U' F2 R2 L F2 B L2 U2 R F' U' B2 R2 L2 D F2 U' L2 B2 U' L2
+        //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
+        cubestate_initial[3] = {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,O};
+    end
+//    reg [161:0] initial_cubestates [3:0] = {
+//    {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,G,Blue,Blue,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O},
+//    {Y,Blue,Red,G,O,W,Y,O,Red,Red,Blue,W,G,Red,G,Blue,Y,G,O,Y,W,O,W,G,Red,Blue,O,Blue,Y,W,W,Blue,Y,W,W,G,Blue,Blue,Red,G,Blue,Red,W,Red,O,G,Red,Y,G,O,Y,O,O,Y},
+//    {Y,Blue,Red,G,O,W,Red,O,G,Blue,Y,Y,Red,G,Red,W,G,O,O,Blue,W,O,Red,Blue,W,W,Blue,Y,Y,G,O,Blue,Red,G,Red,O,W,W,Y,W,G,G,O,Blue,Y,Y,G,Blue,Red,Blue,Y,W,O,Red},
+//    {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,O}};    
 
     reg [161:0] cubestate_for_solving_algorithm;
     wire [161:0] cubestate_updated;
@@ -202,7 +221,7 @@ module main(
         end else begin
             case (state)
                 LOAD_INIT_STATE: begin
-                    cubestate_for_solving_algorithm <= cubestate_initial;
+                    cubestate_for_solving_algorithm <= cubestate_initial[SW[13:11]];
                     state <= FIND_SOLUTION;
                 end
 
