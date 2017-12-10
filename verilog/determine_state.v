@@ -55,21 +55,16 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
 
     reg [2:0] state = SETUP;
 
-    // index in s to which we are going to write (write to s[index:index+2])
-    reg [7:0] index = 0; // this increments by 3 for each sticker we observe
-
     always @(posedge clock) begin
         if (reset) begin
             state <= SETUP;
             counter <= 0;
-            index <= 0;
             cubestate_determined <= 0;
         end else begin
             case (state)
                 SETUP: begin
                     // these should be true anyway, just making sure
                     counter <= 0;
-                    index <= 0;
                     // this is to make sure this shit ain't fucked
                     cubestate_determined <= 0;
                     // only start when we get the start signal...
@@ -83,7 +78,6 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     // VERY NOT SURE ABOUT THIS FOLLOWING LINE - NEED TO FIGURE OUT WHAT VALUE OF COUNTER MATTERS...
                     state <= (counter < 48) ? IDLE : DONE; // still need to do the moves associated with 44 on counter in spin_all...
                     cubestate <= cubestate << 3;
-                    index <= index + 3;
                 end
                 IDLE: begin
                     // make sure we aren't telling spin_all module to keep sending moves
@@ -93,7 +87,8 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                 end
                 OBSERVE: begin
                     // when we get here, we can observe the color under the appropriate sensor
-                    cubestate <= cubestate | (index < 72) ? corner_color_sensor : edge_color_sensor;
+                    cubestate <= cubestate | ((counter < 24) ? {159'h0, edge_color_sensor} : {159'h0, corner_color_sensor});
+//                    cubestate <= cubestate | {159'h0, edge_color_sensor};
                     state <= PREP;
                     // increment counter
                     counter <= counter + 1;

@@ -56,6 +56,8 @@ module color_translator(
             end
         end else if(r_corner > 4 || (r_corner > 3 && edge_bright < 8))begin
             color_corner <= Red;
+        end else if(g_corner > 3 && edge_bright < 10)begin
+            color_corner <= G;
         end else if(b_corner > r_corner || corner_bright < 6 || r_corner >= g_corner)begin
             color_corner <= Blue;
         end else begin

@@ -120,19 +120,8 @@ module main(
     color_sensor corner_reader(.value(corner_val), .scl(JA[1]), .sda(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset));
     
     color_translator(.clock(clock_25mhz), .r_edge(r_edge), .g_edge(g_edge), .b_edge(b_edge), .r_corner(r_corner), .g_corner(g_corner), .b_corner(b_corner), .color_edge(edge_color), .color_corner(corner_color));
-
-    //SEQUENCER
-    reg seq_complete = 0;
-    wire [199:0] new_moves_to_queue;
-    wire [7:0] num_moves_loaded;
-    wire [7:0] current_step;
-    wire seq_done;
-
-    // wire these things:
-    // moves_avail_to_queue -- when a set of moves have been output that should be thrown on the queue
-    // new_moves_to_queue -- the actual moves output by solving_algorithm
-    // seq_complete - the solving_algorithm is done
-
+    
+    //CONSTANTS
     // the values used to represent colors in cubestate register
     parameter W = 3'd0;
     parameter O = 3'd1;
@@ -154,6 +143,7 @@ module main(
     parameter D = 4'd12;    //1100 c
     parameter Di = 4'd13;   //1101 d
     
+    //TEST CASES    
     reg [161:0] cubestate_initial [7:0];
 
     initial begin        
@@ -176,6 +166,18 @@ module main(
         cubestate_initial[5] = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
 
     end
+    
+    //SOLVING ALGORITH AND SEQUENCER
+    reg seq_complete = 0;
+    wire [199:0] new_moves_to_queue;
+    wire [7:0] num_moves_loaded;
+    wire [7:0] current_step;
+    wire seq_done;
+
+    // wire these things:
+    // moves_avail_to_queue -- when a set of moves have been output that should be thrown on the queue
+    // new_moves_to_queue -- the actual moves output by solving_algorithm
+    // seq_complete - the solving_algorithm is done
 
     reg [161:0] cubestate_for_solving_algorithm;
     wire [161:0] cubestate_updated;
@@ -220,7 +222,7 @@ module main(
     spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue_state), .new_moves(new_moves_ready_state));
     delay_timer dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
     
-    serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_initial[4]), .tx_pin(JC[3]), .data_sent(sent_ser_data));
+    serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_for_solving_algorithm), .tx_pin(JC[3]), .data_sent(sent_ser_data));
     
     //STATE MACHINE
     parameter LOAD_INIT_STATE = 5'd0;
