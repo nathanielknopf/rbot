@@ -214,7 +214,7 @@ module main(
     
     determine_state ds(.reset(reset), .start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(ready_to_observe), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate), .cubestate_determined(initial_state_found));
     spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue_state), .new_moves(new_moves_ready_state));
-    delay_timer #(.DURATION(500)) dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
+    delay_timer #(.DURATION(1000)) dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
     
     sequencer seq(.finished_queue(queue_fin), .reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
         
