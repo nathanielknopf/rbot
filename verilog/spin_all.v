@@ -77,7 +77,7 @@ module spin_all(input send_setup_moves, clock, [5:0] counter,
                     // {BDL, BUL, BUR, BDR}
                     16: moves <= moves | {Fi,U,Di,R,Ri}; // BDL
                     17: moves <= moves | {Fi,U,Ui}; // BUL
-                    18: moves <= moves | {Fi,U,Ui}; // BUR
+                    18: moves <= moves | {Fi,R,Ri}; // BUR
                     19: moves <= moves | {Fi,U,Ui}; // BDR
                     // {DLF, DLB, DRB, DRF}
                     20: moves <= moves | {Fi,U,U,D,D,Li,R,Fi,U,Ui}; // DLF
