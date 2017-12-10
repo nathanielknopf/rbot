@@ -61,6 +61,9 @@ module main(
     reg [15:0] led_state = 16'd0;
     
     // STEPPERS
+    wire disable_steppers;
+    assign disable_steppers = SW[1];
+    
     wire stepper_dir_pin;
     wire stepper_step_pin;
     wire [5:0] stepper_en_pins;
@@ -86,7 +89,7 @@ module main(
     wire move_start;
     wire move_done;
     
-    move_to_step steppers(.disable_steppers(SW[1]),  .clock(clock_25mhz), .reset(reset), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
+    move_to_step steppers(.disable_steppers(disable_steppers),  .clock(clock_25mhz), .reset(reset), .next_move(next_move), .move_start(move_start), .move_done(move_done), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
 
     // COLOR SENSORS
     wire [2:0] edge_color;
@@ -150,7 +153,7 @@ module main(
     parameter D = 4'd12;    //1100 c
     parameter Di = 4'd13;   //1101 d
     
-    reg [161:0] cubestate_initial [3:0];
+    reg [161:0] cubestate_initial [7:0];
 
     // use this scramble
     // U Bi Li F B R2 Li B Ui F D Fi L2 Fi U2 Li U2 D B2 L R2 F B L Bi Di
@@ -183,6 +186,10 @@ module main(
         // scramble: U' F2 R2 L F2 B L2 U2 R F' U' B2 R2 L2 D F2 U' L2 B2 U' L2
         //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
         cubestate_initial[3] = {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,O};
+        // solved cube
+        cubestate_initial[4] = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
+        cubestate_initial[5] = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
+
     end
 //    reg [161:0] initial_cubestates [3:0] = {
 //    {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,G,Blue,Blue,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O},
@@ -229,7 +236,7 @@ module main(
                     // we don't want to fuck with the input cubestate here
                     start_finding_solution <= 1;
                     if (cube_solution_finished) state <= DONE_PLANNING_SOLUTION;
-                    else if (num_moves_loaded >= 100) state <= DONE_PLANNING_SOLUTION;
+                    else if (num_moves_loaded >= 150) state <= DONE_PLANNING_SOLUTION;
                     else if (new_moves_ready) state <= CALCULATE_NEW_STATE;
                     else state <= FIND_SOLUTION;
                 end
@@ -255,6 +262,7 @@ module main(
 //    assign data = {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded};
     assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded} : {r_edge[3:0], g_edge[3:0], b_edge[3:0], 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
     assign LED[0] = cube_solution_finished;
+    assign LED[13:11] = SW[13:11];
 
 
     
