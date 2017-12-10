@@ -112,8 +112,10 @@ module main(
     
     clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
     
-    color_sensor edge_reader(.value(edge_val), .scl(JA[3]), .sda(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(edge_color));
-    color_sensor corner_reader(.value(corner_val), .scl(JA[1]), .sda(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .color(corner_color));
+    color_sensor edge_reader(.value(edge_val), .scl(JA[3]), .sda(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset));
+    color_sensor corner_reader(.value(corner_val), .scl(JA[1]), .sda(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset));
+    
+    color_translator(.clock(clock_25mhz), .r_edge(r_edge), .g_edge(g_edge), .b_edge(b_edge), .r_corner(r_corner), .g_corner(g_corner), .b_corner(b_corner), .color_edge(edge_color), .color_corner(corner_color));
 
     //SEQUENCER
     reg seq_complete = 0;
@@ -158,11 +160,14 @@ module main(
 //    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
 // full last layer    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,W,W,Blue,Red,Red,W,G,O,G,G,Red,G,W,O,O,O,Blue,Blue,Red};
     //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
-    // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
+    
+//     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
     //Fi L2 F R2 Fi R2 Fi R2 Fi L2 D2 R D L2 U2 F D2 Li U L2 F2 (actual scramble ends here, setup moves:) R D Li Fi R Di R Li Ui Ri L F Bi Ui Fi B U L Ui Li Ri Ui R U Ri Ui R
-    // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,W,G,Y,Blue,Y,Y,W,Blue,O,Blue,Red,Y,O,W,O,W,Blue,Red,Red,G,G,Red,W,Y,Red,G,Red,Red,O,G,G,Blue,W,Blue,Blue,O,W,Blue,Y,O,O,W,Y,Red,Y,G};
-    // D2 F2 B' L U' F L2 F' B2 R U L2 B2 R2 F2 U' L2 U B2 U2 R2
-    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,G,Blue,Blue,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O};
+
+     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,W,G,Y,Blue,Y,Y,W,Blue,O,Blue,Red,Y,O,W,O,W,Blue,Red,Red,G,G,Red,W,Y,Red,G,Red,Red,O,G,G,Blue,W,Blue,Blue,O,W,Blue,Y,O,O,W,Y,Red,Y,G};
+     // D2 F2 B' L U' F L2 F' B2 R U L2 B2 R2 F2 U' L2 U B2 U2 R2
+
+//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,G,Blue,Blue,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O};
     // B2 U2 D R B' L U' L' D' F B2 U' D2 L2 D B2 D' F2 D2 R2 (fuck)
 
 
