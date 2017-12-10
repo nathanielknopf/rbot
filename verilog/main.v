@@ -236,7 +236,7 @@ module main(
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue_solve),.new_moves_ready(new_moves_ready_solve),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
     sequencer seq(.finished_queue(queue_fin), .reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
-    determine_state ds(.start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(sensor_stable), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate), .cubestate_determined(initial_state_found));
+    determine_state ds(.reset(reset), .start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(sensor_stable), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate), .cubestate_determined(initial_state_found));
     spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue_state), .new_moves(new_moves_ready_state));
     delay_timer dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
     
@@ -253,7 +253,10 @@ module main(
     parameter WAIT_FOR_QUEUE = 4'd7;
     parameter WAIT_FOR_MOVE1 = 4'd8;
     parameter WAIT_FOR_MOVE2 = 4'd9;
-    parameter WAIT_FOR_SENSOR = 4'd10;
+    parameter WAIT_FOR_SENSOR1 = 4'd10;
+    parameter WAIT_FOR_SENSOR2 = 4'd11;
+    parameter SEND_INIT_STATE1 = 4'd12;
+    parameter SEND_INIT_STATE2 = 4'd13;
     
     reg [3:0] state = 0;
 
@@ -286,17 +289,30 @@ module main(
                 end
                 WAIT_FOR_MOVE2: begin
                     seq_complete <= 0;
+                    state <= (seq_done) ? WAIT_FOR_SENSOR1:WAIT_FOR_MOVE2;
+                end
+                WAIT_FOR_SENSOR1: begin
                     start_sens_stability_timer <= 1;
-                    state <= WAIT_FOR_SENSOR;
+                    state <= WAIT_FOR_SENSOR2;
                 end
-                WAIT_FOR_SENSOR: begin
+                WAIT_FOR_SENSOR2: begin
                     start_sens_stability_timer <= 0;
-                    state <= (sensor_stable) ? WAIT_FOR_QUEUE:WAIT_FOR_SENSOR;
+                    state <= (sensor_stable) ? WAIT_FOR_QUEUE:WAIT_FOR_SENSOR2;
                 end
+                
+                SEND_INIT_STATE1: begin
+                    send_ser_data <= 1;
+                    state <= (sent_ser_data) ? SEND_INIT_STATE1:SEND_INIT_STATE2;
+                end
+                SEND_INIT_STATE2: begin
+                    send_ser_data <= 0;
+                    state <= (sent_ser_data) ? FIND_SOLUTION:SEND_INIT_STATE2;
+                end
+                
                 LOAD_INIT_STATE: begin
                     cubestate_for_solving_algorithm <= (SW[3]) ? cubestate_initial[SW[13:11]]:initial_cubestate;
                     determining_state <= 0;
-                    state <= FIND_SOLUTION;
+                    state <= SEND_INIT_STATE1;
                 end
 
                 FIND_SOLUTION: begin
@@ -335,7 +351,7 @@ module main(
     
     //USER DEBUG OUTPUT
 //    assign data = {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded};
-    assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded} : {r_edge[3:0], g_edge[3:0], b_edge[3:0], 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
+    assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, 2'h0, setup_counter, num_moves_loaded} : {r_edge[3:0], g_edge[3:0], b_edge[3:0], 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
     assign LED[0] = cube_solution_finished;
     assign LED[1] = determining_state;
     assign LED[13:11] = SW[13:11];

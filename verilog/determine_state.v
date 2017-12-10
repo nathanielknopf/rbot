@@ -47,11 +47,11 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
     // PREP: send setup moves to motor, go immediately to wait
     // IDLE: wait for the motors to finish - when they send done signal, go to observe
     // OBSERVE: store value under sensor in question in value in question
-    parameter PREP = 0;
-    parameter IDLE = 1;
-    parameter OBSERVE = 2;
-    parameter DONE = 3;
-    parameter SETUP = 4;
+    parameter PREP = 3'd0;
+    parameter IDLE = 3'd1;
+    parameter OBSERVE = 3'd2;
+    parameter DONE = 3'd3;
+    parameter SETUP = 3'd4;
 
     reg [2:0] state = SETUP;
 
@@ -73,6 +73,7 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     // this is to make sure this shit ain't fucked
                     cubestate_determined <= 0;
                     // only start when we get the start signal...
+                    cubestate <= {144'd0, Y, Blue, Red, G, O, W};
                     state <= (start) ? PREP : SETUP;
                 end
                 PREP: begin
@@ -80,7 +81,7 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     // to the motors. Then we go to IDLE
                     send_setup_moves <= 1;
                     // VERY NOT SURE ABOUT THIS FOLLOWING LINE - NEED TO FIGURE OUT WHAT VALUE OF COUNTER MATTERS...
-                    state <= (counter < 44) ? IDLE : DONE; // still need to do the moves associated with 44 on counter in spin_all...
+                    state <= (counter < 48) ? IDLE : DONE; // still need to do the moves associated with 44 on counter in spin_all...
                     cubestate <= cubestate << 3;
                     index <= index + 3;
                 end
