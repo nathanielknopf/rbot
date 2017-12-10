@@ -24,7 +24,7 @@
         // L R' B' U L R' {BL, BD, BR, BU} R L' U' B R L'
         // R2 L2 F2 B2 {DB, DL, DF, DR} B2 F2 L2 R2
 
-module determine_state(input start, [2:0] edge_color_sensor, [2:0] corner_color_sensor, color_sensor_stable, clock,
+module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner_color_sensor, color_sensor_stable, clock,
                         output reg send_setup_moves, reg [5:0] counter=0, reg[161:0] cubestate_output, reg cubestate_determined);
 
     // the values used to represent colors in state register
@@ -53,49 +53,59 @@ module determine_state(input start, [2:0] edge_color_sensor, [2:0] corner_color_
     parameter DONE = 3;
     parameter SETUP = 4;
 
-    reg [2:0] state = 0;
+    reg [2:0] state = SETUP;
 
     // index in s to which we are going to write (write to s[index:index+2])
     reg [7:0] index = 0; // this increments by 3 for each sticker we observe
 
     always @(posedge clock) begin
-        case (state)
-            SETUP: begin
-                // these should be true anyway, just making sure
-                counter <= 0;
-                index <= 0;
-                // this is to make sure this shit ain't fucked
-                cubestate_determined <= 0;
-                state <= PREP;
-            end
-            PREP: begin
-                // we need to tell the spin_all module to send the appropriate moves
-                // to the motors. Then we go to IDLE
-                send_setup_moves <= 1;
-                // VERY NOT SURE ABOUT THIS FOLLOWING LINE - NEED TO FIGURE OUT WHAT VALUE OF COUNTER MATTERS...
-                state <= (counter < 44) ? IDLE : DONE;
-                cubestate <= cubestate << 3;
-                index <= index + 3;
-            end
-            IDLE: begin
-                // make sure we aren't telling spin_all module to keep sending moves
-                send_setup_moves <= 0;
-                // sit here waiting until done turning happens
-                if (color_sensor_stable) state <= OBSERVE;
-            end
-            OBSERVE: begin
-                // when we get here, we can observe the color under the appropriate sensor
-                cubestate <= cubestate | (index < 72) ? corner_color_sensor : edge_color_sensor;
-                state <= PREP;
-                // increment counter
-                counter <= counter + 1;
-            end
-            DONE: begin
-                state <= DONE;
-                cubestate_output <= cubestate;
-                cubestate_determined <= 1;
-            end
-        endcase
+        if (reset) begin
+            state <= SETUP;
+            counter <= 0;
+            index <= 0;
+            cubestate_determined <= 0;
+        end
+        else begin
+            case (state)
+                SETUP: begin
+                    // these should be true anyway, just making sure
+                    counter <= 0;
+                    index <= 0;
+                    // this is to make sure this shit ain't fucked
+                    cubestate_determined <= 0;
+                    // only start when we get the start signal...
+                    state <= (start) ? PREP : SETUP;
+                end
+                PREP: begin
+                    // we need to tell the spin_all module to send the appropriate moves
+                    // to the motors. Then we go to IDLE
+                    send_setup_moves <= 1;
+                    // VERY NOT SURE ABOUT THIS FOLLOWING LINE - NEED TO FIGURE OUT WHAT VALUE OF COUNTER MATTERS...
+                    state <= (counter < 44) ? IDLE : DONE; // still need to do the moves associated with 44 on counter in spin_all...
+                    cubestate <= cubestate << 3;
+                    index <= index + 3;
+                end
+                IDLE: begin
+                    // make sure we aren't telling spin_all module to keep sending moves
+                    send_setup_moves <= 0;
+                    // sit here waiting until done turning happens
+                    if (color_sensor_stable) state <= OBSERVE;
+                end
+                OBSERVE: begin
+                    // when we get here, we can observe the color under the appropriate sensor
+                    cubestate <= cubestate | (index < 72) ? corner_color_sensor : edge_color_sensor;
+                    state <= PREP;
+                    // increment counter
+                    counter <= counter + 1;
+                end
+                DONE: begin
+                    state <= DONE;
+                    cubestate_output <= cubestate;
+                    cubestate_determined <= 1;
+                    send_setup_moves <= 0; // only send them for one bit...? i forget what this signal does.
+                end
+            endcase
+        end
     end
 endmodule
 
