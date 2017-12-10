@@ -204,6 +204,7 @@ module main(
     wire new_moves_ready;
     wire state_updated;
     reg start_finding_solution=0;
+    wire find_next_set_of_moves; //use this to pasue solving alg while doing other calculations
     wire [2:0] step_stuff;
     wire [1:0] state_stuff;
     wire [1:0] pcs;
@@ -220,13 +221,23 @@ module main(
     wire queue_fin;
     reg start_sens_stability_timer = 0;
     wire initial_state_found;
+    
+    reg determining_state = 1;
+    //TODO: use this to decide what is inputted into sequencer
+    wire [59:0] new_moves_to_queue_state;
+    wire [199:0] new_moves_to_queue_solve;
+    wire new_moves_ready_state;
+    wire new_moves_ready_solve;
+    
+    assign new_moves_to_queue = (determining_state) ? {140'h0, new_moves_to_queue_state}:new_moves_to_queue_solve;
+    assign new_moves_ready = (determining_state) ? new_moves_ready_state:new_moves_ready_solve;
 
-    solving_algorithm sa(.reset(reset),.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready),.piece_counter_stuff(pcs));
-    update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
+    solving_algorithm sa(.reset(reset),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue_solve),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready_solve),.piece_counter_stuff(pcs));
+    update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue_solve),.new_moves_ready(new_moves_ready_solve),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
     sequencer seq(.finished_queue(queue_fin), .reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
     determine_state ds(.start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(sensor_stable), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate), .cubestate_determined(initial_state_found));
-    spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue), .new_moves(new_moves_ready));
+    spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue_state), .new_moves(new_moves_ready_state));
     delay_timer dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
     
     serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_for_solving_algorithm), .tx_pin(JC[3]), .data_sent(sent_ser_data));
@@ -249,13 +260,15 @@ module main(
     always @(posedge clock_25mhz) begin
         if (reset) begin
             seq_complete <= 0;
-            state <= LOAD_INIT_STATE;
+            state <= FIND_INIT_STATE;
+            determining_state <= 1;
             start_finding_solution <= 0;
         end else if(SW[14])begin
             state <= DONE_PLANNING_SOLUTION;
         end else begin
             case (state)
                 FIND_INIT_STATE: begin
+                    determining_state <= 1;
                     start_finding_state <= 1;
                     state <= WAIT_FOR_QUEUE;
                 end
@@ -282,6 +295,7 @@ module main(
                 end
                 LOAD_INIT_STATE: begin
                     cubestate_for_solving_algorithm <= (SW[3]) ? cubestate_initial[SW[13:11]]:initial_cubestate;
+                    determining_state <= 0;
                     state <= FIND_SOLUTION;
                 end
 
@@ -323,6 +337,7 @@ module main(
 //    assign data = {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded};
     assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded} : {r_edge[3:0], g_edge[3:0], b_edge[3:0], 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
     assign LED[0] = cube_solution_finished;
+    assign LED[1] = determining_state;
     assign LED[13:11] = SW[13:11];
     assign LED[8] = sent_ser_data;
     assign LED[7:5] = ser_state;

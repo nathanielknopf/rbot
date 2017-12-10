@@ -62,6 +62,8 @@ module sequencer
                         state <= ADD_TO_QUEUE;
                     end else if(seq_complete & |(num_moves)) begin
                         state <= LOAD_MOVE;
+                    end else if(seq_complete) begin //if no moves loaded just go to SEQ_FINISHED
+                        state <= SEQ_FINISHED;
                     end
                 end
                 ADD_TO_QUEUE: begin

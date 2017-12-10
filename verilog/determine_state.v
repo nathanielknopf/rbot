@@ -64,8 +64,7 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
             counter <= 0;
             index <= 0;
             cubestate_determined <= 0;
-        end
-        else begin
+        end else begin
             case (state)
                 SETUP: begin
                     // these should be true anyway, just making sure

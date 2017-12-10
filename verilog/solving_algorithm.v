@@ -1369,6 +1369,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                 end
     
                 WAIT: begin
+                    //TODO: replace this with the output of sequencer that tells when loading moves is complete
                     counter <= counter + 1;
                     state <= (counter == 60) ? MOVE : WAIT;
                 end

@@ -43,7 +43,7 @@ module delay_timer #(parameter DURATION = 250)
                 ms_counter <= 249999;
             end
         end else begin
-            ms_counter <= counter - 1;
+            ms_counter <= ms_counter - 1;
         end
         if(done)begin   //only keep done = 1 for 1 clk cycle
             done <= 0;
