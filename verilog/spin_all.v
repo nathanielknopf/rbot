@@ -85,8 +85,8 @@ module spin_all(input send_setup_moves, clock, [5:0] counter,
                     21: moves <= moves | {Fi,R,Ri}; // UF
                     22: moves <= moves | {Fi,U,Ui}; // UL
                     23: moves <= moves | {Fi,R,Ri}; // UB
-                    // {DFR, DBR, DBL, DFL}      (solved)v
-                    24: moves <= moves | {R,Li,Fi,Ui,R,Li,R,Li,F,F,R,Ri}; // DFR
+                    // {DFR, DBR, DBL, DFL}         (solved)v
+                    24: moves <= moves | {Fi,R,Li,Fi,Ui,R,Li,R,Li,F,F,R,Ri}; // DFR
                     25: moves <= moves | {Fi,U,Ui}; // DBR
                     26: moves <= moves | {Fi,R,Ri}; // DBL
                     27: moves <= moves | {Fi,U,Ui}; // DFL
