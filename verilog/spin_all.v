@@ -110,12 +110,12 @@ module spin_all(input send_setup_moves, clock, [5:0] counter,
                     42: moves <= moves | {F}; // BR
                     43: moves <= moves | {F}; // BU
                     // {DB, DL, DF, DR}                   (solved)v
-                    40: moves <= moves | {Fi,D,D,U,U,Bi,Fi,U,U,D,D,R,Li,Di,F,R,Li,F}; // DB
-                    41: moves <= moves | {F}; // DL
-                    42: moves <= moves | {F}; // DF
-                    43: moves <= moves | {F}; // DR
+                    44: moves <= moves | {Fi,D,D,U,U,Bi,Fi,U,U,D,D,R,Li,Di,F,R,Li,F}; // DB
+                    45: moves <= moves | {F}; // DL
+                    46: moves <= moves | {F}; // DF
+                    47: moves <= moves | {F}; // DR
                     // done, gotta make sure we do these moves....
-                    44: moves <= moves | {L,Ri,Fi,D,L,Ri}; // solved...?
+                    48: moves <= moves | {L,Ri,Fi,D,L,Ri}; // solved...?
                 endcase
                 state <= IDLE;
                 new_moves <= 1;
