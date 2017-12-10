@@ -218,13 +218,16 @@ module main(
     wire [5:0] setup_counter;
     wire [161:0] initial_cubestate;
     wire queue_fin;
+    reg start_sens_stability_timer = 0;
+    wire initial_state_found;
 
     solving_algorithm sa(.reset(reset),.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready),.piece_counter_stuff(pcs));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
     sequencer seq(.finished_queue(queue_fin), .reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
-    determine_state ds(.start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(sensor_stable), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate));
+    determine_state ds(.start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(sensor_stable), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate), .cubestate_determined(initial_state_found));
     spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue), .new_moves(new_moves_ready));
+    delay_timer dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
     
     serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_for_solving_algorithm), .tx_pin(JC[3]), .data_sent(sent_ser_data));
     
@@ -236,6 +239,11 @@ module main(
     parameter SEND_STATE1 = 4'd4;
     parameter SEND_STATE2 = 4'd5;
     parameter FIND_INIT_STATE = 4'd6;
+    parameter WAIT_FOR_QUEUE = 4'd7;
+    parameter WAIT_FOR_MOVE1 = 4'd8;
+    parameter WAIT_FOR_MOVE2 = 4'd9;
+    parameter WAIT_FOR_SENSOR = 4'd10;
+    
     reg [3:0] state = 0;
 
     always @(posedge clock_25mhz) begin
@@ -249,6 +257,28 @@ module main(
             case (state)
                 FIND_INIT_STATE: begin
                     start_finding_state <= 1;
+                    state <= WAIT_FOR_QUEUE;
+                end
+                WAIT_FOR_QUEUE: begin
+                    start_finding_state <= 0;
+                    if(!initial_state_found)begin
+                        state <= (queue_fin) ? WAIT_FOR_MOVE1:WAIT_FOR_QUEUE;
+                    end else begin
+                        state <= LOAD_INIT_STATE;
+                    end
+                end
+                WAIT_FOR_MOVE1: begin
+                    seq_complete <= 1;
+                    state <= WAIT_FOR_MOVE2;
+                end
+                WAIT_FOR_MOVE2: begin
+                    seq_complete <= 0;
+                    start_sens_stability_timer <= 1;
+                    state <= WAIT_FOR_SENSOR;
+                end
+                WAIT_FOR_SENSOR: begin
+                    start_sens_stability_timer <= 0;
+                    state <= (sensor_stable) ? WAIT_FOR_QUEUE:WAIT_FOR_SENSOR;
                 end
                 LOAD_INIT_STATE: begin
                     cubestate_for_solving_algorithm <= (SW[3]) ? cubestate_initial[SW[13:11]]:initial_cubestate;
