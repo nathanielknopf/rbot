@@ -758,7 +758,8 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                                     end
                                     // corner is in RDB
                                     else if (cubestate[47:45] == O && cubestate[59:57] == Y && cubestate[68:66] == Blue) begin
-                                        next_moves <= next_moves | {Bi,U,B,U,Bi,U,B};
+                                        // next_moves <= next_moves | {Bi,U,B,U,Bi,U,B};
+                                        next_moves <= next_moves | {B, U, Bi, U, Bi, U, B};
                                         new_moves_ready <= 1;
                                         state <= UPDATE_STATE;
                                         piece_counter <= 2;
