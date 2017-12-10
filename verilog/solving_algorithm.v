@@ -330,7 +330,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                                     end
                                     // DR
                                     else if (cubestate[143:141] == Y && cubestate[116:114] == Blue) begin
-                                        next_moves <= next_moves | {R,Di,Ri};
+                                        next_moves <= next_moves | {R,Di,Ri,D};
                                         new_moves_ready <= 1;
                                         state <= UPDATE_STATE;
                                         piece_counter <= 2;
