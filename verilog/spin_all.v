@@ -28,7 +28,7 @@
         // R2 L2 F2 B2 {DB, DL, DF, DR} B2 F2 L2 R2
 
 module spin_all(input send_setup_moves, clock, [5:0] counter,
-                output reg [59:0] moves, reg new_moves=0);    
+                output reg [199:0] moves, reg new_moves=0);    
 
     // moves
     parameter R = 4'd2;

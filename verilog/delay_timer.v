@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module delay_timer #(parameter DURATION = 250)
+module delay_timer #(parameter DURATION = 500)
     (input clock,
     input start,
     input reset,

@@ -35,12 +35,13 @@ module sequencer
     input move_done
     );
     
-    localparam IDLE = 0;
-    localparam ADD_TO_QUEUE = 1;
-    localparam LOAD_MOVE = 2;
-    localparam WAIT_FOR_MOVE_1 = 3;
-    localparam WAIT_FOR_MOVE_2 = 4;
-    localparam SEQ_FINISHED = 5;
+    localparam IDLE = 3'd0;
+    localparam ADD_TO_QUEUE = 3'd1;
+    localparam LOAD_MOVE = 3'd2;
+    localparam WAIT_FOR_MOVE_1 = 3'd3;
+    localparam WAIT_FOR_MOVE_2 = 3'd4;
+    localparam SEQ_FINISHED = 3'd5;
+    localparam FINISHED_DATA_QUEUE = 3'd6;
     
     reg [2:0] state = IDLE;
     reg [199:0] part_seq;
@@ -55,7 +56,7 @@ module sequencer
         end else begin
             case(state)
                 IDLE: begin
-                    finished_queue <= (new_moves) ? 0:1;
+                    finished_queue <= 0;
                     seq_done <= 0;
                     if(new_moves) begin
                         part_seq[199:0] <= seq[199:0];
@@ -70,7 +71,11 @@ module sequencer
                     moves[num_moves] <= part_seq[199:196];
                     num_moves <= (|part_seq[199:196]) ? num_moves + 1 : num_moves;
                     part_seq <= part_seq << 4;
-                    state <= (|(part_seq[195:0])) ? ADD_TO_QUEUE : IDLE;
+                    state <= (|(part_seq[195:0])) ? ADD_TO_QUEUE : FINISHED_DATA_QUEUE;
+                end
+                FINISHED_DATA_QUEUE: begin
+                    finished_queue <= 1;
+                    state <= IDLE;
                 end
                 LOAD_MOVE: begin
                     next_move <= moves[curr_step];
