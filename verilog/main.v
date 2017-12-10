@@ -26,6 +26,7 @@ module main(
    input BTNC, BTNU, BTNL, BTNR, BTND,
    inout[7:0] JA, 
    inout[7:0] JB,
+   inout[7:0] JC,
    output[15:0] LED,
    output[7:0] SEG,  // segments A-G (0-6), DP (7)
    output[7:0] AN    // Display 0-7
@@ -185,7 +186,7 @@ module main(
         
         // scramble: U' F2 R2 L F2 B L2 U2 R F' U' B2 R2 L2 D F2 U' L2 B2 U' L2
         //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
-        cubestate_initial[3] = {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,O};
+        cubestate_initial[3] = {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,W};
         // solved cube
         cubestate_initial[4] = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
         cubestate_initial[5] = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
@@ -206,16 +207,23 @@ module main(
     wire [2:0] step_stuff;
     wire [1:0] state_stuff;
     wire [1:0] pcs;
+    
+    reg send_ser_data = 0;
+    wire sent_ser_data;
+    wire [2:0] ser_state;
 
     solving_algorithm sa(.reset(reset),.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready),.piece_counter_stuff(pcs));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
     sequencer seq(.reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
+    serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_updated), .tx_pin(JC[3]), .data_sent(sent_ser_data));
     
     //STATE MACHINE
     parameter LOAD_INIT_STATE = 4'd0;
     parameter FIND_SOLUTION = 4'd1;
     parameter DONE_PLANNING_SOLUTION = 4'd2;
     parameter CALCULATE_NEW_STATE = 4'd3;
+    parameter SEND_STATE1 = 4'd4;
+    parameter SEND_STATE2 = 4'd5;
     reg [3:0] state = 0;
 
     always @(posedge clock_25mhz) begin
@@ -236,7 +244,7 @@ module main(
                     // we don't want to fuck with the input cubestate here
                     start_finding_solution <= 1;
                     if (cube_solution_finished) state <= DONE_PLANNING_SOLUTION;
-                    else if (num_moves_loaded >= 150) state <= DONE_PLANNING_SOLUTION;
+                    else if (num_moves_loaded >= 200) state <= DONE_PLANNING_SOLUTION;
                     else if (new_moves_ready) state <= CALCULATE_NEW_STATE;
                     else state <= FIND_SOLUTION;
                 end
@@ -246,6 +254,14 @@ module main(
                     // cubestate_initial to cubestate_updated, which is produced by update_state.v module
                     cubestate_for_solving_algorithm <= cubestate_updated;
                     state <= (state_updated) ? FIND_SOLUTION : CALCULATE_NEW_STATE;
+                end
+                SEND_STATE1: begin
+                    send_ser_data <= 1;
+                    state <= SEND_STATE2;
+                end
+                SEND_STATE2: begin
+                    send_ser_data <= 0;
+                    state <= (sent_ser_data) ? FIND_SOLUTION:SEND_STATE2;
                 end
 
                 DONE_PLANNING_SOLUTION: begin
@@ -263,6 +279,8 @@ module main(
     assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, current_step, num_moves_loaded} : {r_edge[3:0], g_edge[3:0], b_edge[3:0], 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
     assign LED[0] = cube_solution_finished;
     assign LED[13:11] = SW[13:11];
+    assign LED[8] = sent_ser_data;
+    assign LED{7:5] = ser_state;
 
 
     

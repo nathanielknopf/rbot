@@ -65,10 +65,10 @@ module move_to_step(
     localparam CLOCK_600HZ = 20832;
     localparam CLOCK_800HZ = 15624;
     
-    localparam BETWEEN_STEP_DELAY = 10;
+    localparam BETWEEN_STEP_DELAY = 25;
     
     wire step_clock;
-    clock_100hz #(.CLOCK_PERIOD(CLOCK_400HZ)) local_clock(.reset(move_start), .clock(clock), .slow_clock(step_clock));
+    clock_100hz #(.CLOCK_PERIOD(CLOCK_100HZ)) local_clock(.reset(move_start), .clock(clock), .slow_clock(step_clock));
     assign step_pin = step_clock;
     
     wire dir;
