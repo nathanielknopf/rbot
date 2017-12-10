@@ -156,47 +156,26 @@ module main(
     
     reg [161:0] cubestate_initial [7:0];
 
-    // use this scramble
-    // U Bi Li F B R2 Li B Ui F D Fi L2 Fi U2 Li U2 D B2 L R2 F B L Bi Di
-    // reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,W,G,Blue,W,Red,Red,Blue,O,O,W,G,O,Blue,Red,G,O,W,G,Blue,Red,Blue,Y,Blue,Red,Blue,G,G,W,Red,Y,G,O,Y,O,W,W,Y,Blue,G,O,W,O,Red,Red};
-//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Red,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Blue,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Red,Red,Blue,Red,Red,G,G,O,G,G,O,Blue,Blue,O,O,W,W,W,W};
-    // solved cube
-//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
-    // G Perm (bar in back left with opposite on left)    
-//    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
-// full last layer    reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,W,W,Blue,Red,Red,W,G,O,G,G,Red,G,W,O,O,O,Blue,Blue,Red};
-    //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
-    
-//     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,G,W,Blue,W,Red,Red,W,O,G,W,G,O,G,Blue,Blue,O,Blue,O,Red,Red,Y,Y,Y,Y,Blue,Red,W,Blue,Red,Red,O,W,W,G,G,Red,Blue,G,O,O,Blue,G,W,O};
-    //Fi L2 F R2 Fi R2 Fi R2 Fi L2 D2 R D L2 U2 F D2 Li U L2 F2 (actual scramble ends here, setup moves:) R D Li Fi R Di R Li Ui Ri L F Bi Ui Fi B U L Ui Li Ri Ui R U Ri Ui R
-
-//     reg [161:0] cubestate_initial = {Y,Blue,Red,G,O,W,O,G,W,G,Y,Blue,Y,Y,W,Blue,O,Blue,Red,Y,O,W,O,W,Blue,Red,Red,G,G,Red,W,Y,Red,G,Red,Red,O,G,G,Blue,W,Blue,Blue,O,W,Blue,Y,O,O,W,Y,Red,Y,G};
-     // D2 F2 B' L U' F L2 F' B2 R U L2 B2 R2 F2 U' L2 U B2 U2 R2
-
-    initial begin
-        cubestate_initial[0] = {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,Blue,Blue,G,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O};
+    initial begin        
         // B2 U2 D R B' L U' L' D' F B2 U' D2 L2 D B2 D' F2 D2 R2 (fuck)
+        cubestate_initial[0] = {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,Blue,Blue,G,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O};
         // scramble: U F L' U' R F' D L D2 F R B2 L B2 R' F2 R2 B2 U2 R B2    
-        //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
+        //                     |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
         cubestate_initial[1] = {Y,Blue,Red,G,O,W,Y,O,Red,Red,Blue,W,G,Red,G,Blue,Y,G,O,Y,W,O,W,G,Red,Blue,O,Blue,Y,W,W,Blue,Y,W,W,G,Blue,Blue,Red,G,Blue,Red,W,Red,O,G,Red,Y,G,O,Y,O,O,Y};
         
         // scramble: F' U2 F2 D2 B' R2 F' D2 F' L2 F2 R' U B' L R B F2 D' U
-        //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
+        //                     |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
         cubestate_initial[2] = {Y,Blue,Red,G,O,W,Red,O,G,Blue,Y,Y,Red,G,Red,W,G,O,O,Blue,W,O,Red,Blue,W,W,Blue,Y,Y,G,O,Blue,Red,G,Red,O,W,W,Y,W,G,G,O,Blue,Y,Y,G,Blue,Red,Blue,Y,W,O,Red};
         
         // scramble: U' F2 R2 L F2 B L2 U2 R F' U' B2 R2 L2 D F2 U' L2 B2 U' L2
-        //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
+        //                     |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
         cubestate_initial[3] = {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,W};
         // solved cube
         cubestate_initial[4] = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,Red,G,G,G,G,O,O,O,O,W,W,W,W};
+        // g perm
         cubestate_initial[5] = {Y,Blue,Red,G,O,W,Y,Y,Y,Y,Blue,Blue,Blue,Blue,Red,Red,Red,G,O,G,G,G,O,Red,O,O,W,W,W,W,Y,Y,Y,Y,Blue,G,Blue,Blue,Red,Red,Blue,O,Red,G,G,Red,O,G,O,O,W,W,W,W};
 
     end
-//    reg [161:0] initial_cubestates [3:0] = {
-//    {Y,Blue,Red,G,O,W,O,G,Y,W,O,G,Red,Red,W,G,Blue,Blue,Red,Y,Y,O,Blue,W,Red,Blue,W,G,O,Y,Y,W,Blue,O,Red,Red,Y,W,G,Blue,Blue,G,Red,Red,Blue,O,G,W,Y,O,W,Y,G,O},
-//    {Y,Blue,Red,G,O,W,Y,O,Red,Red,Blue,W,G,Red,G,Blue,Y,G,O,Y,W,O,W,G,Red,Blue,O,Blue,Y,W,W,Blue,Y,W,W,G,Blue,Blue,Red,G,Blue,Red,W,Red,O,G,Red,Y,G,O,Y,O,O,Y},
-//    {Y,Blue,Red,G,O,W,Red,O,G,Blue,Y,Y,Red,G,Red,W,G,O,O,Blue,W,O,Red,Blue,W,W,Blue,Y,Y,G,O,Blue,Red,G,Red,O,W,W,Y,W,G,G,O,Blue,Y,Y,G,Blue,Red,Blue,Y,W,O,Red},
-//    {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,O}};    
 
     reg [161:0] cubestate_for_solving_algorithm;
     wire [161:0] cubestate_updated;
@@ -357,191 +336,6 @@ module main(
     assign LED[13:11] = SW[13:11];
     assign LED[8] = sent_ser_data;
     assign LED[7:5] = ser_state;
-
-
-    
-    // parameter send_moves = 0;
-    // parameter tell_it_to_load = 1;
-    // parameter tell_it_to_go = 2;
-    // parameter idle = 3;
-    
-    // reg [1:0] state = 0;
-
-    // always @(posedge clock_25mhz) begin
-    //     if(reset) begin
-    //         state <= send_moves;
-    //         case (SW[3:0])
-    //             0: solution <= 200'd0 | Ri;
-    //             1: solution <= 200'd0 | {R,Ri};
-    //             2: solution <= 200'd0 | {R,Ri,R,Ri};
-    //             3: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li};
-    //             4: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li,R,Ri};
-    //             5: solution <= 200'd0 | {R,Ri,R,Ri,L,R,Ri,Li,R,Ri,R,Ri};
-    //             6: solution <= 200'd0 | {R,U,Ri,Ui};
-    //             7: solution <= 200'd0 | {U,R,Ui,Ri};
-    //             8: solution <= 200'd0 | {R,U,L,F,D,B};
-    //             9: solution <= 200'd0 | {Bi,Di,Fi,Li,Ui,Ri};
-    //             10: solution <= 200'd0 | {R,U,L,F,D,B,Bi,Di,Fi,Li,Ui,Ri};
-    //             11: solution <= 200'd0 | {U,D,B,R,R,Fi,B,B,U,U,L,D,L,L,D,D,R,R,Bi,U,U,L,L,Fi,B,B,R,R,Bi,R,R};
-    //             12: solution <= 200'd0 | {R,Ri,R,Ri,R,Ri,R,Ri,L};
-    //             13: solution <= 200'd0 | {R,Ri,R,Ri,R,Ri,R,Ri};
-    //             default solution <= 200'd0 | Ri;
-    //         endcase
-    //     end else begin
-    //         case (state)
-    //             send_moves: begin
-    //                 new_moves_to_queue <= solution;
-    //                 state <= tell_it_to_load;
-    //             end
-    //             tell_it_to_load: begin
-    //                 moves_avail_to_queue <= 1;
-    //                 state <= tell_it_to_go;
-    //             end
-    //             tell_it_to_go: begin
-    //                 moves_avail_to_queue <= 0;
-    //                 seq_complete <= 1;
-    //                 state <= idle;
-    //             end
-    //             idle: begin
-    //                 state <= idle;
-    //             end
-    //             default : state <= idle;
-    //         endcase
-    //     end
-    // end
-    
-// I2C TEST    
-    
-//    localparam CS_ADDRESS = 7'h44;
-//    localparam CS_CONFIG_REG1 = 8'h01;
-//    localparam CS_CONFIG_REG2 = 8'h02;
-//    localparam CS_CONFIG_REG3 = 8'h03;
-//    localparam CS_R_HIGH = 8'h0C;
-//    localparam CS_R_LOW = 8'h0B;
-//    localparam CS_G_HIGH = 8'h0A;
-//    localparam CS_G_LOW = 8'h09;
-//    localparam CS_B_HIGH = 8'h0E;
-//    localparam CS_B_LOW = 8'h0D;
-    
-//    localparam CS_CONFIG_REG1_VALUE = 8'h05;
-    
-//    localparam CONFIG1 = 0;
-//    localparam POLL_SENS = 1;
-    
-//    wire setup_done;
-//    reg start_setup = 0;
-//    reg setup_state = CONFIG1; 
-//    reg [7:0] cs_setup_reg = CS_CONFIG_REG1;
-    
-//    //assign data = {3'b000,SW[15],2'b00,SW[7],debounce_SW7, 8'h00, curr_state,time_left, 2'b00,SW[5:4], SW[3:0]};
-//    wire [5:0] state_display;
-//    wire [47:0] value;
-//    wire poll_stop;
-//    assign poll_stop = reset | !setup_done;
-    
-//    wire i2c_clock;
-    
-//    clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
-    
-//    i2c_poll #(.NUM_DATA_BYTES(6)) poll(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(poll_stop), .reading(value), .scl(JA[3]), .sda(JA[2]), .state_out(state_display), .register_address(CS_G_LOW), .device_address(CS_ADDRESS));
-//    i2c_setup setup(.clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset), .scl(JA[3]), .sda(JA[2]), .register_address(cs_setup_reg), .device_address(CS_ADDRESS), .data_in(CS_CONFIG_REG1_VALUE), .start(start_setup), .done(setup_done));
-    
-//    assign data = {8'h0, value[31:24], value[15:8], value[47:40]};
-
-//    assign LED[0] = (state_display==6'd0) ? 1'b1:1'b0;
-//    assign LED[1] = led_state[1] & !reset | (state_display==6'd8) ? 1'b1:1'b0;
-//    assign LED[2] = led_state[2] & !reset | (state_display==6'd10) ? 1'b1:1'b0;
-//    assign LED[3] = led_state[3] & !reset | (state_display==6'd32) ? 1'b1:1'b0;
-//    assign LED[4] = setup_done;
-    
-//    always @(posedge clock_25mhz) begin
-//        if(reset) begin
-//            setup_state <= CONFIG1;
-//        end else begin
-//            case(setup_state)
-//                CONFIG1: begin
-//                    start_setup <= 1;
-//                    if(!setup_done)begin
-//                        setup_state <= POLL_SENS;
-//                    end
-//                end
-//                POLL_SENS: begin
-//                    start_setup <= 0;
-//                end
-//            endcase
-//        end
-//    end
-
-// STEPPER TEST
-    
-//    reg prev_butt;
-//    reg start_stepper;
-    
-//    always @(posedge clock_25mhz)begin
-//        prev_butt <= debounce_BTNC;
-//        start_stepper <= debounce_BTNC & !prev_butt;
-//    end
-    
-//    wire stepper_dir_pin;
-//    wire stepper_step_pin;
-//    wire [5:0] stepper_en_pins;
-    
-//    assign JB[2] = stepper_dir_pin;
-//    assign JB[6] = stepper_step_pin;
-    
-//    assign JB[3] = stepper_en_pins[0];
-//    assign JB[1] = stepper_en_pins[1];
-//    assign JB[0] = stepper_en_pins[2];
-//    assign JB[5] = stepper_en_pins[3];
-//    assign JB[4] = stepper_en_pins[4];
-//    assign JB[7] = stepper_en_pins[5];
-    
-//    assign LED[3:0] = SW[3:0];
-    
-//    move_to_step steppers(.clock(clock_25mhz), .next_move(SW[3:0]), .move_start(start_stepper), .move_done(LED[4]), .dir_pin(stepper_dir_pin), .step_pin(stepper_step_pin), .en_pins(stepper_en_pins));
-
-// OLD I2C TEST
-    
-//    localparam CONFIGA = 4'd0;
-//    localparam CONFIGB = 4'd1;
-//    localparam READA = 4'd2;
-//    localparam READB = 4'd3;
-    
-//    always @(posedge clock_25mhz) begin
-//        led_state <= LED;
-//        if (reset && (tcs_setup_state != CONFIGA)) begin
-//            tcs_setup_state <= CONFIGA;
-//        end else begin
-//            case (tcs_setup_state)
-//                CONFIGA: begin
-//                    if (reset) begin
-//                        tcs_setup_state <= CONFIGA;
-//                    end else begin
-//                        tcs_rw <= 0;
-//                        tcs_reg_addr <= 8'b10000000;
-//                        tcs_data_in <= 8'b00000011;
-//                        tcs_setup_state <= CONFIGB;
-//                    end
-//                end
-//                CONFIGB: begin
-//                    tcs_start <= 1;
-//                    if (tcs_done) begin
-//                        tcs_start <= 0;
-//                        tcs_setup_state <= READA;
-//                    end
-//                end
-//                READA: begin
-//                    tcs_rw <= 1;
-//                    tcs_reg_addr <= 8'b10010100;
-//                    tcs_data_in <= 8'b00000000;
-//                    tcs_setup_state <= READB;    
-//                end
-//                READB: begin
-//                    tcs_start <= 1;
-//                end
-//            endcase
-//        end
-//    end
 
 endmodule
 
