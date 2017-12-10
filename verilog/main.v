@@ -167,17 +167,12 @@ module main(
 
     end
     
-    //SOLVING ALGORITH AND SEQUENCER
+    //SOLVING ALGORITHM, SEQUENCER, AND STATE DETERMINATION
     reg seq_complete = 0;
     wire [199:0] new_moves_to_queue;
     wire [7:0] num_moves_loaded;
     wire [7:0] current_step;
     wire seq_done;
-
-    // wire these things:
-    // moves_avail_to_queue -- when a set of moves have been output that should be thrown on the queue
-    // new_moves_to_queue -- the actual moves output by solving_algorithm
-    // seq_complete - the solving_algorithm is done
 
     reg [161:0] cubestate_for_solving_algorithm;
     wire [161:0] cubestate_updated;
@@ -216,13 +211,13 @@ module main(
 
     solving_algorithm sa(.reset(reset),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue_solve),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready_solve),.piece_counter_stuff(pcs));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue_solve),.new_moves_ready(new_moves_ready_solve),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
-    sequencer seq(.finished_queue(queue_fin), .reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
     
     determine_state ds(.reset(reset), .start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(ready_to_observe), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate), .cubestate_determined(initial_state_found));
     spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue_state), .new_moves(new_moves_ready_state));
-    delay_timer dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
+    delay_timer #(.DURATION(500)) dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
     
-    serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_for_solving_algorithm), .tx_pin(JC[3]), .data_sent(sent_ser_data));
+    sequencer seq(.finished_queue(queue_fin), .reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
+        
     
     //STATE MACHINE
     parameter LOAD_INIT_STATE = 5'd0;
@@ -343,9 +338,10 @@ module main(
     assign LED[1] = !disable_steppers;
     assign LED[2] = determining_state;
     assign LED[13:11] = SW[13:11];
-    assign LED[8] = sent_ser_data;
-    assign LED[7:5] = ser_state;
-
+    assign LED[3] = sent_ser_data;
+    
+    serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_for_solving_algorithm), .tx_pin(JC[3]), .data_sent(sent_ser_data));
+        
 endmodule
 
 module clock_quarter_divider(input clk100_mhz, output reg clock_25mhz = 0);

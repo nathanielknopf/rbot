@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: MIT
-// Engineer: jodalyst
+// Engineer: jeswiezy with much help from jodalyst
 // 
 // Create Date: 10/12/2016 05:11:46 AM
 // Design Name: 
@@ -18,9 +18,6 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
-//i2c_master module:
-//clock comes in at 25MHz...locally generates one at 100kHz to 400kHz (potentially up to 3.8 MHz, I believe, but won't hold breath
 
 module i2c_poll #(parameter NUM_DATA_BYTES=2)
     (input clock,
