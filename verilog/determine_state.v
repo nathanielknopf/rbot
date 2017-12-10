@@ -24,7 +24,7 @@
         // L R' B' U L R' {BL, BD, BR, BU} R L' U' B R L'
         // R2 L2 F2 B2 {DB, DL, DF, DR} B2 F2 L2 R2
 
-module determine_state(input start, edge_color_sensor, corner_color_sensor, color_sensor_stable, clock,
+module determine_state(input start, [2:0] edge_color_sensor, [2:0] corner_color_sensor, color_sensor_stable, clock,
                         output reg send_setup_moves, reg [5:0] counter=0, reg[161:0] cubestate_output, reg cubestate_determined);
 
     // the values used to represent colors in state register

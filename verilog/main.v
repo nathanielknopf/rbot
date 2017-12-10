@@ -211,10 +211,20 @@ module main(
     reg send_ser_data = 0;
     wire sent_ser_data;
     wire [2:0] ser_state;
+    
+    wire sensor_stable;
+    reg start_finding_state = 0;
+    wire send_setup_moves;
+    wire [5:0] setup_counter;
+    wire [161:0] initial_cubestate;
 
     solving_algorithm sa(.reset(reset),.fucked(LED[1]),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready),.piece_counter_stuff(pcs));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue),.new_moves_ready(new_moves_ready),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
     sequencer seq(.reset(reset), .clock(clock_25mhz), .seq_complete(seq_complete), .new_moves(new_moves_ready), .seq(new_moves_to_queue), .seq_done(seq_done), .next_move(next_move), .start_move(move_start), .num_moves(num_moves_loaded), .curr_step(current_step), .move_done(move_done));
+    
+    determine_state ds(.start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(sensor_stable), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate));
+    spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue), .new_moves(new_moves_ready));
+    
     serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_for_solving_algorithm), .tx_pin(JC[3]), .data_sent(sent_ser_data));
     
     //STATE MACHINE
@@ -224,6 +234,7 @@ module main(
     parameter CALCULATE_NEW_STATE = 4'd3;
     parameter SEND_STATE1 = 4'd4;
     parameter SEND_STATE2 = 4'd5;
+    parameter FIND_INIT_STATE = 4'd6;
     reg [3:0] state = 0;
 
     always @(posedge clock_25mhz) begin
@@ -235,8 +246,11 @@ module main(
             state <= DONE_PLANNING_SOLUTION;
         end else begin
             case (state)
+                FIND_INIT_STATE: begin
+                    start_finding_state <= 1;
+                end
                 LOAD_INIT_STATE: begin
-                    cubestate_for_solving_algorithm <= cubestate_initial[SW[13:11]];
+                    cubestate_for_solving_algorithm <= (SW[3]) ? cubestate_initial[SW[13:11]]:initial_cubestate;
                     state <= FIND_SOLUTION;
                 end
 
