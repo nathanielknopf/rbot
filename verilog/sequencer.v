@@ -31,6 +31,7 @@ module sequencer
     output reg start_move,
     output reg [7:0] num_moves = 0,
     output reg [7:0] curr_step = 0,
+    output reg finished_queue,
     input move_done
     );
     
@@ -54,6 +55,7 @@ module sequencer
         end else begin
             case(state)
                 IDLE: begin
+                    finished_queue <= (new_moves) ? 0:1;
                     seq_done <= 0;
                     if(new_moves) begin
                         part_seq[199:0] <= seq[199:0];
