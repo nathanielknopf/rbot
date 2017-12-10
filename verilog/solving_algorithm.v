@@ -1284,61 +1284,72 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
                                 next_moves <= next_moves | {Ri,F,Ri,B,B,R,Fi,Ri,B,B,R,R};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             else if (cubestate[35:33] == Red && cubestate[38:36] == Blue && cubestate[53:51] == G) begin
                                 next_moves <= next_moves | {R,R,B,B,R,F,Ri,B,B,R,Fi,R};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             // a perm - URB
                             else if (cubestate[38:36] == O && cubestate[53:51] == Red && cubestate[20:18] == Blue) begin
                                 next_moves <= next_moves | {U,Ri,F,Ri,B,B,R,Fi,Ri,B,B,R,R,Ui};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             else if (cubestate[38:36] == Blue && cubestate[53:51] == O && cubestate[20:18] == Red) begin
                                 next_moves <= next_moves | {U,R,R,B,B,R,F,Ri,B,B,R,Fi,R,Ui};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             // a perm - ULB
                             else if (cubestate[35:33] == Blue && cubestate[53:51] == O && cubestate[20:18] == G) begin
                                 next_moves <= next_moves | {U,U,R,R,B,B,R,F,Ri,B,B,R,Fi,R,Ui,Ui};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             else if (cubestate[35:33] == O && cubestate[53:51] == G && cubestate[20:18] == Blue) begin
                                 next_moves <= next_moves | {U,U,Ri,F,Ri,B,B,R,Fi,Ri,B,B,R,R,Ui,Ui};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             // a perm - ULF
                             else if (cubestate[35:33] == Red && cubestate[38:36] == O && cubestate[20:18] == G) begin
                                 next_moves <= next_moves | {Ui,R,R,B,B,R,F,Ri,B,B,R,Fi,R,U};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             else if (cubestate[35:33] == O && cubestate[38:36] == G && cubestate[20:18] == Red) begin
                                 next_moves <= next_moves | {Ui,Ri,F,Ri,B,B,R,Fi,Ri,B,B,R,R,U};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             // e perm - two orientations
                             else if (cubestate[26:24] == O && cubestate[35:33] == Red && cubestate[23:21] == G && cubestate[38:36] == G) begin
                                 next_moves <= next_moves | {R,Bi,Ri,F,R,B,Ri,Fi,R,B,Ri,F,R,Bi,Ri,Fi};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             else if (cubestate[26:24] == Red && cubestate[35:33] == O && cubestate[23:21] == Blue && cubestate[38:36] == Blue) begin
                                 next_moves <= next_moves | {U,R,Bi,Ri,F,R,B,Ri,Fi,R,B,Ri,F,R,Bi,Ri,Fi,Ui};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             // h perm - only one orientation
                             else if (cubestate[26:24] == Blue && cubestate[35:33] == Blue && cubestate[56:54] == G && cubestate[53:51] == G) begin
                                 next_moves <= next_moves | {R,R,U,U,R,R,U,U,R,R,U,R,R,U,U,R,R,U,U,R,R,U};
                                 new_moves_ready <= 1;
                                 state <= UPDATE_STATE;
+                                step <= SOLVED;
                             end
                             // otherwise just turn U till we figure out what the shit is happening here
                             else begin
