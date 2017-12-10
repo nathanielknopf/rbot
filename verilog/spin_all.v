@@ -1,4 +1,4 @@
-// basically need an internal variable that tracks what block of moves to spit out
+ // basically need an internal variable that tracks what block of moves to spit out
 // some dumb nerd shit
 
 // determine all corners
@@ -55,67 +55,67 @@ module spin_all(input send_setup_moves, clock, [5:0] counter,
             SEND_MOVES: begin
                 case (counter)
                     // {ULB, ULF, URF, URB}
-                    0: moves <= moves | 0;
-                    1: moves <= moves | {U};
-                    2: moves <= moves | {U};
-                    3: moves <= moves | {U};
-                    // F B' {LDB, LDF, LUF, LUB} B F'
-                    4: moves <= moves | {U,F,Bi};
-                    5: moves <= moves | {U};
-                    6: moves <= moves | {U};
-                    7: moves <= moves | {U};
-                    // L' R {FUL, FDL, FDR, FUR} R' L
-                    8: moves <= moves | {U,B,Fi,Li,R};
-                    9: moves <= moves | {U};
-                    10: moves <= moves | {U};
-                    11: moves <= moves | {U};
-                    // F' B {RUB, RUF, RDF, RDB} B' F
-                    12: moves <= moves | {U,Ri,L,Fi,B};
-                    13: moves <= moves | {U};
-                    14: moves <= moves | {U};
-                    15: moves <= moves | {U};
-                    // L R' {BDL, BUL, BUR, BDR} R L'
-                    16: moves <= moves | {U,Bi,F,L,Ri};
-                    17: moves <= moves | {U};
-                    18: moves <= moves | {U};
-                    19: moves <= moves | {U};
-                    // L2 R2 {DLF, DLB, DRB, DRF} L2 R2
-                    20: moves <= moves | {U,Ri,L};
-                    21: moves <= moves | {U};
-                    22: moves <= moves | {U};
-                    23: moves <= moves | {U};
-                    // {UB, UL, UF, UR}
-                    24: moves <= moves | {Li,R};
-                    25: moves <= moves | {U};
-                    26: moves <= moves | {U};
-                    27: moves <= moves | {U};
-                    // F B' L U F B' {LD, LF, LU, LB} B F' U' L' B F'
-                    28: moves <= moves | {U,F,Bi,L,U,F,Bi};
-                    29: moves <= moves | {U};
-                    30: moves <= moves | {U};
-                    31: moves <= moves | {U};
-                    // L' R F U' L' R {FR, FD, FL, FU} R' L U F' R' L
-                    32: moves <= moves | {U,B,Fi,Ui,Li,B,Fi,Li,R,F,Ui,Li,R};
-                    33: moves <= moves | {U};
-                    34: moves <= moves | {U};
-                    35: moves <= moves | {U};
-                    // F' B R U F' B {RU, RL, RD, RB} B' F U' R' B' F
-                    36: moves <= moves | {U,Ri,L,U,Fi,Ri,L,Fi,B,R,U,Fi,B};
-                    37: moves <= moves | {U};
-                    38: moves <= moves | {U};
-                    39: moves <= moves | {U};
-                    // L R' B' U L R' {BL, BD, BR, BU} R L' U' B R L'
-                    40: moves <= moves | {U,Bi,F,Ui,Ri,Bi,F,L,Ri,Bi,U,L,Ri};
-                    41: moves <= moves | {U};
-                    42: moves <= moves | {U};
-                    43: moves <= moves | {U};
-                    // R2 L2 F2 B2 {DB, DL, DF, DR} B2 F2 L2 R2
-                    40: moves <= moves | {U,R,Li,Ui,B,R,Li,R,R,L,L,F,F,B,B};
-                    41: moves <= moves | {U};
-                    42: moves <= moves | {U};
-                    43: moves <= moves | {U};
+                    0: moves <= moves | {L,Ri,Fi}; // ULB
+                    1: moves <= moves | {F}; // ULF
+                    2: moves <= moves | {F}; // URF
+                    3: moves <= moves | {F}; // URB
+                    // {LDB, LDF, LUF, LUB}
+                    4: moves <= moves | {F,F,Li,R,Ui,D}; // LDB
+                    5: moves <= moves | {F}; // LDF
+                    6: moves <= moves | {F}; // LUF
+                    7: moves <= moves | {F}; // LUB
+                    // {FUL, FDL, FDR, FUR}
+                    8: moves <= moves | {F,U,Di,Fi}; // FUL
+                    9: moves <= moves | {F}; // FDL
+                    10: moves <= moves | {F}; // FDR
+                    11: moves <= moves | {F}; // FUR
+                    // {RUB, RUF, RDF, RDB}
+                    12: moves <= moves | {F,F,U,Di,F,F}; // RUB
+                    13: moves <= moves | {F}; // RUF
+                    14: moves <= moves | {F}; // RDF
+                    15: moves <= moves | {F}; // RDB
+                    // {BDL, BUL, BUR, BDR}
+                    16: moves <= moves | {Fi,U,Di}; // BDL
+                    17: moves <= moves | {Fi}; // BUL
+                    18: moves <= moves | {Fi}; // BUR
+                    19: moves <= moves | {Fi}; // BDR
+                    // {DLF, DLB, DRB, DRF}
+                    20: moves <= moves | {Fi,U,U,D,D,Li,R,Fi}; // DLF
+                    21: moves <= moves | {F}; // DLB
+                    22: moves <= moves | {F}; // DRB
+                    23: moves <= moves | {F}; // DRF
+                    // {UB, UL, UF, UR}   (solved)v
+                    24: moves <= moves | {F,F,L,Ri,Ui,L,Ri,U,F,L,Ri,F,F}; // UB
+                    25: moves <= moves | {F}; // UL
+                    26: moves <= moves | {F}; // UF
+                    27: moves <= moves | {F}; // UR
+                    // {LD, LF, LU, LB}               (solved)v
+                    28: moves <= moves | {Fi,R,Li,Fi,Ui,R,Li,U,Ui,D,Li,Fi,Ui,D,F};
+                    29: moves <= moves | {F}; // LF
+                    30: moves <= moves | {F}; // LU
+                    31: moves <= moves | {F}; // LB
+                    // {FR, FD, FL, FU}        (solved)v
+                    32: moves <= moves | {Di,U,F,L,Di,U,F}; // FR
+                    33: moves <= moves | {Fi}; // FD
+                    34: moves <= moves | {Fi}; // FL
+                    35: moves <= moves | {Fi}; // FU
+                    // {RU, RL, RD, RB}(slvd)v
+                    36: moves <= moves | {F,F,U,Di,Ri,Fi,Di,U,Fi}; // RU
+                    37: moves <= moves | {F}; // RL
+                    38: moves <= moves | {F}; // RD
+                    39: moves <= moves | {F}; // RB
+                    // {BL, BD, BR, BU}            (solved)v
+                    40: moves <= moves | {F,F,Ui,D,F,R,D,Ui,D,D,U,U,F,B,U,U,D,D,F,F}; // BL
+                    41: moves <= moves | {F}; // BD
+                    42: moves <= moves | {F}; // BR
+                    43: moves <= moves | {F}; // BU
+                    // {DB, DL, DF, DR}                   (solved)v
+                    40: moves <= moves | {Fi,D,D,U,U,Bi,Fi,U,U,D,D,R,Li,Di,F,R,Li,F}; // DB
+                    41: moves <= moves | {F}; // DL
+                    42: moves <= moves | {F}; // DF
+                    43: moves <= moves | {F}; // DR
                     // done, gotta make sure we do these moves....
-                    44: moves <= moves | {B,B,F,F,L,L,R,R};
+                    44: moves <= moves | {L,Ri,Fi,D,L,Ri}; // solved...?
                 endcase
                 state <= IDLE;
                 new_moves <= 1;
