@@ -64,7 +64,7 @@ module color_translator(
             color_corner <= G;
         end
         
-        if(edge_bright > 15)begin //W or Y or O
+        if(edge_bright > 15 || (edge_bright > 13 && corner_bright < 10))begin //W or Y or O
             if(b_edge > 5 || (b_edge > 4 && edge_bright < 19))begin
                 color_edge <= W;
             end else if(r_edge > 9 && g_edge < 9)begin

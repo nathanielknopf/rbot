@@ -241,7 +241,7 @@ module main(
     always @(posedge clock_25mhz) begin
         if (reset) begin
             seq_complete <= 0;
-            state <= FIND_INIT_STATE;
+            state <= (SW[3]) ? LOAD_INIT_STATE:FIND_INIT_STATE;
             determining_state <= 1;
             start_finding_solution <= 0;
         end else if(SW[14])begin
