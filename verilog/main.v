@@ -178,7 +178,7 @@ module main(
 
         // scramble: Ui F2 R2 L F2 B L2 U2 R Fi Ui B2 R2 L2 D F2 Ui L2 B2 Ui L2
         //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
-        cubestate_initial[2] = {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,O};
+        cubestate_initial[2] = {Y,Blue,Red,G,O,W,W,Y,G,Blue,O,Blue,Y,G,Red,Red,Red,O,Blue,G,Red,G,O,Y,Y,W,Blue,W,O,W,O,Blue,W,Y,Red,Blue,Blue,Red,Y,G,Red,O,W,W,G,Red,O,Y,O,G,Y,Blue,G,W};
 
         // scramble: Di R2 Di F2 D L2 F2 U L2 B2 Ui L F2 Ri Bi U R2 U Li F Ui
         //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
@@ -194,7 +194,7 @@ module main(
 
         // scramble: F D2 Bi F2 L2 Fi L2 D2 Fi U2 Fi Ui Bi R Ui Li B2 F L U2 Li
         //                              |----centers-----|----edges----edges----edges----edges----edges----edges----edges----|----corners----corners----corners----corners----corners----corners-|
-        cubestate_initial[6] = {Y,Blue,Red,G,O,W,O,Red,G,G,Y,Y,W,W,Blue,W,O,Blue,Blue,G,Y,G,Red,O,Y,Red,Red,Y,Blue,O,Red,Red,W,Red,W,Y,G,O,G,Y,Y,O,Blue,Blue,Blue,W,Y,G,W,Blue,G,O,O,Red};
+        cubestate_initial[6] = {Y,Blue,Red,G,O,W,O,Red,G,G,Y,Y,W,W,Blue,W,O,Blue,Blue,G,Y,G,Red,O,Y,Red,Red,W,Blue,O,Red,Red,W,Red,W,Y,G,O,G,Y,Y,O,Blue,Blue,Blue,W,Y,G,W,Blue,G,O,O,Red};
     end
     
     //SOLVING ALGORITHM, SEQUENCER, AND STATE DETERMINATION
@@ -341,16 +341,17 @@ module main(
                     // the first time we enter this state, we want to change the input cubestate to solving_algorithm from
                     // cubestate_initial to cubestate_updated, which is produced by update_state.v module
                     cubestate_for_solving_algorithm <= cubestate_updated;
-                    state <= (state_updated) ? ((SW[2]) ? SEND_STATE1:FIND_SOLUTION) : CALCULATE_NEW_STATE;
+//                    state <= (state_updated) ? ((SW[2]) ? SEND_STATE1:FIND_SOLUTION) : CALCULATE_NEW_STATE;
+                    state <= (state_updated) ? FIND_SOLUTION : CALCULATE_NEW_STATE;
                 end
-                SEND_STATE1: begin
-                    send_ser_data <= 1;
-                    state <= (sent_ser_data) ? SEND_STATE1:SEND_STATE2;
-                end
-                SEND_STATE2: begin
-                    send_ser_data <= 0;
-                    state <= (sent_ser_data) ? FIND_SOLUTION:SEND_STATE2;
-                end
+//                SEND_STATE1: begin
+//                    send_ser_data <= 1;
+//                    state <= (sent_ser_data) ? SEND_STATE1:SEND_STATE2;
+//                end
+//                SEND_STATE2: begin
+//                    send_ser_data <= 0;
+//                    state <= (sent_ser_data) ? FIND_SOLUTION:SEND_STATE2;
+//                end
 
                 DONE_PLANNING_SOLUTION: begin
                     seq_complete <= 1;
@@ -366,9 +367,10 @@ module main(
     assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, 2'h0, setup_counter, num_moves_loaded} : {r_edge[3:0], g_edge[3:0], b_edge[3:0], 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
     assign LED[0] = cube_solution_finished;
     assign LED[1] = !disable_steppers;
-    assign LED[2] = determining_state;
+    assign LED[2] = SW[3];
+    assign LED[3] = determining_state;
+    assign LED[4] = sent_ser_data;
     assign LED[13:11] = SW[13:11];
-    assign LED[3] = sent_ser_data;
     
     serial ser(.state(ser_state), .reset(reset), .clock(clock_25mhz), .send_data(send_ser_data), .data(cubestate_for_solving_algorithm), .tx_pin(JC[3]), .data_sent(sent_ser_data));
         
