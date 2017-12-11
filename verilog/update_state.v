@@ -33,7 +33,7 @@ module update_state (
         case (state)
             MOVING: begin
                 case (next_move)
-                    R: begin
+                    R: begin // checked at 1:07 AM
                         // corners not on R face
                         cubestate[8:6] <= cubestate[32:30];
                         cubestate[11:9] <= cubestate[35:33];
@@ -58,7 +58,7 @@ module update_state (
                         cubestate[116:114] <= cubestate[119:117];
                         cubestate[113:111] <= cubestate[116:114];
                     end
-                    Ri: begin
+                    Ri: begin // checked at 1:09 AM
                         // corners not on R face
                         cubestate[32:30] <= cubestate[8:6];
                         cubestate[35:33] <= cubestate[11:9];
@@ -83,7 +83,7 @@ module update_state (
                         cubestate[119:117] <= cubestate[116:114];
                         cubestate[116:114] <= cubestate[113:111];
                     end
-                    U: begin
+                    U: begin // checked at 1:10 AM
                         // corners not on U face
                         cubestate[26:24] <= cubestate[41:39];
                         cubestate[41:39] <= cubestate[56:54];
@@ -108,7 +108,7 @@ module update_state (
                         cubestate[83:81] <= cubestate[74:72];
                         cubestate[74:72] <= cubestate[77:75];
                     end
-                    Ui: begin
+                    Ui: begin // checked at 1:12 AM
                         // corners not on U face
                         cubestate[41:39] <= cubestate[26:24];
                         cubestate[56:54] <= cubestate[41:39];
@@ -133,7 +133,7 @@ module update_state (
                         cubestate[74:72] <= cubestate[83:81];
                         cubestate[77:75] <= cubestate[74:72];
                     end
-                    F: begin
+                    F: begin // checked at 1:13 AM
                         // corners not on F face
                         cubestate[41:39] <= cubestate[5:3];
                         cubestate[71:69] <= cubestate[41:39];
@@ -158,7 +158,7 @@ module update_state (
                         cubestate[101:99] <= cubestate[98:96];
                         cubestate[104:102] <= cubestate[101:99];
                     end
-                    Fi: begin
+                    Fi: begin // checked at 1:14 AM
                         // corners not on F face
                         cubestate[5:3] <= cubestate[41:39];
                         cubestate[41:39] <= cubestate[71:69];
@@ -183,7 +183,7 @@ module update_state (
                         cubestate[98:96] <= cubestate[101:99];
                         cubestate[101:99] <= cubestate[104:102];
                     end
-                    L: begin
+                    L: begin // checked at 1:16 AM
                         // corners not on L face
                         cubestate[2:0] <= cubestate[50:48];
                         cubestate[50:48] <= cubestate[62:60];
@@ -208,7 +208,7 @@ module update_state (
                         cubestate[89:87] <= cubestate[92:90];
                         cubestate[92:90] <= cubestate[95:93];
                     end
-                    Li: begin
+                    Li: begin // checked 1:19 AM
                         // corners not on L face
                         cubestate[50:48] <= cubestate[2:0];
                         cubestate[62:60] <= cubestate[50:48];
@@ -233,7 +233,7 @@ module update_state (
                         cubestate[92:90] <= cubestate[89:87];
                         cubestate[95:93] <= cubestate[92:90];
                     end
-                    B: begin
+                    B: begin // checked at 1:22 AM
                         // corners not on B face
                         cubestate[2:0] <= cubestate[38:36];
                         cubestate[38:36] <= cubestate[68:66];
@@ -258,7 +258,7 @@ module update_state (
                         cubestate[122:120] <= cubestate[131:129];
                         cubestate[131:129] <= cubestate[128:126];
                     end
-                    Bi: begin
+                    Bi: begin // checked at 1:25 AM
                         // corners not on B face
                         cubestate[38:36] <= cubestate[2:0];
                         cubestate[68:66] <= cubestate[38:36];
@@ -283,7 +283,7 @@ module update_state (
                         cubestate[131:129] <= cubestate[122:120];
                         cubestate[128:126] <= cubestate[131:129];
                     end
-                    D: begin
+                    D: begin // checked at 1:27 AM
                         // corners not on D face
                         cubestate[29:27] <= cubestate[14:12];
                         cubestate[14:12] <= cubestate[59:57];
@@ -308,7 +308,7 @@ module update_state (
                         cubestate[134:132] <= cubestate[143:141];
                         cubestate[143:141] <= cubestate[140:138];
                     end
-                    Di: begin
+                    Di: begin // checked at 1:28 AM
                         // corners not on D face
                         cubestate[14:12] <= cubestate[29:27];
                         cubestate[59:57] <= cubestate[14:12];
