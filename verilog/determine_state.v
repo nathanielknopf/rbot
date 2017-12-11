@@ -50,8 +50,9 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
     parameter PREP = 3'd0;
     parameter IDLE = 3'd1;
     parameter OBSERVE = 3'd2;
-    parameter DONE = 3'd3;
+    parameter DONE1 = 3'd3;
     parameter SETUP = 3'd4;
+    parameter DONE2 = 3'd5;
 
     reg [2:0] state = SETUP;
 
@@ -76,7 +77,7 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     // to the motors. Then we go to IDLE
                     send_setup_moves <= 1;
                     // VERY NOT SURE ABOUT THIS FOLLOWING LINE - NEED TO FIGURE OUT WHAT VALUE OF COUNTER MATTERS...
-                    state <= (counter < 48) ? IDLE : DONE; // still need to do the moves associated with 44 on counter in spin_all...
+                    state <= (counter < 47) ? IDLE : DONE1; // still need to do the moves associated with 44 on counter in spin_all...
                     cubestate <= cubestate << 3;
                 end
                 IDLE: begin
@@ -93,8 +94,15 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     // increment counter
                     counter <= counter + 1;
                 end
-                DONE: begin
-                    state <= DONE;
+                DONE1: begin
+                    // do the last moves
+                    counter <= counter + 1;
+                    send_setup_moves <= 1;
+                    state <= DONE2;
+                end
+                DONE2: begin
+                    send_setup_moves <= 0;
+                    state <= DONE2;
                     cubestate_output <= cubestate;
                     cubestate_determined <= 1;
                     send_setup_moves <= 0; // only send them for one bit...? i forget what this signal does.
