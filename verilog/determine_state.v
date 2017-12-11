@@ -47,14 +47,21 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
     // PREP: send setup moves to motor, go immediately to wait
     // IDLE: wait for the motors to finish - when they send done signal, go to observe
     // OBSERVE: store value under sensor in question in value in question
-    parameter PREP = 3'd0;
-    parameter IDLE = 3'd1;
-    parameter OBSERVE = 3'd2;
-    parameter DONE1 = 3'd3;
-    parameter SETUP = 3'd4;
-    parameter DONE2 = 3'd5;
+    parameter PREP = 4'd0;
+    parameter IDLE = 4'd1;
+    parameter OBSERVE = 4'd2;
+    parameter DONE1 = 4'd3;
+    parameter SETUP = 4'd4;
+    parameter DONE2 = 4'd5;
+    parameter OBSERVE1 = 4'd6;
+    parameter OBSERVE2 = 4'd7;
+    parameter PREP1 = 4'd8;
+    parameter IDLE1 = 4'd9;
+    
+    reg [5:0] counter_mem = 0;
+    reg [2:0] color_acc [3:0];
 
-    reg [2:0] state = SETUP;
+    reg [3:0] state = SETUP;
 
     always @(posedge clock) begin
         if (reset) begin
@@ -87,12 +94,46 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     if (color_sensor_stable) state <= OBSERVE;
                 end
                 OBSERVE: begin
+                    if(counter < 24) begin
+                        state <= PREP1;
+                        counter_mem <= counter + 1;
+                        counter <= 49;
+                        color_acc[0] <= edge_color_sensor;
+                    end else begin
+                        state <= PREP;
+                        counter <= counter + 1;
+                        cubestate <= cubestate | {159'h0, corner_color_sensor};
+                    end
+                end
+                PREP1: begin
+                    // we need to tell the spin_all module to send the appropriate moves
+                    // to the motors. Then we go to IDLE
+                    send_setup_moves <= 1;
+                    state <= IDLE1;
+                end
+                IDLE1: begin
+                    // make sure we aren't telling spin_all module to keep sending moves
+                    send_setup_moves <= 0;
+                    // sit here waiting until done turning happens
+                    if (color_sensor_stable) state <= OBSERVE1;
+                end
+                OBSERVE1: begin
                     // when we get here, we can observe the color under the appropriate sensor
-                    cubestate <= cubestate | ((counter < 24) ? {159'h0, edge_color_sensor} : {159'h0, corner_color_sensor});
-//                    cubestate <= cubestate | {159'h0, edge_color_sensor};
+                    color_acc[counter-48] <= edge_color_sensor;
+                    if(counter == 51) begin
+                        state <= OBSERVE2;
+                        counter <= counter_mem;
+                    end else begin
+                        counter <= counter + 1;
+                        state <= PREP1;
+                    end
+                end
+                OBSERVE2: begin
+                    if(color_acc[0] == color_acc[1] | color_acc[0] == color_acc[2] | color_acc[0] == color_acc[3]) cubestate <= cubestate | {159'h0, color_acc[0]};
+                    else if(color_acc[1] == color_acc[2] | color_acc[1] == color_acc[3]) cubestate <= cubestate | {159'h0, color_acc[1]};
+                    else if(color_acc[2] == color_acc[3]) cubestate <= cubestate | {159'h0, color_acc[2]};
+                    else cubestate <= cubestate | {159'h0, color_acc[3]};
                     state <= PREP;
-                    // increment counter
-                    counter <= counter + 1;
                 end
                 DONE1: begin
                     // do the last moves

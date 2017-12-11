@@ -117,6 +117,10 @@ module spin_all(input send_setup_moves, clock, [5:0] counter,
                     47: moves <= moves | {Fi,R,Ri}; // UBL
                     // unfuck it
                     48: moves <= moves | {F,R,Li};
+                    // double check edge before continuing
+                    49: moves <= moves | {L, U, Ui};
+                    50: moves <= moves | {L, D, Di};
+                    51: moves <= moves | {L, U, Ui};
                 endcase
                 state <= IDLE;
                 new_moves <= 1;
