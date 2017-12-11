@@ -32,6 +32,6 @@ module lookup (
         21: ind <= 7'd75; // UFR - cubestate[8:6] (actually want 83:81)
         22: ind <= 7'd96; // UFL - cubestate[5:3] (actually want 101:99)
         23: ind <= 7'd75; // UBL - cubestate[2:0] (actually want 77:75)
-        default : ind <= 3'd0;
+        default : ind <= 7'd0;
     endcase
 endmodule
