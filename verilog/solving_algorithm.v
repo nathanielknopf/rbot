@@ -884,7 +884,7 @@ module solving_algorithm(input start, clock, reset, [161:0] cubestate, state_upd
     
                                     // edge is in RB
                                     else if (cubestate[128:126] == G && cubestate[119:117] == O) begin
-                                        next_moves <= next_moves | {D,D,Ri,U,R,D,D,U,U,Li,U,L};
+                                        next_moves <= next_moves | {D,D,Ri,U,R,D,D,U,U,Li,Ui,L};
                                         new_moves_ready <= 1;
                                         state <= UPDATE_STATE;
                                         piece_counter <= 0;
