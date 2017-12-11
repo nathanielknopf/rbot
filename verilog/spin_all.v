@@ -121,6 +121,7 @@ module spin_all(input send_setup_moves, clock, [5:0] counter,
                     49: moves <= moves | {L, U, Ui};
                     50: moves <= moves | {L, D, Di};
                     51: moves <= moves | {L, U, Ui};
+                    52: moves <= moves | {L, D, Di};
                 endcase
                 state <= IDLE;
                 new_moves <= 1;

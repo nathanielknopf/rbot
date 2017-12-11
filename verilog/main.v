@@ -114,12 +114,14 @@ module main(
     assign g_corner = corner_val[15:8];
     assign b_corner = corner_val[47:40];
     
+    wire [2:0] known_edge_color;
+    
     clock_200khz clock_for_i2c(.reset(reset), .clock(clock_25mhz), .slow_clock(i2c_clock));
     
     color_sensor edge_reader(.value(edge_val), .scl(JA[3]), .sda(JA[2]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset));
     color_sensor corner_reader(.value(corner_val), .scl(JA[1]), .sda(JA[0]), .clock(clock_25mhz), .scl_clock(i2c_clock), .reset(reset));
     
-    color_translator(.clock(clock_25mhz), .r_edge(r_edge), .g_edge(g_edge), .b_edge(b_edge), .r_corner(r_corner), .g_corner(g_corner), .b_corner(b_corner), .color_edge(edge_color), .color_corner(corner_color));
+    color_translator(.clock(clock_25mhz), .r_edge(r_edge), .g_edge(g_edge), .b_edge(b_edge), .r_corner(r_corner), .g_corner(g_corner), .b_corner(b_corner), .color_edge(edge_color), .color_corner(corner_color), .known_edge_color(known_edge_color));
     
     //CONSTANTS
     // the values used to represent colors in cubestate register
@@ -242,7 +244,7 @@ module main(
     solving_algorithm sa(.reset(reset),.step_stuff(step_stuff),.state_stuff(state_stuff),.start(start_finding_solution),.clock(clock_25mhz),.cubestate(cubestate_for_solving_algorithm),.state_updated(state_updated),.next_moves(new_moves_to_queue_solve),.cube_solved(cube_solution_finished),.new_moves_ready(new_moves_ready_solve),.piece_counter_stuff(pcs));
     update_state us(.clock(clock_25mhz),.moves_input(new_moves_to_queue_solve),.new_moves_ready(new_moves_ready_solve),.cubestate_input(cubestate_for_solving_algorithm),.cubestate_updated(cubestate_updated),.state_updated(state_updated));
     
-    determine_state ds(.reset(reset), .start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(ready_to_observe), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate), .cubestate_determined(initial_state_found));
+    determine_state ds(.reset(reset), .start(start_finding_state), .edge_color_sensor(edge_color), .corner_color_sensor(corner_color), .color_sensor_stable(ready_to_observe), .clock(clock_25mhz), .send_setup_moves(send_setup_moves), .counter(setup_counter), .cubestate_output(initial_cubestate), .cubestate_determined(initial_state_found), .known_edge_color(known_edge_color));
     spin_all spin_it(.send_setup_moves(send_setup_moves), .clock(clock_25mhz), .counter(setup_counter), .moves(new_moves_to_queue_state), .new_moves(new_moves_ready_state));
     delay_timer #(.DURATION(1000)) dt(.clock(clock_25mhz), .reset(reset), .start(start_sens_stability_timer), .done(sensor_stable));
     
@@ -364,7 +366,7 @@ module main(
     end
     
     //USER DEBUG OUTPUT
-    assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, 2'h0, setup_counter, num_moves_loaded} : {r_edge[3:0], g_edge[3:0], b_edge[3:0], 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
+    assign data = (SW[0]) ? {1'h0, step_stuff, 2'h0, pcs, state, next_move, 2'h0, setup_counter, num_moves_loaded} : {((known_edge_color == 3'd7) ? {r_edge[3:0], g_edge[3:0], b_edge[3:0]} : 12'h0), 1'h0, edge_color, r_corner[3:0], g_corner[3:0], b_corner[3:0], 1'h0, corner_color};
     assign LED[0] = cube_solution_finished;
     assign LED[1] = !disable_steppers;
     assign LED[2] = SW[3];

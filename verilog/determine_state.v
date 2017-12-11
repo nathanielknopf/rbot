@@ -61,12 +61,6 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
     
     reg [5:0] counter_mem = 0;
     reg [2:0] color_acc [3:0];
-    wire [4:0] corner_num;
-    wire [7:0] ind;
-    
-    assign corner_num = counter - 24;
-    
-    lookup lt(.clock(clock), .corner_num(corner_num), .ind(ind));
 
     reg [3:0] state = SETUP;
 
@@ -156,11 +150,11 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                 end
                 OBSERVE1: begin
                     // when we get here, we can observe the color under the appropriate sensor
-                    color_acc[counter-48] <= edge_color_sensor;
-                    if(counter == 51) begin
+                    if(counter == 52) begin
                         state <= OBSERVE2;
                         counter <= counter_mem;
                     end else begin
+                        color_acc[counter-48] <= edge_color_sensor;
                         counter <= counter + 1;
                         state <= PREP1;
                     end
