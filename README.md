@@ -1,16 +1,9 @@
-# rbot
-6.111 Fall 2017 Final Project - Rubik's Cube Solving Robot
-Jacob Swiezy, Nathaniel Knopf
+# rbot - A Rubik's Cube Solving Robot, Implemented on a Nexys 4 FPGA
+## 6.111 Fall 2017 Final Project - Jacob Swiezy, Nathaniel Knopf
 
-## How to Use this Project
-Don't. Like seriously, this is *totally* fucked, man.
+### Overview
+There's a robot. It can turn a Rubik's Cube, and has two color sensors. One at the FDL corner sticker (front bottom left), and one at the FD edge sticker (front bottom). By turning observing the colors at these locations while a scrambled Rubik's Cube is turned, the starting state of the Rubik's Cube can be determined. This information is stored in a 162 bit register called "cubestate."
 
-## How this Project Works
-It doesn't.
+A module called solving algorithm then uses "cubestate" to generate a series of moves to solve the Rubik's Cube using an implementation of the human algorithm called "The Beginner's Method" (or "Green Cross"). This is accomplished through the use of a FSM where the state represents the step of the method being executed. In each state, different patterns are identified, and corresponding sequences of moves to manipulate the Rubik's Cube in desired way are exported by the solving algorithm module.
 
-#### But actually?
-There's a robot. It can turn a Rubik's Cube, and has two color sensors. One at the FDL corner sticker, and one at the FD edge sticker. By turning a scrambled Rubik's Cube and paying attention to what those sensors say, the robot can figure out what the scrambled state of the Rubik's Cube is. This information is stored in a 162 bit register called "cubestate."
-
-A module called solving algorithm then generates a series of moves to solve the Rubik's Cube using a bastardization of the human-y method called "The Beginner's Method" (also called "Green Cross").
-
-The robot collects these moves and then executes them, and provided that it doesn't jam up the cube (there is no feedback here) the Rubik's Cube gets solved. Hopefully.
+The sequencing module then collects these moves and sends them to the robot, which executes them on the Rubik's Cube to solve it.
