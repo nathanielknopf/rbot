@@ -25,7 +25,7 @@
         // R2 L2 F2 B2 {DB, DL, DF, DR} B2 F2 L2 R2
 
 module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner_color_sensor, color_sensor_stable, clock,
-                        output reg send_setup_moves, reg [5:0] counter=0, reg[161:0] cubestate_output, reg cubestate_determined);
+                        output reg send_setup_moves, reg [5:0] counter=0, reg[161:0] cubestate_output, reg cubestate_determined, reg [2:0] known_edge_color=3'd7);
 
     // the values used to represent colors in state register
     // colors are 3 bit numbers, explaining why state is 54*3 bit register
@@ -35,6 +35,7 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
     parameter Red = 3'd3;
     parameter Blue = 3'd4;
     parameter Y = 3'd5;
+    parameter NULL = 3'd7;
 
     // cubestate is a 54*3=162 bit register
     // cubestate[71:0] is reserved for corners
@@ -60,6 +61,12 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
     
     reg [5:0] counter_mem = 0;
     reg [2:0] color_acc [3:0];
+    wire [4:0] corner_num;
+    wire [7:0] ind;
+    
+    assign corner_num = counter - 24;
+    
+    lookup lt(.clock(clock), .corner_num(corner_num), .ind(ind));
 
     reg [3:0] state = SETUP;
 
@@ -78,6 +85,7 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     // only start when we get the start signal...
                     cubestate <= {144'd0, Y, Blue, Red, G, O, W};
                     state <= (start) ? PREP : SETUP;
+                    known_edge_color <= NULL;
                 end
                 PREP: begin
                     // we need to tell the spin_all module to send the appropriate moves
@@ -86,6 +94,35 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     // VERY NOT SURE ABOUT THIS FOLLOWING LINE - NEED TO FIGURE OUT WHAT VALUE OF COUNTER MATTERS...
                     state <= (counter < 47) ? IDLE : DONE1; // still need to do the moves associated with 44 on counter in spin_all...
                     cubestate <= cubestate << 3;
+                    
+                    case (counter)
+                        // subtract 75 + 3 times the index here
+                        0: known_edge_color <= cubestate[38:36]; // DFR - cubestate[71:69] (actually want 107:105)
+                        1: ind <= 7'd75; // DBR - cubestate[68:66] (actually want 143:141)
+                        2: ind <= 7'd36; // DBL - cubestate[65:63] (actually want 101:99)
+                        3: ind <= 7'd75; // DFL - cubestate[62:60] (actually want 137:135)
+                        4: ind <= 7'd48; // BDL - cubestate[59:57] (actually want 107:105)
+                        5: ind <= 7'd72; // BUR - cubestate[56:54] (actually want 128:126)
+                        6: ind <= 7'd48; // BUL - cubestate[53:51] (actually want 101:99)
+                        7: ind <= 7'd72; // BDL - cubestate[50:48] (actually want 122:120)
+                        8: ind <= 7'd51; // RDB - cubestate[47:45] (actually want 98:96)
+                        9: ind <= 7'd72; // RDF - cubestate[44:42] (actually want 116:114)
+                        10: ind <= 7'd63; // RUF - cubestate[41:39] (actually want 104:102)
+                        11: ind <= 7'd72; // RUB - cubestate[38:36] (actually want 110:108)
+                        12: ind <= 7'd72; // FUR - cubestate[35:33] (actually want 107:105)
+                        13: ind <= 7'd66; // FDR - cubestate[32:30] (actually want 98:96)
+                        14: ind <= 7'd72; // FDL - cubestate[29:27] (actually want 101:99)
+                        15: ind <= 7'd78; // FUL - cubestate[26:24] (actually want 104:102)
+                        16: ind <= 7'd81; // LBU - cubestate[23:21] (actually want 104:102)
+                        17: ind <= 7'd72; // LFU - cubestate[20:18] (actually want 92:90)
+                        18: ind <= 7'd81; // LFD - cubestate[17:15] (actually want 98:96)
+                        19: ind <= 7'd72; // LBD - cubestate[14:12] (actually want 86:84)
+                        20: ind <= 7'd96; // UBR - cubestate[11:9] (actually want 107:105)
+                        21: ind <= 7'd75; // UFR - cubestate[8:6] (actually want 83:81)
+                        22: ind <= 7'd96; // UFL - cubestate[5:3] (actually want 101:99)
+                        23: ind <= 7'd75; // UBL - cubestate[2:0] (actually want 77:75)
+                        default : known_edge_color <= NULL;
+                    endcase
                 end
                 IDLE: begin
                     // make sure we aren't telling spin_all module to keep sending moves
@@ -140,6 +177,7 @@ module determine_state(input start, reset, [2:0] edge_color_sensor, [2:0] corner
                     counter <= counter + 1;
                     send_setup_moves <= 1;
                     state <= DONE2;
+                    known_edge_color <= NULL;
                 end
                 DONE2: begin
                     send_setup_moves <= 0;

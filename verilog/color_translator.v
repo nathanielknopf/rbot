@@ -47,8 +47,12 @@ module color_translator(
     
     
     always @(posedge clock)begin
+    
+        //determine corner color
+        
         case(known_edge_color)
             W:begin
+                color_edge <= W;
                 if(b_corner > r_corner) color_corner <= Blue;
                 else if(r_corner > 7)begin
                     if(g_corner < 8) color_corner <= O;
@@ -58,6 +62,7 @@ module color_translator(
                 else color_corner <= Red;
             end
             O:begin
+                color_edge <= O;
                 if(r_corner > 7)begin
                     if(g_corner < 7) color_corner <= O;
                     else if(b_corner > 4) color_corner <= W;
@@ -67,6 +72,7 @@ module color_translator(
                 else color_corner <= Blue;
             end
             G:begin
+                color_edge <= G;
                 if(r_corner > 6)begin
                     if(g_corner < 8) color_corner <= O;
                     else if(b_corner > 5) color_corner <= W;
@@ -76,6 +82,7 @@ module color_translator(
                 else color_corner <= G;
             end
             Red:begin
+                color_edge <= Red;
                 if(r_corner > 6)begin
                     if(g_corner < 7) color_corner <= O;
                     else if(b_corner > 4) color_corner <= W;
@@ -85,6 +92,7 @@ module color_translator(
                 else color_corner <= Blue;
             end
             Blue:begin
+                color_edge <= Blue;
                 if(r_corner > 6)begin
                     if(g_corner < 6) color_corner <= O; //weak
                     else if(b_corner > 5) color_corner <= W;
@@ -94,6 +102,7 @@ module color_translator(
                 else color_corner <= G;
             end
             Y:begin
+                color_edge <= Y;
                 if(corner_bright > 16)begin
                     if(b_corner > 5) color_corner <= W;
                     else color_corner <= Y;
@@ -120,26 +129,27 @@ module color_translator(
                 end else begin
                     color_corner <= G;
                 end
+                
+                //determine edge color
+        
+                if(edge_bright > 15 || (edge_bright > 13 && corner_bright < 10))begin //W or Y or O
+                    if(b_edge > 5 || (b_edge > 4 && edge_bright < 19))begin
+                        color_edge <= W;
+                    end else if(r_edge > 9 && g_edge < 9)begin
+                        color_edge <= O;
+                    end else begin
+                        color_edge <= Y;
+                    end
+                end else if((edge_bright > 11 && corner_bright < 10) || (edge_bright > 10 && corner_bright < 5))begin
+                    color_edge <= O;
+                end else if(r_edge > g_edge || (r_edge == g_edge && edge_bright > 7))begin
+                    color_edge <= Red;
+                end else if(g_edge > 5 || (g_edge > 4 && corner_bright < 10))begin
+                    color_edge <= G;
+                end else begin
+                    color_edge <= Blue;
+                end
             end
         endcase
-        
-        if(edge_bright > 15 || (edge_bright > 13 && corner_bright < 10))begin //W or Y or O
-            if(b_edge > 5 || (b_edge > 4 && edge_bright < 19))begin
-                color_edge <= W;
-            end else if(r_edge > 9 && g_edge < 9)begin
-                color_edge <= O;
-            end else begin
-                color_edge <= Y;
-            end
-        end else if((edge_bright > 11 && corner_bright < 10) || (edge_bright > 10 && corner_bright < 5))begin
-            color_edge <= O;
-        end else if(r_edge > g_edge || (r_edge == g_edge && edge_bright > 7))begin
-            color_edge <= Red;
-        end else if(g_edge > 5 || (g_edge > 4 && corner_bright < 10))begin
-            color_edge <= G;
-        end else begin
-            color_edge <= Blue;
-        end
     end
-
 endmodule
